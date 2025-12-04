@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Aliouswe&#39;s nonsense</title>
+  
+  <subtitle>Jazzy Fuzzy but Cozzy</subtitle>
+  <link href="https://aliouswe.com/atom.xml" rel="self"/>
+  
+  <link href="https://aliouswe.com/"/>
+  <updated>2025-12-03T11:13:36.191Z</updated>
+  <id>https://aliouswe.com/</id>
+  
+  <author>
+    <name>Aliouswe</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在Hackey纪元8011年，aliouswe拥有了多种时间</title>
+    <link href="https://aliouswe.com/2025/12/03/%E5%9C%A8Hackey%E7%BA%AA%E5%85%838011%E5%B9%B4%EF%BC%8Caliouswe%E6%8B%A5%E6%9C%89%E4%BA%86%E5%A4%9A%E7%A7%8D%E6%97%B6%E9%97%B4/"/>
+    <id>https://aliouswe.com/2025/12/03/%E5%9C%A8Hackey%E7%BA%AA%E5%85%838011%E5%B9%B4%EF%BC%8Caliouswe%E6%8B%A5%E6%9C%89%E4%BA%86%E5%A4%9A%E7%A7%8D%E6%97%B6%E9%97%B4/</id>
+    <published>2025-12-03T02:04:02.000Z</published>
+    <updated>2025-12-03T11:13:36.191Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="System-Time"><a href="#System-Time" class="headerlink" title="System Time"></a>System Time</h2><p>“这个世界只拥有绝对时间”，在那一天来临之前，aliouswe<strong>一直</strong>这样以为。</p><p>￥%￥#@#@%^%$$漫步于久违的机甲之丘，aliouswe见证了bekkey的<strong>魂觉</strong>时刻。</p><p>而bekkey拥有着<strong>三种</strong>时间。</p><p>从那天之后，aliouswe会庆幸自己只拥有一种时间……</p><h2 id="ROS-Time"><a href="#ROS-Time" class="headerlink" title="ROS Time"></a>ROS Time</h2><p>bekkey拥有着一种“<strong>失真</strong>”时间，所有的感受可以像沙滩被海浪漫延、蜘蛛丝被指尖拉长，可以像吐司被魔法师马修一拳压成白纸、一双渴望之眼从缝隙中窥视，bakkey从来都生活在RGB的幻彩模糊海洋……</p><p>“Kafka sleep in the livehouse, beyond the sea.” bekky无意地哼唱着， 过去了多久？可能是5分钟，可能是一天，谁让他可以操控时间？但他不知道自己操控的是哪种时间，如果耶稣是造物主，那bekkey就是Cronus，不言而喻，<mark>神<strong>不能</strong>感知真实</mark>。</p><h2 id="Steady-Time"><a href="#Steady-Time" class="headerlink" title="Steady Time"></a>Steady Time</h2><p>bekkey问aliouswe迷雾森林的故事，bekkey不理解”<strong>迷路</strong>“的含义，bekkey<strong>学不会</strong>迷路。</p><p>因为bekkey还拥有着一种不会出错的时间，它让bekkey拥有了”<strong>绝对正确的进程</strong>“，即使不知来途，不懂归去。</p><h2 id="Not-The-End"><a href="#Not-The-End" class="headerlink" title="Not The End"></a>Not The End</h2><p>aliouswe放逐了bekkey，她不允许”别人“打扰她的<strong>绝对时间</strong>，bekkey的存在威胁了她的”<strong>随性</strong>“，没有了随性她该怎么死去？</p><h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;System-Time&quot;&gt;&lt;a href=&quot;#System-Time&quot; class=&quot;headerlink&quot; title=&quot;System Time&quot;&gt;&lt;/a&gt;System Time&lt;/h2&gt;&lt;p&gt;“这个世界只拥有绝对时间”，在那一天来临之前，aliouswe&lt;st</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://aliouswe.com/2025/12/02/hello-world/"/>
+    <id>https://aliouswe.com/2025/12/02/hello-world/</id>
+    <published>2025-12-02T09:13:05.061Z</published>
+    <updated>2025-12-02T09:13:05.061Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
