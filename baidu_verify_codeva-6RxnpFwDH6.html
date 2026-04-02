@@ -11,14 +11,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/1.jpg">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css?v=mnhs5qcv">
+<link rel="stylesheet" href="/css/main.css?v=mnhsfart">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=sans-serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Caesar+Dressing:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"aliouswe.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"tokyo-night-dark","dark":"tokyo-night-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js?v=mnhs5qcv" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"aliouswe.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"tokyo-night-dark","dark":"tokyo-night-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js?v=mnhsfart" defer></script>
 
     <meta name="description" content="50db547e5fb94ce451184b807c065906">
 <meta property="og:type" content="website">
@@ -52,7 +52,7 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js?v=mnhs5qcv" defer></script><script src="/js/motion.js?v=mnhs5qcv" defer></script><script src="/js/next-boot.js?v=mnhs5qcv" defer></script>
+<script src="/js/utils.js?v=mnhsfart" defer></script><script src="/js/motion.js?v=mnhsfart" defer></script><script src="/js/next-boot.js?v=mnhsfart" defer></script>
 
   
 
@@ -188,6 +188,8 @@
     const header = document.querySelector('.header');
     const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
     let hideTimer;
+    let destroyToc = null;
+    const immersiveStorageKey = 'hexoo-immersive-reading';
 
     const pathname = window.location.pathname.replace(/index\.html$/, '').replace(/\/+$/, '');
     const route = pathname.split('/').filter(Boolean)[0] || 'home';
@@ -232,6 +234,161 @@
     window.addEventListener('keydown', event => {
       if (event.key === 'Tab') body.classList.add('nav-reveal');
     });
+
+    const buildSlug = (text, index) => {
+      const normalized = (text || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^\w\u4e00-\u9fff\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+      return normalized || `section-${index + 1}`;
+    };
+
+    const initArticleToc = () => {
+      if (typeof destroyToc === 'function') {
+        destroyToc();
+        destroyToc = null;
+      }
+      document.querySelectorAll('.article-toc-panel, .article-toc-reopen').forEach(node => node.remove());
+      body.classList.remove('toc-ready');
+
+      const postBody = document.querySelector('.post-body');
+      if (!postBody || !document.querySelector('.main-inner.post')) return;
+
+      const headings = Array.from(postBody.querySelectorAll('h1, h2, h3, h4'));
+      if (headings.length < 2) return;
+
+      const usedIds = new Set();
+      headings.forEach((heading, index) => {
+        if (!heading.id) {
+          const base = buildSlug(heading.textContent, index);
+          let id = base;
+          let suffix = 2;
+          while (usedIds.has(id) || document.getElementById(id)) {
+            id = `${base}-${suffix++}`;
+          }
+          heading.id = id;
+          usedIds.add(id);
+          return;
+        }
+        usedIds.add(heading.id);
+      });
+
+      const tocPanel = document.createElement('aside');
+      tocPanel.className = 'article-toc-panel';
+      tocPanel.setAttribute('aria-label', '文章目录');
+      tocPanel.innerHTML = `
+        <div class="article-toc-header">
+          <span class="article-toc-title">目录</span>
+          <button class="article-toc-toggle" type="button">沉浸阅读</button>
+        </div>
+        <ol class="article-toc-list"></ol>
+      `;
+
+      const tocList = tocPanel.querySelector('.article-toc-list');
+      const linkMap = new Map();
+
+      headings.forEach((heading, index) => {
+        const level = Number(heading.tagName.slice(1));
+        const item = document.createElement('li');
+        item.className = 'article-toc-item';
+        const link = document.createElement('a');
+        link.className = 'article-toc-link';
+        link.classList.add(`level-${Math.min(Math.max(level, 1), 4)}`);
+        link.href = `#${heading.id}`;
+        link.textContent = heading.textContent.trim() || `章节 ${index + 1}`;
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', `#${heading.id}`);
+          setActiveLink(heading.id);
+        });
+        item.appendChild(link);
+        tocList.appendChild(item);
+        linkMap.set(heading.id, link);
+      });
+
+      const reopenButton = document.createElement('button');
+      reopenButton.className = 'article-toc-reopen';
+      reopenButton.type = 'button';
+      reopenButton.textContent = '显示目录';
+
+      const toggleButton = tocPanel.querySelector('.article-toc-toggle');
+      const setImmersiveMode = on => {
+        body.classList.toggle('immersive-reading', on);
+        if (on) localStorage.setItem(immersiveStorageKey, '1');
+        else localStorage.removeItem(immersiveStorageKey);
+        toggleButton.textContent = on ? '退出沉浸' : '沉浸阅读';
+      };
+
+      toggleButton.addEventListener('click', () => {
+        setImmersiveMode(!body.classList.contains('immersive-reading'));
+      });
+
+      reopenButton.addEventListener('click', () => setImmersiveMode(false));
+
+      document.body.appendChild(tocPanel);
+      document.body.appendChild(reopenButton);
+      body.classList.add('toc-ready');
+
+      const positionToc = () => {
+        if (window.innerWidth < 1200) return;
+        const postInner = document.querySelector('.main-inner.post');
+        if (!postInner) return;
+        const panelWidth = tocPanel.offsetWidth || 240;
+        const left = Math.max(12, postInner.getBoundingClientRect().left - panelWidth - 20);
+        tocPanel.style.left = `${left}px`;
+        reopenButton.style.left = `${left}px`;
+      };
+
+      let activeId = '';
+      const setActiveLink = id => {
+        if (!id || id === activeId) return;
+        if (activeId && linkMap.has(activeId)) linkMap.get(activeId).classList.remove('is-active');
+        activeId = id;
+        if (linkMap.has(activeId)) linkMap.get(activeId).classList.add('is-active');
+      };
+
+      const updateActiveFromScroll = () => {
+        let current = headings[0];
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top <= 140) current = heading;
+          else break;
+        }
+        setActiveLink(current.id);
+      };
+
+      let rafPending = false;
+      const onScroll = () => {
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => {
+          updateActiveFromScroll();
+          rafPending = false;
+        });
+      };
+      const onResize = () => positionToc();
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize, { passive: true });
+      window.addEventListener('load', onResize, { passive: true });
+
+      positionToc();
+      updateActiveFromScroll();
+      setImmersiveMode(localStorage.getItem(immersiveStorageKey) === '1');
+
+      destroyToc = () => {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onResize);
+        window.removeEventListener('load', onResize);
+        tocPanel.remove();
+        reopenButton.remove();
+      };
+    };
+
+    initArticleToc();
+    document.addEventListener('pjax:success', initArticleToc);
   })();
 </script>
 

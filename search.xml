@@ -1,564 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
-  <entry>
-    <title>Behind The Door</title>
-    <url>/2025/12/07/The-Door/</url>
-    <content><![CDATA[<h2 id="Winporal–biggsowwy维，aliouswe解构了世界"><a href="#Winporal–biggsowwy维，aliouswe解构了世界" class="headerlink" title="Winporal–biggsowwy维，aliouswe解构了世界"></a>Winporal–biggsowwy维，aliouswe解构了世界</h2><p>aliouswe掌握不了<strong>概况</strong>，就像啤酒不了解新闻，因为她解构了自己……</p>
-<p>而在她心中，自己就是整个世界, 漠视像咖啡因一样侵蚀着她的健康和知觉，失去了对自己的感知，世界就消失了……</p>
-<h2 id="P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门"><a href="#P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门" class="headerlink" title="P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门"></a>P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门</h2><p>“The door can solve all problems, my friend.” elign望着aliouswe的废墟</p>
-<p>elign 的所有信徒创造了the door，他确信门可以<strong>察觉</strong>aliouswe的世界而aliouswe可以获得门授予的第二世界</p>
-<p>可惜的是aliouswe仍然无法区分线条和颜色，会失足掉进咖啡渣沼泽，也会在耳鸣中失眠。—门只是在角落</p>
-<h2 id="Sql-cm域遨游，aliouswe撞上了门"><a href="#Sql-cm域遨游，aliouswe撞上了门" class="headerlink" title="Sql.cm域遨游，aliouswe撞上了门"></a>Sql.cm域遨游，aliouswe撞上了门</h2><p>aliouswe: “Can you open for me?”</p>
-<p>the door :”Of course not. I am <strong>not designed</strong> to be opened.”</p>
-<p>门为了<strong>集群</strong>而存在，门不为任何人而开</p>
-<p>但是aliouswe有点特别，the door 无法找到她的<strong>齿轮</strong>——它发现她是如此完整，完整到细微变得模糊，门被黏住了眼</p>
-<p>久违地，the door的内核下起了雪，溢到了把手上</p>
-<p>这意味着aliouswe永远不可能成为门的信徒……</p>
-<h2 id="Not-The-End"><a href="#Not-The-End" class="headerlink" title="Not The End"></a>Not The End</h2><p>“Hey! I want to give you a door” aliouswe送给elign一扇”<strong>门</strong>“</p>
-<p>独门教就这样失去了首领</p>
-<p>the inspration from “<a href="https://lizengland.com/blog/the-door-problem/">https://lizengland.com/blog/the-door-problem/</a>“</p>
-]]></content>
-      <tags>
-        <tag>riddle but philosophy</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>everything i should kown about control</title>
-    <url>/2026/04/02/everything-i-should-kown-about-control/</url>
-    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="单片机构成（mcu）"><a href="#单片机构成（mcu）" class="headerlink" title="单片机构成（mcu）"></a>单片机构成（mcu）</h2><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=9ad13efb2aeb89fbb8349edca113d69b_921f831bd35ec25d_H4S7R2J3DO_V8GHLG5HGP273AM7UGTOIE3TH8"></p>
-<ul>
-<li><p>运算器：负责执行算术和逻辑运算。</p>
-</li>
-<li><p>控制器：计算机的大脑中枢，它协调和控制计算机各部件的工作。控制器从存储器中取出指令，分析指令的内容，并根据指令要求向其他部件发出控制信号，以确保整个计算机系统有条不紊地运行。</p>
-</li>
-<li><p>存储设备：用于存储数据和程序。它可以分为主存储器（如随机存取存储器RAM）和辅助存储器（如硬盘、固态硬盘等）。</p>
-<ul>
-<li><p>主存储器：暂时存储正在运行的程序和数据。</p>
-</li>
-<li><p>辅助存储器：长期存储大量的数据和程序。</p>
-</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="调试接口标准"><a href="#调试接口标准" class="headerlink" title="调试接口标准"></a>调试接口标准</h2><ul>
-<li>为什么需要调试接口标准<br>   电脑和单片机之间的一条“调试通道”，用来给芯片下载程序、调试程序、读取芯片内部状态。GDB &#x2F; GDB Server &#x2F; 这类硬件调试器很多就是通过 JTAG 或 SWD 这类调试接口和单片机通信的。</li>
-</ul>
-<ol>
-<li>JTAG：线更多，功能更完整，传统一些。</li>
-<li>SWD：线更少，STM32里非常常用，只能用于ARM内核的单片机。</li>
-</ol>
-<p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=d19dc477af37a262b2dab153c1683550_e12328cba062698d_H2SLO2J3DO_ASMPO4EDQPP4M8EHTJ8OHEAS18"></p>
-<hr>
-<h2 id="boot-电路"><a href="#boot-电路" class="headerlink" title="boot 电路"></a>boot 电路</h2><h3 id="为什么需要boot-电路"><a href="#为什么需要boot-电路" class="headerlink" title="为什么需要boot 电路"></a>为什么需要boot 电路</h3><p>单片机一上电，CPU 必须先找一个<strong>起点</strong>去取第一条指令</p>
-<p>这个<strong>起点</strong>可能有 3 个地方：</p>
-<ul>
-<li><strong>主 Flash</strong></li>
-<li><strong>系统存储器</strong></li>
-<li><strong>内部 SRAM</strong></li>
-</ul>
-<h3 id="启动模式的选择"><a href="#启动模式的选择" class="headerlink" title="启动模式的选择"></a>启动模式的选择</h3><p>STM32 通过 <strong>BOOT0、BOOT1 的电平组合</strong> （见表格）来决定选哪个区域启动</p>
-<p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=6451e6d223ab7e21e6430d037126e1aa_30224f9171630ed7_4OMUR7J3DO_6CKUJ8OJJPFU3VIOF8Q2CBFDJO"></p>
-<blockquote>
-<p>X表示无所谓，0 或 1 都行。</p>
-</blockquote>
-<ol>
-<li><p><code>BOOT0 = 0，BOOT1 = X</code></p>
-<ul>
-<li><p>芯片复位后，直接从 Flash 里执行你的程序（也就是你写的 <code>main()</code> 前面的启动代码，最终都会从这里开始跑。</p>
-</li>
-<li><p>启动地址：<strong>0x08000000</strong> 是STM32内置的Flash，一般我们使用JTAG或者SWD模式下载程序时，就是下载到这里，重启后也直接从这启动程序。基本上都是采用这种模式。</p>
-</li>
-</ul>
-</li>
-<li><p><code>BOOT0 = 1，BOOT1 = 0</code></p>
-<ul>
-<li><p><strong>系统存储器</strong>一般放的是 STM32 官方出厂烧好的 BootLoader。</p>
-</li>
-<li><p>作用是：</p>
-<ul>
-<li>你可以不靠 JTAG &#x2F; SWD。</li>
-<li>而是通过串口、USB、CAN 等某些方式下载程序。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><code>BOOT0 = 1，BOOT1 = 1</code></p>
-<ul>
-<li><p>启动到<strong>内部 SRAM</strong>也就是从 RAM 启动。</p>
-</li>
-<li><p>这个模式平时很少用，更多用于：</p>
-<ul>
-<li>调试</li>
-<li>特殊测试</li>
-</ul>
-<p>因为 RAM 掉电就没了，通常不会拿来做正常程序启动。</p>
-</li>
-</ul>
-</li>
-</ol>
-<h3 id="电路原理"><a href="#电路原理" class="headerlink" title="电路原理"></a>电路原理</h3><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=dcc421d1203f02c6243f04b114f3ca8e_bfd028d5fe916993_TFAPN8B3DO_CF4CTNH48152BJAIFSLENLCRK4"></p>
-<blockquote>
-<p>该电路图本质上是在给 <strong>BOOT0 &#x2F; BOOT1 选择高低电平</strong></p>
-</blockquote>
-<p>你可以看到：</p>
-<ul>
-<li>上面接了 <strong>VCC3V3</strong>，表示高电平</li>
-<li>下面接了 <strong>GND</strong>，表示低电平</li>
-<li>中间通过排针跳帽来选择连到哪边</li>
-</ul>
-<p>也就是说：</p>
-<ul>
-<li>跳帽接到 3.3V → 这个 Boot 引脚为 <strong>1</strong></li>
-<li>跳帽接到 GND → 这个 Boot 引脚为 <strong>0</strong></li>
-</ul>
-<p>电阻 R3、R4 是 100k，一般起到：</p>
-<ul>
-<li>限流</li>
-<li>上拉 &#x2F; 下拉辅助</li>
-<li>保证引脚状态稳定</li>
-</ul>
-<hr>
-<h2 id="时钟"><a href="#时钟" class="headerlink" title="时钟"></a>时钟</h2><h3 id="时钟树"><a href="#时钟树" class="headerlink" title="时钟树"></a>时钟树</h3><p>STM32 里通常不是“一个时钟管全部”，而是有一套<strong>时钟树</strong></p>
-<p>也就是说：</p>
-<ul>
-<li>先有几个“原始时钟源”</li>
-<li>再经过选择、分频、倍频</li>
-<li>最后分给 CPU 和各个外设</li>
-</ul>
-<p>这就叫 <strong>时钟树</strong></p>
-<h3 id="时钟控制器（RCC）"><a href="#时钟控制器（RCC）" class="headerlink" title="时钟控制器（RCC）"></a>时钟控制器（RCC）</h3><p>它主要管两大类事情：</p>
-<h4 id="时钟管理"><a href="#时钟管理" class="headerlink" title="时钟管理"></a>时钟管理</h4><p>它负责：</p>
-<ul>
-<li>选择时钟源</li>
-<li>打开某个外设的时钟</li>
-<li>设置分频、倍频</li>
-<li>让系统时钟分配给各总线和外设</li>
-</ul>
-<p>比如：</p>
-<ul>
-<li>你要用 GPIOA</li>
-<li>先得开 GPIOA 的时钟</li>
-<li>这个动作通常就是 RCC 在管</li>
-</ul>
-<p>如果时钟没开，你去操作 GPIO 寄存器，往往就不生效。</p>
-<p>这就是为什么很多 STM32 程序都会先写类似：</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">__HAL_RCC_GPIOA_CLK_ENABLE();</span><br></pre></td></tr></table></figure>
-
-<p>这句话本质就是：</p>
-<p><strong>通过 RCC 把 GPIOA 的时钟打开。</strong></p>
-<h3 id="复位管理"><a href="#复位管理" class="headerlink" title="复位管理"></a>复位管理</h3><p>RCC 还可以对某些外设进行复位。</p>
-<p>比如一个外设状态乱了，可以：</p>
-<ul>
-<li>给它复位一下</li>
-<li>再重新配置</li>
-</ul>
-<p>所以 RCC 不只是时钟模块，它还带“复位控制”。</p>
-<h3 id="常见时钟源"><a href="#常见时钟源" class="headerlink" title="常见时钟源"></a>常见时钟源</h3><ol>
-<li><p>HSI（<strong>High Speed Internal</strong>）：高速内部时钟，芯片内部自带的 RC 振荡器</p>
-<ul>
-<li>不需要外部晶振</li>
-<li>上电就能用</li>
-<li>成本低，方便</li>
-<li>但精度一般不如外部晶振</li>
-</ul>
-</li>
-<li><p>HSE（<strong>High Speed External</strong>）：高速外部时钟，通常来自板子上的外部晶振。</p>
-<ul>
-<li>精度更高</li>
-<li>更稳定</li>
-<li>常用于需要较准频率的场景</li>
-<li>但要外接晶振电路</li>
-</ul>
-</li>
-<li><p>LSI（<strong>Low Speed Internal</strong>）：低速内部时钟。</p>
-<ul>
-<li>频率低</li>
-<li>精度一般</li>
-<li>常给独立看门狗、RTC 等低速模块使用</li>
-</ul>
-</li>
-<li><p>LSE（<strong>Low Speed External</strong>）：低速外部时钟，一般是 <strong>32.768kHz</strong> 晶振。</p>
-<p>这个频率很经典，因为适合做：</p>
-<ul>
-<li>RTC 实时时钟</li>
-<li>日历计时</li>
-</ul>
-</li>
-</ol>
-<h3 id="Crystal-ceramic-resonator（晶体-陶瓷振荡器）"><a href="#Crystal-ceramic-resonator（晶体-陶瓷振荡器）" class="headerlink" title="Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）"></a>Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）</h3><p>一种<strong>外部谐振元件</strong></p>
-<p>开发板上常见有一个小小的晶振器件，它不是 MCU 内部自己生时钟，而是：</p>
-<ul>
-<li>接在 STM32 的时钟引脚上</li>
-<li>配合 MCU 内部振荡电路</li>
-<li>产生稳定时钟</li>
-</ul>
-<h4 id="晶体振荡器"><a href="#晶体振荡器" class="headerlink" title="晶体振荡器"></a>晶体振荡器</h4><p>一般说“晶振”，通常指石英晶体。</p>
-<p>特点：</p>
-<ul>
-<li>精度高</li>
-<li>稳定性好</li>
-<li>很常用</li>
-</ul>
-<p>比如板子上常见：</p>
-<ul>
-<li>8MHz 晶振</li>
-<li>12MHz 晶振</li>
-<li>25MHz 晶振</li>
-</ul>
-<h4 id="陶瓷振荡器"><a href="#陶瓷振荡器" class="headerlink" title="陶瓷振荡器"></a>陶瓷振荡器</h4><p>也能用来提供振荡源，但一般精度会比石英晶体差一些。</p>
-<h3 id="Bypass-clock-source（旁路时钟源）"><a href="#Bypass-clock-source（旁路时钟源）" class="headerlink" title="Bypass clock source（旁路时钟源）"></a>Bypass clock source（旁路时钟源）</h3><p>由外部其他设备主动给出该时钟信号，不经过 MCU 内部时钟电路驱动，可直接作为单片机时钟</p>
-<h3 id="系统时钟（SYSCLK）"><a href="#系统时钟（SYSCLK）" class="headerlink" title="系统时钟（SYSCLK）"></a>系统时钟（SYSCLK）</h3><p><em><strong>芯片当前最核心的主工作时钟</strong></em>（是 CPU 和很多总线时钟的基础来源</p>
-<p>系统时钟可以由这些来源之一提供：</p>
-<ul>
-<li>HSI</li>
-<li>HSE</li>
-<li>PLL 输出</li>
-</ul>
-<p>通常 STM32 不会直接一直拿原始时钟跑，而是常常通过 <strong>PLL 倍频</strong> 之后得到更高的系统时钟。</p>
-<p>例如：</p>
-<ul>
-<li>外部晶振 HSE &#x3D; 8MHz</li>
-<li>经过 PLL 倍频</li>
-<li>得到 SYSCLK &#x3D; 72MHz</li>
-</ul>
-<p>这样芯片主频就提高了。</p>
-<h3 id="PLL"><a href="#PLL" class="headerlink" title="PLL"></a>PLL</h3><p>PLL 就是 <strong>锁相环</strong>，一个<code>“倍频器”</code>或者<code>“调频器”</code></p>
-<p>例如：</p>
-<ul>
-<li>输入 8MHz</li>
-<li>PLL 倍频后输出 72MHz</li>
-</ul>
-<p>这样就能让芯片从一个较低频率的时钟源，得到一个更高的主频。</p>
-<p>所以很多 STM32 的典型配置都是：</p>
-<ul>
-<li>HSE → PLL → SYSCLK</li>
-</ul>
-<h3 id="分频"><a href="#分频" class="headerlink" title="分频"></a>分频</h3><p>意思就是把时钟<strong>变慢</strong>。</p>
-<p>例如：</p>
-<ul>
-<li>系统时钟 72MHz</li>
-<li>分频 2</li>
-<li>得到 36MHz</li>
-</ul>
-<p>为什么要分频？</p>
-<p>因为不是所有模块都能跑一样快，也不是所有模块都需要那么快。</p>
-<p>所以 STM32 会把系统时钟再分给不同总线和外设。</p>
-<h3 id="AHB-APB"><a href="#AHB-APB" class="headerlink" title="AHB&#x2F;APB"></a>AHB&#x2F;APB</h3><ul>
-<li><p><strong>AHB</strong>：高速总线时钟</p>
-<p>通常给：</p>
-<ul>
-<li>内核</li>
-<li>DMA</li>
-<li>内存接口</li>
-<li>高速外设</li>
-</ul>
-</li>
-<li><p><strong>APB1 &#x2F; APB2</strong>：低速 &#x2F; 高速外设总线时钟</p>
-<p>常给：</p>
-<ul>
-<li>USART</li>
-<li>SPI</li>
-<li>I2C</li>
-<li>TIM</li>
-<li>ADC</li>
-<li>GPIO 等外设</li>
-</ul>
-<p>不同系列分法略有差异，但核心思想一样：</p>
-<p><strong>系统时钟不会直接一股脑送到所有外设，而是先分到不同总线。</strong></p>
-<p>比如常见一种理解方式：</p>
-<ul>
-<li>SYSCLK → AHB</li>
-<li>AHB → APB1</li>
-<li>AHB → APB2</li>
-</ul>
-<p>然后外设再挂在 APB1 或 APB2 上。</p>
-</li>
-</ul>
-<h3 id="与时钟树相关的参数"><a href="#与时钟树相关的参数" class="headerlink" title="与时钟树相关的参数"></a>与时钟树相关的参数</h3><ul>
-<li><p>串口波特率</p>
-</li>
-<li><p>定时器定时：定时器溢出时间 &#x3D; 预分频 × 自动重装值 × 时钟周期</p>
-</li>
-<li><p>ADC采样速度</p>
-</li>
-<li><p>USB、CAN 等外设</p>
-</li>
-</ul>
-<hr>
-<h1 id="GPIO"><a href="#GPIO" class="headerlink" title="GPIO"></a>GPIO</h1><blockquote>
-<p>MCU与外部元件沟通的接触点，一般沟通的是电压信息俗称<strong>引脚</strong></p>
-</blockquote>
-<h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><h3 id="输入模式"><a href="#输入模式" class="headerlink" title="输入模式"></a>输入模式</h3><ul>
-<li><p>下拉输入</p>
-<p>意思是：</p>
-<ul>
-<li>引脚默认通过一个电阻接地</li>
-<li>所以在没人管它时，默认是 <strong>低电平</strong></li>
-</ul>
-<p>如果外部给它高电平，它才会变成 1。</p>
-<p>用途：</p>
-<ul>
-<li>防止引脚悬空</li>
-<li>让默认状态明确</li>
-</ul>
-</li>
-<li><p>上拉输入</p>
-<p>意思是：</p>
-<ul>
-<li>引脚默认通过一个电阻接到 VDD</li>
-<li>所以默认是 <strong>高电平</strong></li>
-</ul>
-<p>如果外部把它拉低，它才会变成 0。</p>
-<p>这个在按键电路里特别常见。</p>
-<p>比如：</p>
-<ul>
-<li>默认高电平</li>
-<li>按键按下接地</li>
-<li>读到低电平表示按下</li>
-</ul>
-</li>
-<li><p>浮空输入</p>
-<p>意思是：</p>
-<ul>
-<li>不上拉，也不下拉</li>
-<li>引脚完全“飘着”</li>
-</ul>
-<p>这样如果外部没明确驱动，就可能：</p>
-<ul>
-<li>一会高</li>
-<li>一会低</li>
-<li>很容易受干扰</li>
-</ul>
-<p>所以浮空输入一般只在：</p>
-<ul>
-<li>外部已经有明确驱动</li>
-<li>或特殊场景</li>
-</ul>
-<p>才会使用。</p>
-</li>
-<li><p>模拟输入</p>
-<p>这个和前面几种数字输入不一样。</p>
-<p>它不是判断 0 &#x2F; 1，而是读取一个<strong>连续变化的电压值</strong>。</p>
-<p>比如：</p>
-<ul>
-<li>0.3V</li>
-<li>1.2V</li>
-<li>2.7V</li>
-</ul>
-<p>这种通常给：</p>
-<ul>
-<li>ADC</li>
-<li>模拟传感器输入</li>
-</ul>
-<p>用了模拟输入模式后，GPIO 的数字输入那一套比较器之类通常会被关掉，减少干扰和功耗。</p>
-</li>
-</ul>
-<h3 id="输出模式"><a href="#输出模式" class="headerlink" title="输出模式"></a>输出模式</h3><ul>
-<li><p>推挽输出</p>
-<p>这是最常用的输出模式。</p>
-<p>特点是：</p>
-<ul>
-<li>想输出高电平，就能主动拉高</li>
-<li>想输出低电平，就能主动拉低</li>
-</ul>
-<p>也就是：</p>
-<p><strong>高低电平都由单片机主动驱动。</strong></p>
-<p>适合：</p>
-<ul>
-<li>点亮 LED</li>
-<li>输出普通数字信号</li>
-<li>控制一般器件</li>
-</ul>
-</li>
-<li><p>开漏输出</p>
-<p>这个模式下：</p>
-<ul>
-<li>只能主动拉低</li>
-<li>不能主动拉高</li>
-</ul>
-<p>当它“输出高”时，本质上不是主动输出高电平，而是：</p>
-<ul>
-<li>把上面的管子关掉</li>
-<li>引脚处于“放开”的状态</li>
-<li>需要靠外部上拉电阻把它拉高</li>
-</ul>
-<p>所以开漏输出通常要配合：</p>
-<ul>
-<li>外部上拉</li>
-<li>或内部上拉</li>
-</ul>
-</li>
-<li><p>复用推挽输出、复用开漏输出</p>
-<p>这里的“复用”意思是：</p>
-<p>这个引脚不再只是普通 GPIO，而是交给某个外设使用。</p>
-<p>比如这个脚可能不再单纯输出 0 &#x2F; 1，而是变成：</p>
-<ul>
-<li>USART_TX</li>
-<li>SPI_SCK</li>
-<li>I2C_SCL</li>
-<li>TIM_PWM</li>
-</ul>
-<p>所以：</p>
-<ul>
-<li><strong>复用推挽输出</strong>：给外设输出信号，底层输出结构是推挽</li>
-<li><strong>复用开漏输出</strong>：给外设输出信号，底层输出结构是开漏</li>
-</ul>
-<p>比如：</p>
-<ul>
-<li>UART TX 常常用复用推挽</li>
-<li>I2C 常常用复用开漏</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h2 id="示例图讲解"><a href="#示例图讲解" class="headerlink" title="示例图讲解"></a>示例图讲解</h2><p>顺序：从右到左</p>
-<p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=8d74a1cb271500b0a719971a66c639e9_f0e13bb3b1a07af5_OO6ASF33DO_6BTMAKSV7011ODH937PSC35E7G"></p>
-<h3 id="I-O-引脚和保护二极管"><a href="#I-O-引脚和保护二极管" class="headerlink" title="I&#x2F;O 引脚和保护二极管"></a>I&#x2F;O 引脚和保护二极管</h3><p><strong><strong>这是 GPIO 引脚真正连到芯片外部的地方</strong></strong></p>
-<p>保护二极管的作用主要是：</p>
-<ul>
-<li>防止静电冲击</li>
-<li>防止电压过高或过低对内部电路造成损伤</li>
-</ul>
-<h3 id="输入电路-（中上部分）"><a href="#输入电路-（中上部分）" class="headerlink" title="输入电路 （中上部分）"></a>输入电路 （中上部分）</h3><h4 id="上拉电阻、下拉电阻"><a href="#上拉电阻、下拉电阻" class="headerlink" title="上拉电阻、下拉电阻"></a>上拉电阻、下拉电阻</h4><p>图里标了大约 <strong>50K</strong>。</p>
-<p>这表示 STM32 内部通常集成了弱上拉 &#x2F; 弱下拉电阻。</p>
-<p>所以配置成：</p>
-<ul>
-<li>上拉输入</li>
-<li>下拉输入</li>
-</ul>
-<p>其实就是在控制内部这个电阻是否接上。</p>
-<p>注意这个电阻值通常比较大，是“弱上拉&#x2F;弱下拉”，不是特别强的驱动。</p>
-<h4 id="TTL-施密特触发器"><a href="#TTL-施密特触发器" class="headerlink" title="TTL 施密特触发器"></a>TTL 施密特触发器</h4><p><strong>把外部不是特别干净的电压信号，转换成芯片内部更稳定的数字 0 &#x2F; 1 判断</strong></p>
-<p>因为外部输入电压可能不是一下子从 0V 跳到 3.3V，而是慢慢变化，还可能有噪声。</p>
-<p>施密特触发器可以提高抗干扰能力，让芯片更稳定判断：</p>
-<ul>
-<li>这是高电平</li>
-<li>这是低电平</li>
-</ul>
-<h4 id="IDR：输入数据寄存器"><a href="#IDR：输入数据寄存器" class="headerlink" title="IDR：输入数据寄存器"></a>IDR：输入数据寄存器</h4><p>这个寄存器里保存的是当前引脚读到的输入状态。</p>
-<p>比如：</p>
-<ul>
-<li>引脚现在是高电平 → 对应位是 1</li>
-<li>引脚现在是低电平 → 对应位是 0</li>
-</ul>
-<p>所以你程序里读取 GPIO 输入，本质上就是在读这个寄存器对应位</p>
-<h4 id="模拟输入-复用功能输入"><a href="#模拟输入-复用功能输入" class="headerlink" title="模拟输入 &#x2F; 复用功能输入"></a>模拟输入 &#x2F; 复用功能输入</h4><h5 id="模拟输入"><a href="#模拟输入" class="headerlink" title="模拟输入"></a>模拟输入</h5><p>这个脚可以接到 ADC 等模拟模块，不走数字输入判断。</p>
-<h5 id="复用功能输入"><a href="#复用功能输入" class="headerlink" title="复用功能输入"></a>复用功能输入</h5><p>这个脚也可以送给某个片上外设当输入。</p>
-<p>比如：</p>
-<ul>
-<li>串口 RX</li>
-<li>定时器输入捕获</li>
-<li>外部中断输入</li>
-<li>SPI MISO</li>
-</ul>
-<p>也就是说，GPIO 虽然叫 GPIO，但它还经常是很多外设功能的“入口”。 </p>
-<h3 id="输出电路（中下部分）"><a href="#输出电路（中下部分）" class="headerlink" title="输出电路（中下部分）"></a>输出电路（中下部分）</h3><h4 id="ODR：输出数据寄存器"><a href="#ODR：输出数据寄存器" class="headerlink" title="ODR：输出数据寄存器"></a>ODR：输出数据寄存器</h4><p>你给某个 GPIO 输出 1 或 0，本质上就是改这个寄存器里的某一位。</p>
-<p>比如：</p>
-<ul>
-<li>写 1 → 希望该引脚输出高</li>
-<li>写 0 → 希望该引脚输出低</li>
-</ul>
-<p>然后这个值再去控制后面的输出驱动电路。</p>
-<h4 id="BRR-BSRR"><a href="#BRR-BSRR" class="headerlink" title="BRR &#x2F; BSRR"></a>BRR &#x2F; BSRR</h4><ul>
-<li><strong>BSRR</strong>：位设置 &#x2F; 复位寄存器</li>
-<li><strong>BRR</strong>：位复位寄存器</li>
-</ul>
-<p>它们的作用是：</p>
-<p><strong>可以更方便、更原子地对某一位 GPIO 置 1 或清 0。</strong></p>
-<p>为什么不用直接改 ODR？</p>
-<p>因为直接改 ODR 可能涉及：</p>
-<ul>
-<li>先读</li>
-<li>再改</li>
-<li>再写回</li>
-</ul>
-<p>在某些场景下不够安全，尤其在中断或并发访问时。</p>
-<p>而 BSRR 可以做到：</p>
-<ul>
-<li>写某位到 set 区 → 置 1</li>
-<li>写某位到 reset 区 → 清 0</li>
-</ul>
-<p>所以很多底层库都喜欢用它来快速控制引脚。</p>
-<h4 id="输出控制"><a href="#输出控制" class="headerlink" title="输出控制"></a>输出控制</h4><p>这块逻辑会根据你配置的模式决定：</p>
-<ul>
-<li>是普通 GPIO 输出</li>
-<li>还是复用输出</li>
-<li>是推挽</li>
-<li>还是开漏</li>
-</ul>
-<p>也就是控制下面那两个 MOS 管怎么工作。</p>
-<h4 id="P-MOS-和-N-MOS"><a href="#P-MOS-和-N-MOS" class="headerlink" title="P-MOS 和 N-MOS"></a>P-MOS 和 N-MOS</h4><p>这两个是输出驱动核心。</p>
-<p>你可以简单理解成：</p>
-<ul>
-<li><strong>P-MOS</strong> 负责把引脚往 <strong>高电平</strong> 拉</li>
-<li><strong>N-MOS</strong> 负责把引脚往 <strong>低电平</strong> 拉</li>
-</ul>
-<h5 id="推挽输出时"><a href="#推挽输出时" class="headerlink" title="推挽输出时"></a>推挽输出时</h5><ul>
-<li>输出高：P-MOS 开，N-MOS 关</li>
-<li>输出低：P-MOS 关，N-MOS 开</li>
-</ul>
-<p>所以推挽可以主动输出高和低。</p>
-<h5 id="开漏输出时"><a href="#开漏输出时" class="headerlink" title="开漏输出时"></a>开漏输出时</h5><p>通常上面的拉高能力被禁掉，只保留下拉能力：</p>
-<ul>
-<li>输出低：N-MOS 开，把引脚拉到低电平</li>
-<li>输出高：N-MOS 关，引脚悬空，由外部上拉拉高</li>
-</ul>
-<p>这就是为什么开漏不能主动输出高。</p>
-<h4 id="复用功能输出"><a href="#复用功能输出" class="headerlink" title="复用功能输出"></a>复用功能输出</h4><p> 意思是：</p>
-<p>这个引脚输出的数据不一定来自 ODR，也可能来自某个外设模块。</p>
-<p>比如：</p>
-<ul>
-<li>定时器输出 PWM</li>
-<li>USART 输出发送数据</li>
-<li>SPI 输出时钟&#x2F;数据</li>
-</ul>
-<p>这时候你虽然看到的是这个 GPIO 脚在变化，但其实背后是外设在控制它，不是你手动写 ODR 了。</p>
-]]></content>
+<search> 
+  
+  
+    
+    <entry>
+      <title>everything i should kown about control</title>
+      <link href="/2026/04/02/everything-i-should-kown-about-control/"/>
+      <url>/2026/04/02/everything-i-should-kown-about-control/</url>
+      
+        <content type="html"><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="单片机构成（mcu）"><a href="#单片机构成（mcu）" class="headerlink" title="单片机构成（mcu）"></a>单片机构成（mcu）</h2><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=9ad13efb2aeb89fbb8349edca113d69b_921f831bd35ec25d_H4S7R2J3DO_V8GHLG5HGP273AM7UGTOIE3TH8"></p><ul><li><p>运算器：负责执行算术和逻辑运算。</p></li><li><p>控制器：计算机的大脑中枢，它协调和控制计算机各部件的工作。控制器从存储器中取出指令，分析指令的内容，并根据指令要求向其他部件发出控制信号，以确保整个计算机系统有条不紊地运行。</p></li><li><p>存储设备：用于存储数据和程序。它可以分为主存储器（如随机存取存储器RAM）和辅助存储器（如硬盘、固态硬盘等）。</p><ul><li><p>主存储器：暂时存储正在运行的程序和数据。</p></li><li><p>辅助存储器：长期存储大量的数据和程序。</p></li></ul></li></ul><hr><h2 id="调试接口标准"><a href="#调试接口标准" class="headerlink" title="调试接口标准"></a>调试接口标准</h2><ul><li>为什么需要调试接口标准<br>   电脑和单片机之间的一条“调试通道”，用来给芯片下载程序、调试程序、读取芯片内部状态。GDB &#x2F; GDB Server &#x2F; 这类硬件调试器很多就是通过 JTAG 或 SWD 这类调试接口和单片机通信的。</li></ul><ol><li>JTAG：线更多，功能更完整，传统一些。</li><li>SWD：线更少，STM32里非常常用，只能用于ARM内核的单片机。</li></ol><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=d19dc477af37a262b2dab153c1683550_e12328cba062698d_H2SLO2J3DO_ASMPO4EDQPP4M8EHTJ8OHEAS18"></p><hr><h2 id="boot-电路"><a href="#boot-电路" class="headerlink" title="boot 电路"></a>boot 电路</h2><h3 id="为什么需要boot-电路"><a href="#为什么需要boot-电路" class="headerlink" title="为什么需要boot 电路"></a>为什么需要boot 电路</h3><p>单片机一上电，CPU 必须先找一个<strong>起点</strong>去取第一条指令</p><p>这个<strong>起点</strong>可能有 3 个地方：</p><ul><li><strong>主 Flash</strong></li><li><strong>系统存储器</strong></li><li><strong>内部 SRAM</strong></li></ul><h3 id="启动模式的选择"><a href="#启动模式的选择" class="headerlink" title="启动模式的选择"></a>启动模式的选择</h3><p>STM32 通过 <strong>BOOT0、BOOT1 的电平组合</strong> （见表格）来决定选哪个区域启动</p><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=6451e6d223ab7e21e6430d037126e1aa_30224f9171630ed7_4OMUR7J3DO_6CKUJ8OJJPFU3VIOF8Q2CBFDJO"></p><blockquote><p>X表示无所谓，0 或 1 都行。</p></blockquote><ol><li><p><code>BOOT0 = 0，BOOT1 = X</code></p><ul><li><p>芯片复位后，直接从 Flash 里执行你的程序（也就是你写的 <code>main()</code> 前面的启动代码，最终都会从这里开始跑。</p></li><li><p>启动地址：<strong>0x08000000</strong> 是STM32内置的Flash，一般我们使用JTAG或者SWD模式下载程序时，就是下载到这里，重启后也直接从这启动程序。基本上都是采用这种模式。</p></li></ul></li><li><p><code>BOOT0 = 1，BOOT1 = 0</code></p><ul><li><p><strong>系统存储器</strong>一般放的是 STM32 官方出厂烧好的 BootLoader。</p></li><li><p>作用是：</p><ul><li>你可以不靠 JTAG &#x2F; SWD。</li><li>而是通过串口、USB、CAN 等某些方式下载程序。</li></ul></li></ul></li><li><p><code>BOOT0 = 1，BOOT1 = 1</code></p><ul><li><p>启动到<strong>内部 SRAM</strong>也就是从 RAM 启动。</p></li><li><p>这个模式平时很少用，更多用于：</p><ul><li>调试</li><li>特殊测试</li></ul><p>因为 RAM 掉电就没了，通常不会拿来做正常程序启动。</p></li></ul></li></ol><h3 id="电路原理"><a href="#电路原理" class="headerlink" title="电路原理"></a>电路原理</h3><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=dcc421d1203f02c6243f04b114f3ca8e_bfd028d5fe916993_TFAPN8B3DO_CF4CTNH48152BJAIFSLENLCRK4"></p><blockquote><p>该电路图本质上是在给 <strong>BOOT0 &#x2F; BOOT1 选择高低电平</strong></p></blockquote><p>你可以看到：</p><ul><li>上面接了 <strong>VCC3V3</strong>，表示高电平</li><li>下面接了 <strong>GND</strong>，表示低电平</li><li>中间通过排针跳帽来选择连到哪边</li></ul><p>也就是说：</p><ul><li>跳帽接到 3.3V → 这个 Boot 引脚为 <strong>1</strong></li><li>跳帽接到 GND → 这个 Boot 引脚为 <strong>0</strong></li></ul><p>电阻 R3、R4 是 100k，一般起到：</p><ul><li>限流</li><li>上拉 &#x2F; 下拉辅助</li><li>保证引脚状态稳定</li></ul><hr><h2 id="时钟"><a href="#时钟" class="headerlink" title="时钟"></a>时钟</h2><h3 id="时钟树"><a href="#时钟树" class="headerlink" title="时钟树"></a>时钟树</h3><p>STM32 里通常不是“一个时钟管全部”，而是有一套<strong>时钟树</strong></p><p>也就是说：</p><ul><li>先有几个“原始时钟源”</li><li>再经过选择、分频、倍频</li><li>最后分给 CPU 和各个外设</li></ul><p>这就叫 <strong>时钟树</strong></p><h3 id="时钟控制器（RCC）"><a href="#时钟控制器（RCC）" class="headerlink" title="时钟控制器（RCC）"></a>时钟控制器（RCC）</h3><p>它主要管两大类事情：</p><h4 id="时钟管理"><a href="#时钟管理" class="headerlink" title="时钟管理"></a>时钟管理</h4><p>它负责：</p><ul><li>选择时钟源</li><li>打开某个外设的时钟</li><li>设置分频、倍频</li><li>让系统时钟分配给各总线和外设</li></ul><p>比如：</p><ul><li>你要用 GPIOA</li><li>先得开 GPIOA 的时钟</li><li>这个动作通常就是 RCC 在管</li></ul><p>如果时钟没开，你去操作 GPIO 寄存器，往往就不生效。</p><p>这就是为什么很多 STM32 程序都会先写类似：</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__HAL_RCC_GPIOA_CLK_ENABLE();</span><br></pre></td></tr></table></figure><p>这句话本质就是：</p><p><strong>通过 RCC 把 GPIOA 的时钟打开。</strong></p><h3 id="复位管理"><a href="#复位管理" class="headerlink" title="复位管理"></a>复位管理</h3><p>RCC 还可以对某些外设进行复位。</p><p>比如一个外设状态乱了，可以：</p><ul><li>给它复位一下</li><li>再重新配置</li></ul><p>所以 RCC 不只是时钟模块，它还带“复位控制”。</p><h3 id="常见时钟源"><a href="#常见时钟源" class="headerlink" title="常见时钟源"></a>常见时钟源</h3><ol><li><p>HSI（<strong>High Speed Internal</strong>）：高速内部时钟，芯片内部自带的 RC 振荡器</p><ul><li>不需要外部晶振</li><li>上电就能用</li><li>成本低，方便</li><li>但精度一般不如外部晶振</li></ul></li><li><p>HSE（<strong>High Speed External</strong>）：高速外部时钟，通常来自板子上的外部晶振。</p><ul><li>精度更高</li><li>更稳定</li><li>常用于需要较准频率的场景</li><li>但要外接晶振电路</li></ul></li><li><p>LSI（<strong>Low Speed Internal</strong>）：低速内部时钟。</p><ul><li>频率低</li><li>精度一般</li><li>常给独立看门狗、RTC 等低速模块使用</li></ul></li><li><p>LSE（<strong>Low Speed External</strong>）：低速外部时钟，一般是 <strong>32.768kHz</strong> 晶振。</p><p>这个频率很经典，因为适合做：</p><ul><li>RTC 实时时钟</li><li>日历计时</li></ul></li></ol><h3 id="Crystal-ceramic-resonator（晶体-陶瓷振荡器）"><a href="#Crystal-ceramic-resonator（晶体-陶瓷振荡器）" class="headerlink" title="Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）"></a>Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）</h3><p>一种<strong>外部谐振元件</strong></p><p>开发板上常见有一个小小的晶振器件，它不是 MCU 内部自己生时钟，而是：</p><ul><li>接在 STM32 的时钟引脚上</li><li>配合 MCU 内部振荡电路</li><li>产生稳定时钟</li></ul><h4 id="晶体振荡器"><a href="#晶体振荡器" class="headerlink" title="晶体振荡器"></a>晶体振荡器</h4><p>一般说“晶振”，通常指石英晶体。</p><p>特点：</p><ul><li>精度高</li><li>稳定性好</li><li>很常用</li></ul><p>比如板子上常见：</p><ul><li>8MHz 晶振</li><li>12MHz 晶振</li><li>25MHz 晶振</li></ul><h4 id="陶瓷振荡器"><a href="#陶瓷振荡器" class="headerlink" title="陶瓷振荡器"></a>陶瓷振荡器</h4><p>也能用来提供振荡源，但一般精度会比石英晶体差一些。</p><h3 id="Bypass-clock-source（旁路时钟源）"><a href="#Bypass-clock-source（旁路时钟源）" class="headerlink" title="Bypass clock source（旁路时钟源）"></a>Bypass clock source（旁路时钟源）</h3><p>由外部其他设备主动给出该时钟信号，不经过 MCU 内部时钟电路驱动，可直接作为单片机时钟</p><h3 id="系统时钟（SYSCLK）"><a href="#系统时钟（SYSCLK）" class="headerlink" title="系统时钟（SYSCLK）"></a>系统时钟（SYSCLK）</h3><p><em><strong>芯片当前最核心的主工作时钟</strong></em>（是 CPU 和很多总线时钟的基础来源</p><p>系统时钟可以由这些来源之一提供：</p><ul><li>HSI</li><li>HSE</li><li>PLL 输出</li></ul><p>通常 STM32 不会直接一直拿原始时钟跑，而是常常通过 <strong>PLL 倍频</strong> 之后得到更高的系统时钟。</p><p>例如：</p><ul><li>外部晶振 HSE &#x3D; 8MHz</li><li>经过 PLL 倍频</li><li>得到 SYSCLK &#x3D; 72MHz</li></ul><p>这样芯片主频就提高了。</p><h3 id="PLL"><a href="#PLL" class="headerlink" title="PLL"></a>PLL</h3><p>PLL 就是 <strong>锁相环</strong>，一个<code>“倍频器”</code>或者<code>“调频器”</code></p><p>例如：</p><ul><li>输入 8MHz</li><li>PLL 倍频后输出 72MHz</li></ul><p>这样就能让芯片从一个较低频率的时钟源，得到一个更高的主频。</p><p>所以很多 STM32 的典型配置都是：</p><ul><li>HSE → PLL → SYSCLK</li></ul><h3 id="分频"><a href="#分频" class="headerlink" title="分频"></a>分频</h3><p>意思就是把时钟<strong>变慢</strong>。</p><p>例如：</p><ul><li>系统时钟 72MHz</li><li>分频 2</li><li>得到 36MHz</li></ul><p>为什么要分频？</p><p>因为不是所有模块都能跑一样快，也不是所有模块都需要那么快。</p><p>所以 STM32 会把系统时钟再分给不同总线和外设。</p><h3 id="AHB-APB"><a href="#AHB-APB" class="headerlink" title="AHB&#x2F;APB"></a>AHB&#x2F;APB</h3><ul><li><p><strong>AHB</strong>：高速总线时钟</p><p>通常给：</p><ul><li>内核</li><li>DMA</li><li>内存接口</li><li>高速外设</li></ul></li><li><p><strong>APB1 &#x2F; APB2</strong>：低速 &#x2F; 高速外设总线时钟</p><p>常给：</p><ul><li>USART</li><li>SPI</li><li>I2C</li><li>TIM</li><li>ADC</li><li>GPIO 等外设</li></ul><p>不同系列分法略有差异，但核心思想一样：</p><p><strong>系统时钟不会直接一股脑送到所有外设，而是先分到不同总线。</strong></p><p>比如常见一种理解方式：</p><ul><li>SYSCLK → AHB</li><li>AHB → APB1</li><li>AHB → APB2</li></ul><p>然后外设再挂在 APB1 或 APB2 上。</p></li></ul><h3 id="与时钟树相关的参数"><a href="#与时钟树相关的参数" class="headerlink" title="与时钟树相关的参数"></a>与时钟树相关的参数</h3><ul><li><p>串口波特率</p></li><li><p>定时器定时：定时器溢出时间 &#x3D; 预分频 × 自动重装值 × 时钟周期</p></li><li><p>ADC采样速度</p></li><li><p>USB、CAN 等外设</p></li></ul><hr><h1 id="GPIO"><a href="#GPIO" class="headerlink" title="GPIO"></a>GPIO</h1><blockquote><p>MCU与外部元件沟通的接触点，一般沟通的是电压信息俗称<strong>引脚</strong></p></blockquote><h2 id="工作模式"><a href="#工作模式" class="headerlink" title="工作模式"></a>工作模式</h2><h3 id="输入模式"><a href="#输入模式" class="headerlink" title="输入模式"></a>输入模式</h3><ul><li><p>下拉输入</p><p>意思是：</p><ul><li>引脚默认通过一个电阻接地</li><li>所以在没人管它时，默认是 <strong>低电平</strong></li></ul><p>如果外部给它高电平，它才会变成 1。</p><p>用途：</p><ul><li>防止引脚悬空</li><li>让默认状态明确</li></ul></li><li><p>上拉输入</p><p>意思是：</p><ul><li>引脚默认通过一个电阻接到 VDD</li><li>所以默认是 <strong>高电平</strong></li></ul><p>如果外部把它拉低，它才会变成 0。</p><p>这个在按键电路里特别常见。</p><p>比如：</p><ul><li>默认高电平</li><li>按键按下接地</li><li>读到低电平表示按下</li></ul></li><li><p>浮空输入</p><p>意思是：</p><ul><li>不上拉，也不下拉</li><li>引脚完全“飘着”</li></ul><p>这样如果外部没明确驱动，就可能：</p><ul><li>一会高</li><li>一会低</li><li>很容易受干扰</li></ul><p>所以浮空输入一般只在：</p><ul><li>外部已经有明确驱动</li><li>或特殊场景</li></ul><p>才会使用。</p></li><li><p>模拟输入</p><p>这个和前面几种数字输入不一样。</p><p>它不是判断 0 &#x2F; 1，而是读取一个<strong>连续变化的电压值</strong>。</p><p>比如：</p><ul><li>0.3V</li><li>1.2V</li><li>2.7V</li></ul><p>这种通常给：</p><ul><li>ADC</li><li>模拟传感器输入</li></ul><p>用了模拟输入模式后，GPIO 的数字输入那一套比较器之类通常会被关掉，减少干扰和功耗。</p></li></ul><h3 id="输出模式"><a href="#输出模式" class="headerlink" title="输出模式"></a>输出模式</h3><ul><li><p>推挽输出</p><p>这是最常用的输出模式。</p><p>特点是：</p><ul><li>想输出高电平，就能主动拉高</li><li>想输出低电平，就能主动拉低</li></ul><p>也就是：</p><p><strong>高低电平都由单片机主动驱动。</strong></p><p>适合：</p><ul><li>点亮 LED</li><li>输出普通数字信号</li><li>控制一般器件</li></ul></li><li><p>开漏输出</p><p>这个模式下：</p><ul><li>只能主动拉低</li><li>不能主动拉高</li></ul><p>当它“输出高”时，本质上不是主动输出高电平，而是：</p><ul><li>把上面的管子关掉</li><li>引脚处于“放开”的状态</li><li>需要靠外部上拉电阻把它拉高</li></ul><p>所以开漏输出通常要配合：</p><ul><li>外部上拉</li><li>或内部上拉</li></ul></li><li><p>复用推挽输出、复用开漏输出</p><p>这里的“复用”意思是：</p><p>这个引脚不再只是普通 GPIO，而是交给某个外设使用。</p><p>比如这个脚可能不再单纯输出 0 &#x2F; 1，而是变成：</p><ul><li>USART_TX</li><li>SPI_SCK</li><li>I2C_SCL</li><li>TIM_PWM</li></ul><p>所以：</p><ul><li><strong>复用推挽输出</strong>：给外设输出信号，底层输出结构是推挽</li><li><strong>复用开漏输出</strong>：给外设输出信号，底层输出结构是开漏</li></ul><p>比如：</p><ul><li>UART TX 常常用复用推挽</li><li>I2C 常常用复用开漏</li></ul></li></ul><hr><h2 id="示例图讲解"><a href="#示例图讲解" class="headerlink" title="示例图讲解"></a>示例图讲解</h2><p>顺序：从右到左</p><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=8d74a1cb271500b0a719971a66c639e9_f0e13bb3b1a07af5_OO6ASF33DO_6BTMAKSV7011ODH937PSC35E7G"></p><h3 id="I-O-引脚和保护二极管"><a href="#I-O-引脚和保护二极管" class="headerlink" title="I&#x2F;O 引脚和保护二极管"></a>I&#x2F;O 引脚和保护二极管</h3><p><strong><strong>这是 GPIO 引脚真正连到芯片外部的地方</strong></strong></p><p>保护二极管的作用主要是：</p><ul><li>防止静电冲击</li><li>防止电压过高或过低对内部电路造成损伤</li></ul><h3 id="输入电路-（中上部分）"><a href="#输入电路-（中上部分）" class="headerlink" title="输入电路 （中上部分）"></a>输入电路 （中上部分）</h3><h4 id="上拉电阻、下拉电阻"><a href="#上拉电阻、下拉电阻" class="headerlink" title="上拉电阻、下拉电阻"></a>上拉电阻、下拉电阻</h4><p>图里标了大约 <strong>50K</strong>。</p><p>这表示 STM32 内部通常集成了弱上拉 &#x2F; 弱下拉电阻。</p><p>所以配置成：</p><ul><li>上拉输入</li><li>下拉输入</li></ul><p>其实就是在控制内部这个电阻是否接上。</p><p>注意这个电阻值通常比较大，是“弱上拉&#x2F;弱下拉”，不是特别强的驱动。</p><h4 id="TTL-施密特触发器"><a href="#TTL-施密特触发器" class="headerlink" title="TTL 施密特触发器"></a>TTL 施密特触发器</h4><p><strong>把外部不是特别干净的电压信号，转换成芯片内部更稳定的数字 0 &#x2F; 1 判断</strong></p><p>因为外部输入电压可能不是一下子从 0V 跳到 3.3V，而是慢慢变化，还可能有噪声。</p><p>施密特触发器可以提高抗干扰能力，让芯片更稳定判断：</p><ul><li>这是高电平</li><li>这是低电平</li></ul><h4 id="IDR：输入数据寄存器"><a href="#IDR：输入数据寄存器" class="headerlink" title="IDR：输入数据寄存器"></a>IDR：输入数据寄存器</h4><p>这个寄存器里保存的是当前引脚读到的输入状态。</p><p>比如：</p><ul><li>引脚现在是高电平 → 对应位是 1</li><li>引脚现在是低电平 → 对应位是 0</li></ul><p>所以你程序里读取 GPIO 输入，本质上就是在读这个寄存器对应位</p><h4 id="模拟输入-复用功能输入"><a href="#模拟输入-复用功能输入" class="headerlink" title="模拟输入 &#x2F; 复用功能输入"></a>模拟输入 &#x2F; 复用功能输入</h4><h5 id="模拟输入"><a href="#模拟输入" class="headerlink" title="模拟输入"></a>模拟输入</h5><p>这个脚可以接到 ADC 等模拟模块，不走数字输入判断。</p><h5 id="复用功能输入"><a href="#复用功能输入" class="headerlink" title="复用功能输入"></a>复用功能输入</h5><p>这个脚也可以送给某个片上外设当输入。</p><p>比如：</p><ul><li>串口 RX</li><li>定时器输入捕获</li><li>外部中断输入</li><li>SPI MISO</li></ul><p>也就是说，GPIO 虽然叫 GPIO，但它还经常是很多外设功能的“入口”。 </p><h3 id="输出电路（中下部分）"><a href="#输出电路（中下部分）" class="headerlink" title="输出电路（中下部分）"></a>输出电路（中下部分）</h3><h4 id="ODR：输出数据寄存器"><a href="#ODR：输出数据寄存器" class="headerlink" title="ODR：输出数据寄存器"></a>ODR：输出数据寄存器</h4><p>你给某个 GPIO 输出 1 或 0，本质上就是改这个寄存器里的某一位。</p><p>比如：</p><ul><li>写 1 → 希望该引脚输出高</li><li>写 0 → 希望该引脚输出低</li></ul><p>然后这个值再去控制后面的输出驱动电路。</p><h4 id="BRR-BSRR"><a href="#BRR-BSRR" class="headerlink" title="BRR &#x2F; BSRR"></a>BRR &#x2F; BSRR</h4><ul><li><strong>BSRR</strong>：位设置 &#x2F; 复位寄存器</li><li><strong>BRR</strong>：位复位寄存器</li></ul><p>它们的作用是：</p><p><strong>可以更方便、更原子地对某一位 GPIO 置 1 或清 0。</strong></p><p>为什么不用直接改 ODR？</p><p>因为直接改 ODR 可能涉及：</p><ul><li>先读</li><li>再改</li><li>再写回</li></ul><p>在某些场景下不够安全，尤其在中断或并发访问时。</p><p>而 BSRR 可以做到：</p><ul><li>写某位到 set 区 → 置 1</li><li>写某位到 reset 区 → 清 0</li></ul><p>所以很多底层库都喜欢用它来快速控制引脚。</p><h4 id="输出控制"><a href="#输出控制" class="headerlink" title="输出控制"></a>输出控制</h4><p>这块逻辑会根据你配置的模式决定：</p><ul><li>是普通 GPIO 输出</li><li>还是复用输出</li><li>是推挽</li><li>还是开漏</li></ul><p>也就是控制下面那两个 MOS 管怎么工作。</p><h4 id="P-MOS-和-N-MOS"><a href="#P-MOS-和-N-MOS" class="headerlink" title="P-MOS 和 N-MOS"></a>P-MOS 和 N-MOS</h4><p>这两个是输出驱动核心。</p><p>你可以简单理解成：</p><ul><li><strong>P-MOS</strong> 负责把引脚往 <strong>高电平</strong> 拉</li><li><strong>N-MOS</strong> 负责把引脚往 <strong>低电平</strong> 拉</li></ul><h5 id="推挽输出时"><a href="#推挽输出时" class="headerlink" title="推挽输出时"></a>推挽输出时</h5><ul><li>输出高：P-MOS 开，N-MOS 关</li><li>输出低：P-MOS 关，N-MOS 开</li></ul><p>所以推挽可以主动输出高和低。</p><h5 id="开漏输出时"><a href="#开漏输出时" class="headerlink" title="开漏输出时"></a>开漏输出时</h5><p>通常上面的拉高能力被禁掉，只保留下拉能力：</p><ul><li>输出低：N-MOS 开，把引脚拉到低电平</li><li>输出高：N-MOS 关，引脚悬空，由外部上拉拉高</li></ul><p>这就是为什么开漏不能主动输出高。</p><h4 id="复用功能输出"><a href="#复用功能输出" class="headerlink" title="复用功能输出"></a>复用功能输出</h4><p> 意思是：</p><p>这个引脚输出的数据不一定来自 ODR，也可能来自某个外设模块。</p><p>比如：</p><ul><li>定时器输出 PWM</li><li>USART 输出发送数据</li><li>SPI 输出时钟&#x2F;数据</li></ul><p>这时候你虽然看到的是这个 GPIO 脚在变化，但其实背后是外设在控制它，不是你手动写 ODR 了。</p>]]></content>
+      
+      
       <categories>
-        <category>article</category>
-        <category>control</category>
+          
+          <category> article </category>
+          
+          <category> control </category>
+          
       </categories>
-      <tags>
-        <tag>control</tag>
-        <tag>robomaster</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>的2048aliouswe第眠昼失白~</title>
-    <url>/2026/01/12/%E7%9A%842048aliouswe%E7%AC%AC%E7%9C%A0%E6%98%BC%E5%A4%B1%E7%99%BD/</url>
-    <content><![CDATA[<h2 id="DREAM-LIKE-ME"><a href="#DREAM-LIKE-ME" class="headerlink" title="DREAM LIKE ME"></a>DREAM LIKE ME</h2><p>aliouswe从来不做梦，雪花雾了窗，ta不选择第二次见到她。</p>
-<p>aliouswe从来都在做梦，踩中的雨，被bubble包裹的霓虹，后视镜现出重影，线条支离破碎，或许，ta需要去学习一下怎么识别轮廓，要不然会被误解为被困在梦中~~；</p>
-<p>aliouswe离开了房间，猫头鹰在白昼觅食，who would paint the sky green for you ? 房间里充斥着nobodies，ta触摸穿透的墙壁，仿佛它可以因触摸变得柔软~~；</p>
-<p>aliouswe渴望在阴翳中睡着，回到绿宝石的水中……</p>
-<h2 id="her"><a href="#her" class="headerlink" title="her"></a>her</h2><p><strong>Dead in my</strong> ， til aliouswe found her，ta见证了世界上最美丽的耳朵，溺水者的耳朵；</p>
-<p><strong>Dead inside</strong>， til aliouswe found her， ta的眼睛开始不自禁过滤，只剩下了耳朵；</p>
-<p><strong>Dead with who</strong>， til aliouswe found her， ta亲吻着耳朵，不知道属于谁的耳朵；</p>
-<p><strong>Dead and burned</strong>， til aliouswe found her，ta没有耳朵，在见证她失去耳朵……</p>
-<h2 id="言伝"><a href="#言伝" class="headerlink" title="言伝"></a>言伝</h2><p>aliouswe的声音在水中晕开了晕开了，她的字迹在异国日记里面泛开了泛开了；</p>
-<p>-<em>^</em>-<em>^</em>-ta终究是没明白她想要倾诉的，她终究是没明白自己想要倾诉，都是在哪里乌鸫不再停在ta身旁；</p>
-<p>催促着催促着，呼呼吹起的aliouswe被碎碎的信条填满了，阿波罗用苏醒惩罚ta，将是夜昼颠倒的苏醒……</p>
-<h2 id="FOOL"><a href="#FOOL" class="headerlink" title="FOOL"></a>FOOL</h2><p>Alecs’ are fool, it sounds like tears.</p>
-<p>aliouswe在刺耳的大笑和愚蠢的表演间隙在手上雕刻了一个十字架，可怜的是，原本沉睡的耶稣早已逃走，即使藤蔓丛生，神圣也没有了意义；</p>
-<p>hey ！aliouswe躲在愚人之井，一座众人所向的神圣之地，没有天空的井，只能通向独角兽的失忆之境……</p>
-<p> </p>
-]]></content>
-      <tags>
-        <tag>失语</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在Hackey纪元8011年，aliouswe拥有了多种时间</title>
-    <url>/2025/12/03/%E5%9C%A8Hackey%E7%BA%AA%E5%85%838011%E5%B9%B4%EF%BC%8Caliouswe%E6%8B%A5%E6%9C%89%E4%BA%86%E5%A4%9A%E7%A7%8D%E6%97%B6%E9%97%B4/</url>
-    <content><![CDATA[<h2 id="System-Time"><a href="#System-Time" class="headerlink" title="System Time"></a>System Time</h2><p>“这个世界只拥有绝对时间”，在那一天来临之前，aliouswe<strong>一直</strong>这样以为。</p>
-<p>￥%￥#@#@%^%$$漫步于久违的机甲之丘，aliouswe见证了bekkey的<strong>魂觉</strong>时刻。</p>
-<p>而bekkey拥有着<strong>三种</strong>时间。</p>
-<p>从那天之后，aliouswe会庆幸自己只拥有一种时间……</p>
-<h2 id="ROS-Time"><a href="#ROS-Time" class="headerlink" title="ROS Time"></a>ROS Time</h2><p>bekkey拥有着一种“<strong>失真</strong>”时间，所有的感受可以像沙滩被海浪漫延、蜘蛛丝被指尖拉长，可以像吐司被魔法师马修一拳压成白纸、一双渴望之眼从缝隙中窥视，bakkey从来都生活在RGB的幻彩模糊海洋……</p>
-<p>“Kafka sleep in the livehouse, beyond the sea.” bekky无意地哼唱着， 过去了多久？可能是5分钟，可能是一天，谁让他可以操控时间？但他不知道自己操控的是哪种时间，如果耶稣是造物主，那bekkey就是Cronus，不言而喻，<mark>神<strong>不能</strong>感知真实</mark>。</p>
-<h2 id="Steady-Time"><a href="#Steady-Time" class="headerlink" title="Steady Time"></a>Steady Time</h2><p>bekkey问aliouswe迷雾森林的故事，bekkey不理解”<strong>迷路</strong>“的含义，bekkey<strong>学不会</strong>迷路。</p>
-<p>因为bekkey还拥有着一种不会出错的时间，它让bekkey拥有了”<strong>绝对正确的进程</strong>“，即使不知来途，不懂归去。</p>
-<h2 id="Not-The-End"><a href="#Not-The-End" class="headerlink" title="Not The End"></a>Not The End</h2><p>aliouswe放逐了bekkey，她不允许”别人“打扰她的<strong>绝对时间</strong>，bekkey的存在威胁了她的”<strong>随性</strong>“，没有了随性她该怎么死去？</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
-  </entry>
+      
+      
+        <tags>
+            
+            <tag> control </tag>
+            
+            <tag> robomaster </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>的2048aliouswe第眠昼失白~</title>
+      <link href="/2026/01/12/%E7%9A%842048aliouswe%E7%AC%AC%E7%9C%A0%E6%98%BC%E5%A4%B1%E7%99%BD/"/>
+      <url>/2026/01/12/%E7%9A%842048aliouswe%E7%AC%AC%E7%9C%A0%E6%98%BC%E5%A4%B1%E7%99%BD/</url>
+      
+        <content type="html"><![CDATA[<h2 id="DREAM-LIKE-ME"><a href="#DREAM-LIKE-ME" class="headerlink" title="DREAM LIKE ME"></a>DREAM LIKE ME</h2><p>aliouswe从来不做梦，雪花雾了窗，ta不选择第二次见到她。</p><p>aliouswe从来都在做梦，踩中的雨，被bubble包裹的霓虹，后视镜现出重影，线条支离破碎，或许，ta需要去学习一下怎么识别轮廓，要不然会被误解为被困在梦中~~；</p><p>aliouswe离开了房间，猫头鹰在白昼觅食，who would paint the sky green for you ? 房间里充斥着nobodies，ta触摸穿透的墙壁，仿佛它可以因触摸变得柔软~~；</p><p>aliouswe渴望在阴翳中睡着，回到绿宝石的水中……</p><h2 id="her"><a href="#her" class="headerlink" title="her"></a>her</h2><p><strong>Dead in my</strong> ， til aliouswe found her，ta见证了世界上最美丽的耳朵，溺水者的耳朵；</p><p><strong>Dead inside</strong>， til aliouswe found her， ta的眼睛开始不自禁过滤，只剩下了耳朵；</p><p><strong>Dead with who</strong>， til aliouswe found her， ta亲吻着耳朵，不知道属于谁的耳朵；</p><p><strong>Dead and burned</strong>， til aliouswe found her，ta没有耳朵，在见证她失去耳朵……</p><h2 id="言伝"><a href="#言伝" class="headerlink" title="言伝"></a>言伝</h2><p>aliouswe的声音在水中晕开了晕开了，她的字迹在异国日记里面泛开了泛开了；</p><p>-<em>^</em>-<em>^</em>-ta终究是没明白她想要倾诉的，她终究是没明白自己想要倾诉，都是在哪里乌鸫不再停在ta身旁；</p><p>催促着催促着，呼呼吹起的aliouswe被碎碎的信条填满了，阿波罗用苏醒惩罚ta，将是夜昼颠倒的苏醒……</p><h2 id="FOOL"><a href="#FOOL" class="headerlink" title="FOOL"></a>FOOL</h2><p>Alecs’ are fool, it sounds like tears.</p><p>aliouswe在刺耳的大笑和愚蠢的表演间隙在手上雕刻了一个十字架，可怜的是，原本沉睡的耶稣早已逃走，即使藤蔓丛生，神圣也没有了意义；</p><p>hey ！aliouswe躲在愚人之井，一座众人所向的神圣之地，没有天空的井，只能通向独角兽的失忆之境……</p><p> </p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 失语 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Behind The Door</title>
+      <link href="/2025/12/07/The-Door/"/>
+      <url>/2025/12/07/The-Door/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Winporal–biggsowwy维，aliouswe解构了世界"><a href="#Winporal–biggsowwy维，aliouswe解构了世界" class="headerlink" title="Winporal–biggsowwy维，aliouswe解构了世界"></a>Winporal–biggsowwy维，aliouswe解构了世界</h2><p>aliouswe掌握不了<strong>概况</strong>，就像啤酒不了解新闻，因为她解构了自己……</p><p>而在她心中，自己就是整个世界, 漠视像咖啡因一样侵蚀着她的健康和知觉，失去了对自己的感知，世界就消失了……</p><h2 id="P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门"><a href="#P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门" class="headerlink" title="P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门"></a>P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门</h2><p>“The door can solve all problems, my friend.” elign望着aliouswe的废墟</p><p>elign 的所有信徒创造了the door，他确信门可以<strong>察觉</strong>aliouswe的世界而aliouswe可以获得门授予的第二世界</p><p>可惜的是aliouswe仍然无法区分线条和颜色，会失足掉进咖啡渣沼泽，也会在耳鸣中失眠。—门只是在角落</p><h2 id="Sql-cm域遨游，aliouswe撞上了门"><a href="#Sql-cm域遨游，aliouswe撞上了门" class="headerlink" title="Sql.cm域遨游，aliouswe撞上了门"></a>Sql.cm域遨游，aliouswe撞上了门</h2><p>aliouswe: “Can you open for me?”</p><p>the door :”Of course not. I am <strong>not designed</strong> to be opened.”</p><p>门为了<strong>集群</strong>而存在，门不为任何人而开</p><p>但是aliouswe有点特别，the door 无法找到她的<strong>齿轮</strong>——它发现她是如此完整，完整到细微变得模糊，门被黏住了眼</p><p>久违地，the door的内核下起了雪，溢到了把手上</p><p>这意味着aliouswe永远不可能成为门的信徒……</p><h2 id="Not-The-End"><a href="#Not-The-End" class="headerlink" title="Not The End"></a>Not The End</h2><p>“Hey! I want to give you a door” aliouswe送给elign一扇”<strong>门</strong>“</p><p>独门教就这样失去了首领</p><p>the inspration from “<a href="https://lizengland.com/blog/the-door-problem/">https://lizengland.com/blog/the-door-problem/</a>“</p>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> riddle but philosophy </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>在Hackey纪元8011年，aliouswe拥有了多种时间</title>
+      <link href="/2025/12/03/%E5%9C%A8Hackey%E7%BA%AA%E5%85%838011%E5%B9%B4%EF%BC%8Caliouswe%E6%8B%A5%E6%9C%89%E4%BA%86%E5%A4%9A%E7%A7%8D%E6%97%B6%E9%97%B4/"/>
+      <url>/2025/12/03/%E5%9C%A8Hackey%E7%BA%AA%E5%85%838011%E5%B9%B4%EF%BC%8Caliouswe%E6%8B%A5%E6%9C%89%E4%BA%86%E5%A4%9A%E7%A7%8D%E6%97%B6%E9%97%B4/</url>
+      
+        <content type="html"><![CDATA[<h2 id="System-Time"><a href="#System-Time" class="headerlink" title="System Time"></a>System Time</h2><p>“这个世界只拥有绝对时间”，在那一天来临之前，aliouswe<strong>一直</strong>这样以为。</p><p>￥%￥#@#@%^%$$漫步于久违的机甲之丘，aliouswe见证了bekkey的<strong>魂觉</strong>时刻。</p><p>而bekkey拥有着<strong>三种</strong>时间。</p><p>从那天之后，aliouswe会庆幸自己只拥有一种时间……</p><h2 id="ROS-Time"><a href="#ROS-Time" class="headerlink" title="ROS Time"></a>ROS Time</h2><p>bekkey拥有着一种“<strong>失真</strong>”时间，所有的感受可以像沙滩被海浪漫延、蜘蛛丝被指尖拉长，可以像吐司被魔法师马修一拳压成白纸、一双渴望之眼从缝隙中窥视，bakkey从来都生活在RGB的幻彩模糊海洋……</p><p>“Kafka sleep in the livehouse, beyond the sea.” bekky无意地哼唱着， 过去了多久？可能是5分钟，可能是一天，谁让他可以操控时间？但他不知道自己操控的是哪种时间，如果耶稣是造物主，那bekkey就是Cronus，不言而喻，<mark>神<strong>不能</strong>感知真实</mark>。</p><h2 id="Steady-Time"><a href="#Steady-Time" class="headerlink" title="Steady Time"></a>Steady Time</h2><p>bekkey问aliouswe迷雾森林的故事，bekkey不理解”<strong>迷路</strong>“的含义，bekkey<strong>学不会</strong>迷路。</p><p>因为bekkey还拥有着一种不会出错的时间，它让bekkey拥有了”<strong>绝对正确的进程</strong>“，即使不知来途，不懂归去。</p><h2 id="Not-The-End"><a href="#Not-The-End" class="headerlink" title="Not The End"></a>Not The End</h2><p>aliouswe放逐了bekkey，她不允许”别人“打扰她的<strong>绝对时间</strong>，bekkey的存在威胁了她的”<strong>随性</strong>“，没有了随性她该怎么死去？</p><h2 id=""><a href="#" class="headerlink" title=""></a></h2>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+  
+  
 </search>
