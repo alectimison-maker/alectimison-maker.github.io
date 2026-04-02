@@ -11,14 +11,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/images/1.jpg">
   <link rel="mask-icon" href="/images/logo.svg" color="#222">
 
-<link rel="stylesheet" href="/css/main.css?v=mnhsiarn">
+<link rel="stylesheet" href="/css/main.css?v=mnhsuofa">
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=sans-serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Caesar+Dressing:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"aliouswe.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"tokyo-night-dark","dark":"tokyo-night-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js?v=mnhsiarn" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"aliouswe.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"tokyo-night-dark","dark":"tokyo-night-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js?v=mnhsuofa" defer></script>
 
     <meta name="description" content="Winporal–biggsowwy维，aliouswe解构了世界aliouswe掌握不了概况，就像啤酒不了解新闻，因为她解构了自己…… 而在她心中，自己就是整个世界, 漠视像咖啡因一样侵蚀着她的健康和知觉，失去了对自己的感知，世界就消失了…… P8-Q7-E2站点，”独门教“创始人elign送给aliouswe一扇门“The door can solve all problems, my fri">
 <meta property="og:type" content="article">
@@ -52,7 +52,7 @@
 
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js?v=mnhsiarn" defer></script><script src="/js/motion.js?v=mnhsiarn" defer></script><script src="/js/next-boot.js?v=mnhsiarn" defer></script>
+<script src="/js/utils.js?v=mnhsuofa" defer></script><script src="/js/motion.js?v=mnhsuofa" defer></script><script src="/js/next-boot.js?v=mnhsuofa" defer></script>
 
   
 
@@ -250,7 +250,7 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-<div class="cursor-fx" aria-hidden="true"></div>
+﻿<div class="cursor-fx" aria-hidden="true"></div>
 <script>
   (() => {
     const root = document.documentElement;
@@ -306,6 +306,15 @@
       if (event.key === 'Tab') body.classList.add('nav-reveal');
     });
 
+    const labels = {
+      tocTitle    : '\u76ee\u5f55',
+      immersiveOn : '\u6c89\u6d78\u9605\u8bfb',
+      immersiveOff: '\u9000\u51fa\u6c89\u6d78',
+      showToc     : '\u663e\u793a\u76ee\u5f55',
+      section     : '\u7ae0\u8282',
+      fold        : '\u6298\u53e0'
+    };
+
     const buildSlug = (text, index) => {
       const normalized = (text || '')
         .trim()
@@ -321,8 +330,9 @@
         destroyToc();
         destroyToc = null;
       }
+
       document.querySelectorAll('.article-toc-panel, .article-toc-reopen').forEach(node => node.remove());
-      body.classList.remove('toc-ready');
+      body.classList.remove('toc-ready', 'toc-layout-hidden');
 
       const postBody = document.querySelector('.post-body');
       if (!postBody || !document.querySelector('.main-inner.post')) return;
@@ -340,57 +350,117 @@
             id = `${base}-${suffix++}`;
           }
           heading.id = id;
-          usedIds.add(id);
-          return;
         }
         usedIds.add(heading.id);
       });
 
       const tocPanel = document.createElement('aside');
       tocPanel.className = 'article-toc-panel';
-      tocPanel.setAttribute('aria-label', '文章目录');
+      tocPanel.setAttribute('aria-label', labels.tocTitle);
       tocPanel.innerHTML = `
         <div class="article-toc-header">
-          <span class="article-toc-title">目录</span>
-          <button class="article-toc-toggle" type="button">沉浸阅读</button>
+          <span class="article-toc-title">${labels.tocTitle}</span>
+          <button class="article-toc-toggle" type="button">${labels.immersiveOn}</button>
         </div>
-        <ol class="article-toc-list"></ol>
+        <div class="article-toc-tree-wrap"></div>
       `;
 
-      const tocList = tocPanel.querySelector('.article-toc-list');
       const linkMap = new Map();
+      const nodeMetaMap = new Map();
 
+      const tocRoot = { level: 0, children: [] };
+      const stack = [tocRoot];
       headings.forEach((heading, index) => {
         const level = Number(heading.tagName.slice(1));
-        const item = document.createElement('li');
-        item.className = 'article-toc-item';
-        const link = document.createElement('a');
-        link.className = 'article-toc-link';
-        link.classList.add(`level-${Math.min(Math.max(level, 1), 4)}`);
-        link.href = `#${heading.id}`;
-        link.textContent = heading.textContent.trim() || `章节 ${index + 1}`;
-        link.addEventListener('click', event => {
-          event.preventDefault();
-          heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          history.replaceState(null, '', `#${heading.id}`);
-          setActiveLink(heading.id);
-        });
-        item.appendChild(link);
-        tocList.appendChild(item);
-        linkMap.set(heading.id, link);
+        const node = {
+          id      : heading.id,
+          level   : Math.min(Math.max(level, 1), 4),
+          text    : heading.textContent.trim() || `${labels.section} ${index + 1}`,
+          heading,
+          children: []
+        };
+        while (stack.length > 1 && node.level <= stack[stack.length - 1].level) stack.pop();
+        stack[stack.length - 1].children.push(node);
+        stack.push(node);
       });
+
+      const setCollapsedState = (item, collapsed) => {
+        if (!item) return;
+        item.classList.toggle('is-collapsed', collapsed);
+        const button = item.querySelector(':scope > .article-toc-row .article-toc-fold-btn');
+        if (button) button.setAttribute('aria-expanded', String(!collapsed));
+      };
+
+      const renderTree = (nodes, parentId = '') => {
+        const list = document.createElement('ul');
+        list.className = 'article-toc-tree';
+
+        nodes.forEach(node => {
+          const item = document.createElement('li');
+          item.className = 'article-toc-node';
+          item.dataset.level = String(node.level);
+          item.dataset.id = node.id;
+
+          const row = document.createElement('div');
+          row.className = 'article-toc-row';
+
+          if (node.children.length) {
+            const foldButton = document.createElement('button');
+            foldButton.className = 'article-toc-fold-btn';
+            foldButton.type = 'button';
+            foldButton.setAttribute('aria-label', labels.fold);
+            foldButton.setAttribute('aria-expanded', 'true');
+            foldButton.innerHTML = '<span class="article-toc-fold-icon"></span>';
+            foldButton.addEventListener('click', event => {
+              event.preventDefault();
+              event.stopPropagation();
+              setCollapsedState(item, !item.classList.contains('is-collapsed'));
+            });
+            row.appendChild(foldButton);
+          } else {
+            const spacer = document.createElement('span');
+            spacer.className = 'article-toc-fold-spacer';
+            row.appendChild(spacer);
+          }
+
+          const link = document.createElement('a');
+          link.className = 'article-toc-link';
+          link.href = `#${node.id}`;
+          link.textContent = node.text;
+          link.addEventListener('click', event => {
+            event.preventDefault();
+            node.heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `#${node.id}`);
+            setActiveLink(node.id);
+          });
+
+          row.appendChild(link);
+          item.appendChild(row);
+
+          if (node.children.length) item.appendChild(renderTree(node.children, node.id));
+
+          list.appendChild(item);
+          linkMap.set(node.id, link);
+          nodeMetaMap.set(node.id, { item, parentId });
+        });
+
+        return list;
+      };
+
+      const treeWrap = tocPanel.querySelector('.article-toc-tree-wrap');
+      treeWrap.appendChild(renderTree(tocRoot.children));
 
       const reopenButton = document.createElement('button');
       reopenButton.className = 'article-toc-reopen';
       reopenButton.type = 'button';
-      reopenButton.textContent = '显示目录';
+      reopenButton.textContent = labels.showToc;
 
       const toggleButton = tocPanel.querySelector('.article-toc-toggle');
       const setImmersiveMode = on => {
         body.classList.toggle('immersive-reading', on);
         if (on) localStorage.setItem(immersiveStorageKey, '1');
         else localStorage.removeItem(immersiveStorageKey);
-        toggleButton.textContent = on ? '退出沉浸' : '沉浸阅读';
+        toggleButton.textContent = on ? labels.immersiveOff : labels.immersiveOn;
       };
 
       toggleButton.addEventListener('click', () => {
@@ -404,11 +474,31 @@
       body.classList.add('toc-ready');
 
       const positionToc = () => {
-        if (window.innerWidth < 1200) return;
+        if (window.innerWidth < 1200) {
+          body.classList.add('toc-layout-hidden');
+          return;
+        }
+
         const postInner = document.querySelector('.main-inner.post');
         if (!postInner) return;
-        const panelWidth = tocPanel.offsetWidth || 240;
-        const left = Math.max(12, postInner.getBoundingClientRect().left - panelWidth - 20);
+
+        const rect = postInner.getBoundingClientRect();
+        const gap = 42;
+        const leftBoundary = 12;
+        const maxWidth = 240;
+        const minWidth = 180;
+        const available = rect.left - gap - leftBoundary;
+
+        if (available < minWidth) {
+          body.classList.add('toc-layout-hidden');
+          return;
+        }
+
+        body.classList.remove('toc-layout-hidden');
+        const panelWidth = Math.min(maxWidth, available);
+        const left = Math.max(leftBoundary, rect.left - panelWidth - gap);
+
+        tocPanel.style.width = `${Math.floor(panelWidth)}px`;
         tocPanel.style.left = `${left}px`;
         reopenButton.style.left = `${left}px`;
       };
@@ -416,9 +506,18 @@
       let activeId = '';
       const setActiveLink = id => {
         if (!id || id === activeId) return;
+
         if (activeId && linkMap.has(activeId)) linkMap.get(activeId).classList.remove('is-active');
         activeId = id;
         if (linkMap.has(activeId)) linkMap.get(activeId).classList.add('is-active');
+
+        let parentId = nodeMetaMap.get(activeId)?.parentId;
+        while (parentId) {
+          const parentMeta = nodeMetaMap.get(parentId);
+          if (!parentMeta) break;
+          setCollapsedState(parentMeta.item, false);
+          parentId = parentMeta.parentId;
+        }
       };
 
       const updateActiveFromScroll = () => {
@@ -453,6 +552,7 @@
         window.removeEventListener('scroll', onScroll);
         window.removeEventListener('resize', onResize);
         window.removeEventListener('load', onResize);
+        body.classList.remove('toc-layout-hidden');
         tocPanel.remove();
         reopenButton.remove();
       };
