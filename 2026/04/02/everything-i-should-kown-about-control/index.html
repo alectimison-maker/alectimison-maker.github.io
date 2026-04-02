@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/1.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1.jpg">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css?v=mnhqn9r6">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Microsoft+YaHei:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=sans-serif:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Caesar+Dressing:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"aliouswe.com","root":"/","images":"/images","scheme":"Mist","darkmode":true,"version":"8.26.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"remove","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js?v=mnhqn9r6" defer></script>
+
+    <meta name="description" content="预备知识单片机构成（mcu）  运算器：负责执行算术和逻辑运算。  控制器：计算机的大脑中枢，它协调和控制计算机各部件的工作。控制器从存储器中取出指令，分析指令的内容，并根据指令要求向其他部件发出控制信号，以确保整个计算机系统有条不紊地运行。  存储设备：用于存储数据和程序。它可以分为主存储器（如随机存取存储器RAM）和辅助存储器（如硬盘、固态硬盘等）。  主存储器：暂时存储正在运行的程序和数据。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="everything i should kown about control">
+<meta property="og:url" content="https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/index.html">
+<meta property="og:site_name" content="Aliouswe&#39;s nonsense">
+<meta property="og:description" content="预备知识单片机构成（mcu）  运算器：负责执行算术和逻辑运算。  控制器：计算机的大脑中枢，它协调和控制计算机各部件的工作。控制器从存储器中取出指令，分析指令的内容，并根据指令要求向其他部件发出控制信号，以确保整个计算机系统有条不紊地运行。  存储设备：用于存储数据和程序。它可以分为主存储器（如随机存取存储器RAM）和辅助存储器（如硬盘、固态硬盘等）。  主存储器：暂时存储正在运行的程序和数据。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=9ad13efb2aeb89fbb8349edca113d69b_921f831bd35ec25d_H4S7R2J3DO_V8GHLG5HGP273AM7UGTOIE3TH8">
+<meta property="og:image" content="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=d19dc477af37a262b2dab153c1683550_e12328cba062698d_H2SLO2J3DO_ASMPO4EDQPP4M8EHTJ8OHEAS18">
+<meta property="og:image" content="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=6451e6d223ab7e21e6430d037126e1aa_30224f9171630ed7_4OMUR7J3DO_6CKUJ8OJJPFU3VIOF8Q2CBFDJO">
+<meta property="og:image" content="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=dcc421d1203f02c6243f04b114f3ca8e_bfd028d5fe916993_TFAPN8B3DO_CF4CTNH48152BJAIFSLENLCRK4">
+<meta property="article:published_time" content="2026-04-02T15:45:48.000Z">
+<meta property="article:modified_time" content="2026-04-02T17:17:31.928Z">
+<meta property="article:author" content="Aliouswe">
+<meta property="article:tag" content="control">
+<meta property="article:tag" content="robomaster">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=9ad13efb2aeb89fbb8349edca113d69b_921f831bd35ec25d_H4S7R2J3DO_V8GHLG5HGP273AM7UGTOIE3TH8">
+
+
+<link rel="canonical" href="https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/","path":"2026/04/02/everything-i-should-kown-about-control/","title":"everything i should kown about control"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>everything i should kown about control | Aliouswe's nonsense</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js?v=mnhqn9r6" defer></script><script src="/js/motion.js?v=mnhqn9r6" defer></script><script src="/js/next-boot.js?v=mnhqn9r6" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;700&family=Share+Tech+Mono&family=Silkscreen:wght@400;700&family=Cormorant+Garamond:wght@500;600;700&family=Barlow+Condensed:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<link rel="alternate" href="/atom.xml" title="Aliouswe's nonsense" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aliouswe's nonsense</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Jazzy Fuzzy but Cozzy</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-article"><a href="/article/" rel="section"><i class="fa fa-book-open fa-fw"></i>article</a></li><li class="menu-item menu-item-jazz"><a href="/jazz/" rel="section"><i class="fa fa-music fa-fw"></i>jazz</a></li><li class="menu-item menu-item-anime"><a href="/anime/" rel="section"><i class="fa fa-tv fa-fw"></i>anime</a></li><li class="menu-item menu-item-coffee"><a href="/coffee/" rel="section"><i class="fa fa-mug-hot fa-fw"></i>coffee</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aliouswe.jpg">
+      <meta itemprop="name" content="Aliouswe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aliouswe's nonsense">
+      <meta itemprop="description" content="我用思考来感觉">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="everything i should kown about control | Aliouswe's nonsense">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          everything i should kown about control
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2026-04-02 23:45:48" itemprop="dateCreated datePublished" datetime="2026-04-02T23:45:48+08:00">2026-04-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2026-04-03 01:17:31" itemprop="dateModified" datetime="2026-04-03T01:17:31+08:00">2026-04-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/article/" itemprop="url" rel="index"><span itemprop="name">article</span></a>
+        </span>
+          , 
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/article/control/" itemprop="url" rel="index"><span itemprop="name">control</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="单片机构成（mcu）"><a href="#单片机构成（mcu）" class="headerlink" title="单片机构成（mcu）"></a>单片机构成（mcu）</h2><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=9ad13efb2aeb89fbb8349edca113d69b_921f831bd35ec25d_H4S7R2J3DO_V8GHLG5HGP273AM7UGTOIE3TH8"></p>
+<ul>
+<li><p>运算器：负责执行算术和逻辑运算。</p>
+</li>
+<li><p>控制器：计算机的大脑中枢，它协调和控制计算机各部件的工作。控制器从存储器中取出指令，分析指令的内容，并根据指令要求向其他部件发出控制信号，以确保整个计算机系统有条不紊地运行。</p>
+</li>
+<li><p>存储设备：用于存储数据和程序。它可以分为主存储器（如随机存取存储器RAM）和辅助存储器（如硬盘、固态硬盘等）。</p>
+<ul>
+<li><p>主存储器：暂时存储正在运行的程序和数据。</p>
+</li>
+<li><p>辅助存储器：长期存储大量的数据和程序。</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="调试接口标准"><a href="#调试接口标准" class="headerlink" title="调试接口标准"></a>调试接口标准</h2><ul>
+<li>为什么需要调试接口标准<br>   电脑和单片机之间的一条“调试通道”，用来给芯片下载程序、调试程序、读取芯片内部状态。GDB &#x2F; GDB Server &#x2F; 这类硬件调试器很多就是通过 JTAG 或 SWD 这类调试接口和单片机通信的。</li>
+</ul>
+<ol>
+<li>JTAG：线更多，功能更完整，传统一些。</li>
+<li>SWD：线更少，STM32里非常常用，只能用于ARM内核的单片机。</li>
+</ol>
+<p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=d19dc477af37a262b2dab153c1683550_e12328cba062698d_H2SLO2J3DO_ASMPO4EDQPP4M8EHTJ8OHEAS18"></p>
+<hr>
+<h2 id="boot-电路"><a href="#boot-电路" class="headerlink" title="boot 电路"></a>boot 电路</h2><h3 id="为什么需要boot-电路"><a href="#为什么需要boot-电路" class="headerlink" title="为什么需要boot 电路"></a>为什么需要boot 电路</h3><p>单片机一上电，CPU 必须先找一个<strong>起点</strong>去取第一条指令</p>
+<p>这个<strong>起点</strong>可能有 3 个地方：</p>
+<ul>
+<li><strong>主 Flash</strong></li>
+<li><strong>系统存储器</strong></li>
+<li><strong>内部 SRAM</strong></li>
+</ul>
+<h3 id="启动模式的选择"><a href="#启动模式的选择" class="headerlink" title="启动模式的选择"></a>启动模式的选择</h3><p>STM32 通过 <strong>BOOT0、BOOT1 的电平组合</strong> （见表格）来决定选哪个区域启动</p>
+<p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=6451e6d223ab7e21e6430d037126e1aa_30224f9171630ed7_4OMUR7J3DO_6CKUJ8OJJPFU3VIOF8Q2CBFDJO"></p>
+<blockquote>
+<p>X表示无所谓，0 或 1 都行。</p>
+</blockquote>
+<ol>
+<li><p><code>BOOT0 = 0，BOOT1 = X</code></p>
+<ul>
+<li><p>芯片复位后，直接从 Flash 里执行你的程序（也就是你写的 <code>main()</code> 前面的启动代码，最终都会从这里开始跑。</p>
+</li>
+<li><p>启动地址：<strong>0x08000000</strong> 是STM32内置的Flash，一般我们使用JTAG或者SWD模式下载程序时，就是下载到这里，重启后也直接从这启动程序。基本上都是采用这种模式。</p>
+</li>
+</ul>
+</li>
+<li><p><code>BOOT0 = 1，BOOT1 = 0</code></p>
+<ul>
+<li><p><strong>系统存储器</strong>一般放的是 STM32 官方出厂烧好的 BootLoader。</p>
+</li>
+<li><p>作用是：</p>
+<ul>
+<li>你可以不靠 JTAG &#x2F; SWD。</li>
+<li>而是通过串口、USB、CAN 等某些方式下载程序。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>BOOT0 = 1，BOOT1 = 1</code></p>
+<ul>
+<li><p>启动到<strong>内部 SRAM</strong>也就是从 RAM 启动。</p>
+</li>
+<li><p>这个模式平时很少用，更多用于：</p>
+<ul>
+<li>调试</li>
+<li>特殊测试</li>
+</ul>
+<p>因为 RAM 掉电就没了，通常不会拿来做正常程序启动。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="电路原理"><a href="#电路原理" class="headerlink" title="电路原理"></a>电路原理</h3><p><img src="https://internal-api-drive-stream.feishu.cn/space/api/box/stream/download/wps/auth_code/?code=dcc421d1203f02c6243f04b114f3ca8e_bfd028d5fe916993_TFAPN8B3DO_CF4CTNH48152BJAIFSLENLCRK4"></p>
+<blockquote>
+<p>该电路图本质上是在给 <strong>BOOT0 &#x2F; BOOT1 选择高低电平</strong></p>
+</blockquote>
+<p>你可以看到：</p>
+<ul>
+<li>上面接了 <strong>VCC3V3</strong>，表示高电平</li>
+<li>下面接了 <strong>GND</strong>，表示低电平</li>
+<li>中间通过排针跳帽来选择连到哪边</li>
+</ul>
+<p>也就是说：</p>
+<ul>
+<li>跳帽接到 3.3V → 这个 Boot 引脚为 <strong>1</strong></li>
+<li>跳帽接到 GND → 这个 Boot 引脚为 <strong>0</strong></li>
+</ul>
+<p>电阻 R3、R4 是 100k，一般起到：</p>
+<ul>
+<li>限流</li>
+<li>上拉 &#x2F; 下拉辅助</li>
+<li>保证引脚状态稳定</li>
+</ul>
+<hr>
+<h2 id="时钟"><a href="#时钟" class="headerlink" title="时钟"></a>时钟</h2><h3 id="时钟树"><a href="#时钟树" class="headerlink" title="时钟树"></a>时钟树</h3><p>STM32 里通常不是“一个时钟管全部”，而是有一套<strong>时钟树</strong></p>
+<p>也就是说：</p>
+<ul>
+<li>先有几个“原始时钟源”</li>
+<li>再经过选择、分频、倍频</li>
+<li>最后分给 CPU 和各个外设</li>
+</ul>
+<p>这就叫 <strong>时钟树</strong></p>
+<h3 id="时钟控制器（RCC）"><a href="#时钟控制器（RCC）" class="headerlink" title="时钟控制器（RCC）"></a>时钟控制器（RCC）</h3><p>它主要管两大类事情：</p>
+<h4 id="时钟管理"><a href="#时钟管理" class="headerlink" title="时钟管理"></a>时钟管理</h4><p>它负责：</p>
+<ul>
+<li>选择时钟源</li>
+<li>打开某个外设的时钟</li>
+<li>设置分频、倍频</li>
+<li>让系统时钟分配给各总线和外设</li>
+</ul>
+<p>比如：</p>
+<ul>
+<li>你要用 GPIOA</li>
+<li>先得开 GPIOA 的时钟</li>
+<li>这个动作通常就是 RCC 在管</li>
+</ul>
+<p>如果时钟没开，你去操作 GPIO 寄存器，往往就不生效。</p>
+<p>这就是为什么很多 STM32 程序都会先写类似：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__HAL_RCC_GPIOA_CLK_ENABLE();</span><br></pre></td></tr></table></figure>
+
+<p>这句话本质就是：</p>
+<p><strong>通过 RCC 把 GPIOA 的时钟打开。</strong></p>
+<h3 id="复位管理"><a href="#复位管理" class="headerlink" title="复位管理"></a>复位管理</h3><p>RCC 还可以对某些外设进行复位。</p>
+<p>比如一个外设状态乱了，可以：</p>
+<ul>
+<li>给它复位一下</li>
+<li>再重新配置</li>
+</ul>
+<p>所以 RCC 不只是时钟模块，它还带“复位控制”。</p>
+<h3 id="常见时钟源"><a href="#常见时钟源" class="headerlink" title="常见时钟源"></a>常见时钟源</h3><ol>
+<li><p>HSI（<strong>High Speed Internal</strong>）：高速内部时钟，芯片内部自带的 RC 振荡器</p>
+<ul>
+<li>不需要外部晶振</li>
+<li>上电就能用</li>
+<li>成本低，方便</li>
+<li>但精度一般不如外部晶振</li>
+</ul>
+</li>
+<li><p>HSE（<strong>High Speed External</strong>）：高速外部时钟，通常来自板子上的外部晶振。</p>
+<ul>
+<li>精度更高</li>
+<li>更稳定</li>
+<li>常用于需要较准频率的场景</li>
+<li>但要外接晶振电路</li>
+</ul>
+</li>
+<li><p>LSI（<strong>Low Speed Internal</strong>）：低速内部时钟。</p>
+<ul>
+<li>频率低</li>
+<li>精度一般</li>
+<li>常给独立看门狗、RTC 等低速模块使用</li>
+</ul>
+</li>
+<li><p>LSE（<strong>Low Speed External</strong>）：低速外部时钟，一般是 <strong>32.768kHz</strong> 晶振。</p>
+<p>这个频率很经典，因为适合做：</p>
+<ul>
+<li>RTC 实时时钟</li>
+<li>日历计时</li>
+</ul>
+</li>
+</ol>
+<h3 id="Crystal-ceramic-resonator（晶体-陶瓷振荡器）"><a href="#Crystal-ceramic-resonator（晶体-陶瓷振荡器）" class="headerlink" title="Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）"></a>Crystal&#x2F;ceramic resonator（晶体&#x2F;陶瓷振荡器）</h3><p>一种<strong>外部谐振元件</strong></p>
+<p>开发板上常见有一个小小的晶振器件，它不是 MCU 内部自己生时钟，而是：</p>
+<ul>
+<li>接在 STM32 的时钟引脚上</li>
+<li>配合 MCU 内部振荡电路</li>
+<li>产生稳定时钟</li>
+</ul>
+<h4 id="晶体振荡器"><a href="#晶体振荡器" class="headerlink" title="晶体振荡器"></a>晶体振荡器</h4><p>一般说“晶振”，通常指石英晶体。</p>
+<p>特点：</p>
+<ul>
+<li>精度高</li>
+<li>稳定性好</li>
+<li>很常用</li>
+</ul>
+<p>比如板子上常见：</p>
+<ul>
+<li>8MHz 晶振</li>
+<li>12MHz 晶振</li>
+<li>25MHz 晶振</li>
+</ul>
+<h4 id="陶瓷振荡器"><a href="#陶瓷振荡器" class="headerlink" title="陶瓷振荡器"></a>陶瓷振荡器</h4><p>也能用来提供振荡源，但一般精度会比石英晶体差一些。</p>
+<h3 id="Bypass-clock-source（旁路时钟源）"><a href="#Bypass-clock-source（旁路时钟源）" class="headerlink" title="Bypass clock source（旁路时钟源）"></a>Bypass clock source（旁路时钟源）</h3><p>由外部其他设备主动给出该时钟信号，不经过 MCU 内部时钟电路驱动，可直接作为单片机时钟</p>
+<h3 id="系统时钟（SYSCLK）"><a href="#系统时钟（SYSCLK）" class="headerlink" title="系统时钟（SYSCLK）"></a>系统时钟（SYSCLK）</h3><p><em><strong>芯片当前最核心的主工作时钟</strong></em>（是 CPU 和很多总线时钟的基础来源</p>
+<p>系统时钟可以由这些来源之一提供：</p>
+<ul>
+<li>HSI</li>
+<li>HSE</li>
+<li>PLL 输出</li>
+</ul>
+<p>通常 STM32 不会直接一直拿原始时钟跑，而是常常通过 <strong>PLL 倍频</strong> 之后得到更高的系统时钟。</p>
+<p>例如：</p>
+<ul>
+<li>外部晶振 HSE &#x3D; 8MHz</li>
+<li>经过 PLL 倍频</li>
+<li>得到 SYSCLK &#x3D; 72MHz</li>
+</ul>
+<p>这样芯片主频就提高了。</p>
+<h3 id="PLL"><a href="#PLL" class="headerlink" title="PLL"></a>PLL</h3><p>PLL 就是 <strong>锁相环</strong>，一个<code>“倍频器”</code>或者<code>“调频器”</code></p>
+<p>例如：</p>
+<ul>
+<li>输入 8MHz</li>
+<li>PLL 倍频后输出 72MHz</li>
+</ul>
+<p>这样就能让芯片从一个较低频率的时钟源，得到一个更高的主频。</p>
+<p>所以很多 STM32 的典型配置都是：</p>
+<ul>
+<li>HSE → PLL → SYSCLK</li>
+</ul>
+<h3 id="分频"><a href="#分频" class="headerlink" title="分频"></a>分频</h3><p>意思就是把时钟<strong>变慢</strong>。</p>
+<p>例如：</p>
+<ul>
+<li>系统时钟 72MHz</li>
+<li>分频 2</li>
+<li>得到 36MHz</li>
+</ul>
+<p>为什么要分频？</p>
+<p>因为不是所有模块都能跑一样快，也不是所有模块都需要那么快。</p>
+<p>所以 STM32 会把系统时钟再分给不同总线和外设。</p>
+<h3 id="AHB-APB"><a href="#AHB-APB" class="headerlink" title="AHB&#x2F;APB"></a>AHB&#x2F;APB</h3><ul>
+<li><p><strong>AHB</strong>：高速总线时钟</p>
+<p>通常给：</p>
+<ul>
+<li>内核</li>
+<li>DMA</li>
+<li>内存接口</li>
+<li>高速外设</li>
+</ul>
+</li>
+<li><p><strong>APB1 &#x2F; APB2</strong>：低速 &#x2F; 高速外设总线时钟</p>
+<p>常给：</p>
+<ul>
+<li>USART</li>
+<li>SPI</li>
+<li>I2C</li>
+<li>TIM</li>
+<li>ADC</li>
+<li>GPIO 等外设</li>
+</ul>
+<p>不同系列分法略有差异，但核心思想一样：</p>
+<p><strong>系统时钟不会直接一股脑送到所有外设，而是先分到不同总线。</strong></p>
+<p>比如常见一种理解方式：</p>
+<ul>
+<li>SYSCLK → AHB</li>
+<li>AHB → APB1</li>
+<li>AHB → APB2</li>
+</ul>
+<p>然后外设再挂在 APB1 或 APB2 上。</p>
+</li>
+</ul>
+<h3 id="与时钟树相关的参数"><a href="#与时钟树相关的参数" class="headerlink" title="与时钟树相关的参数"></a>与时钟树相关的参数</h3><ul>
+<li><p>串口波特率</p>
+</li>
+<li><p>定时器定时：定时器溢出时间 &#x3D; 预分频 × 自动重装值 × 时钟周期</p>
+</li>
+<li><p>ADC采样速度</p>
+</li>
+<li><p>USB、CAN 等外设</p>
+</li>
+</ul>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/control/" rel="tag"># control</a>
+              <a href="/tags/robomaster/" rel="tag"># robomaster</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/12/%E7%9A%842048aliouswe%E7%AC%AC%E7%9C%A0%E6%98%BC%E5%A4%B1%E7%99%BD/" rel="prev" title="的2048aliouswe第眠昼失白~">
+                  <i class="fa fa-angle-left"></i> 的2048aliouswe第眠昼失白~
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aliouswe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<div class="cursor-fx" aria-hidden="true"></div>
+<script>
+  (() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const cursorFx = document.querySelector('.cursor-fx');
+    const header = document.querySelector('.header');
+    const coarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+    let hideTimer;
+
+    const pathname = window.location.pathname.replace(/index\.html$/, '').replace(/\/+$/, '');
+    const route = pathname.split('/').filter(Boolean)[0] || 'home';
+    body.classList.add(`route-${route}`);
+
+    const revealNav = () => {
+      if (!header || coarsePointer) return;
+      clearTimeout(hideTimer);
+      body.classList.add('nav-reveal');
+    };
+
+    const queueHideNav = () => {
+      if (!header || coarsePointer) return;
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (!header.matches(':hover')) body.classList.remove('nav-reveal');
+      }, 260);
+    };
+
+    const pointerMove = event => {
+      if (cursorFx) {
+        root.style.setProperty('--mx', `${event.clientX}px`);
+        root.style.setProperty('--my', `${event.clientY}px`);
+        cursorFx.classList.add('is-active');
+      }
+      if (event.clientY <= 92) revealNav();
+      else queueHideNav();
+    };
+
+    if (coarsePointer) body.classList.add('nav-reveal');
+    else body.classList.remove('nav-reveal');
+
+    window.addEventListener('pointermove', pointerMove, { passive: true });
+    window.addEventListener('pointerdown', pointerMove, { passive: true });
+    window.addEventListener('pointerleave', () => cursorFx && cursorFx.classList.remove('is-active'), { passive: true });
+
+    if (header && !coarsePointer) {
+      header.addEventListener('mouseenter', revealNav);
+      header.addEventListener('mouseleave', queueHideNav);
+    }
+
+    window.addEventListener('keydown', event => {
+      if (event.key === 'Tab') body.classList.add('nav-reveal');
+    });
+  })();
+</script>
+
+</body>
+</html>

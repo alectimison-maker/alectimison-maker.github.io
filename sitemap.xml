@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/</loc>
+    
+    <lastmod>2026-04-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://aliouswe.com/article/index.html</loc>
+    
+    <lastmod>2026-04-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://aliouswe.com/coffee/index.html</loc>
     
     <lastmod>2026-04-02</lastmod>
@@ -12,15 +30,6 @@
   
   <url>
     <loc>https://aliouswe.com/anime/index.html</loc>
-    
-    <lastmod>2026-04-02</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://aliouswe.com/article/index.html</loc>
     
     <lastmod>2026-04-02</lastmod>
     
@@ -123,6 +132,34 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://aliouswe.com/tags/control/</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://aliouswe.com/tags/robomaster/</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
+  
+  <url>
+    <loc>https://aliouswe.com/categories/article/</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://aliouswe.com/categories/article/control/</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
 </urlset>
