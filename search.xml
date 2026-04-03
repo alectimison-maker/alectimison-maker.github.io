@@ -551,7 +551,7 @@
 <li>SPI 输出时钟&#x2F;数据</li>
 </ul>
 <p>这时候你虽然看到的是这个 GPIO 脚在变化，但其实背后是外设在控制它，不是你手动写 ODR 了。</p>
-<h2 id="分示例图讲解"><a href="#分示例图讲解" class="headerlink" title="分示例图讲解"></a>分示例图讲解</h2><h3 id="输入模式-1"><a href="#输入模式-1" class="headerlink" title="输入模式"></a>输入模式</h3><p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\6.png"></p>
+<h2 id="分示例图讲解"><a href="#分示例图讲解" class="headerlink" title="分示例图讲解"></a>分示例图讲解</h2><h3 id="输入模式-1"><a href="#输入模式-1" class="headerlink" title="输入模式"></a>输入模式</h3><p><img src="/images/control/6.png"></p>
 <h4 id="下拉输入（右上角）"><a href="#下拉输入（右上角）" class="headerlink" title="下拉输入（右上角）"></a>下拉输入（右上角）</h4><ul>
 <li>PC13 这个引脚通过一个 <strong>10k 电阻接地</strong></li>
 <li>按键另一端接 <strong>VCC</strong></li>
@@ -612,8 +612,8 @@
 <li><p>限流保护，避免按键按下时电源和地直接短路。</p>
 </li>
 </ol>
-<h3 id="输出模式-1"><a href="#输出模式-1" class="headerlink" title="输出模式"></a>输出模式</h3><h4 id="推挽输出"><a href="#推挽输出" class="headerlink" title="推挽输出"></a>推挽输出</h4><p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\7.png"></p>
-<p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\8.png"></p>
+<h3 id="输出模式-1"><a href="#输出模式-1" class="headerlink" title="输出模式"></a>输出模式</h3><h4 id="推挽输出"><a href="#推挽输出" class="headerlink" title="推挽输出"></a>推挽输出</h4><p><img src="/images/control/7.png"></p>
+<p><img src="/images/control/8.png"></p>
 <ul>
 <li><p>可以输出高电平和低电平</p>
 </li>
@@ -624,8 +624,8 @@
 <li><p>无法提供大电流</p>
 </li>
 </ul>
-<h4 id="开漏输出"><a href="#开漏输出" class="headerlink" title="开漏输出"></a>开漏输出</h4><p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\9.png"></p>
-<p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\10.png"></p>
+<h4 id="开漏输出"><a href="#开漏输出" class="headerlink" title="开漏输出"></a>开漏输出</h4><p><img src="/images/control/9.png"></p>
+<p><img src="/images/control/10.png"></p>
 <ul>
 <li><p>只能提供低电平</p>
 <ul>
@@ -721,7 +721,7 @@
 <li><p>子优先级，在多中断事件发生时，高的可以插队到低的前面先处理，决定<strong>同级中断</strong>的先后顺序</p>
 </li>
 </ul>
-<h3 id="中断优先级分组"><a href="#中断优先级分组" class="headerlink" title="中断优先级分组"></a>中断优先级分组</h3><p><img src="C:\Users\chenyuxin\hexoo\hexoo\source\images\control\11.png"></p>
+<h3 id="中断优先级分组"><a href="#中断优先级分组" class="headerlink" title="中断优先级分组"></a>中断优先级分组</h3><p><img src="/images/control/11.png"></p>
 <p>示例解释：</p>
 <h4 id="NVIC-PriorityGroup-0"><a href="#NVIC-PriorityGroup-0" class="headerlink" title="NVIC_PriorityGroup_0"></a><code>NVIC_PriorityGroup_0</code></h4><ul>
 <li>0 bit 给抢占优先级</li>
