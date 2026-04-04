@@ -1262,7 +1262,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #4d57f6;
+  background: #c3af53;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -3262,6 +3262,12 @@ body.toc-layout-hidden .article-toc-reopen {
 .post-body figure.highlight .gutter pre,
 .post-body figure.highlight .code pre,
 .post-body figure.highlight .code pre .hljs {
+  background: transparent !important;
+}
+.post-body figure.highlight tbody,
+.post-body figure.highlight tr,
+.post-body figure.highlight tbody tr:nth-of-type(odd),
+.post-body figure.highlight tbody tr:hover {
   background: transparent !important;
 }
 .post-tags a {
