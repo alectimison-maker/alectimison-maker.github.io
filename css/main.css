@@ -1262,7 +1262,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #ff667e;
+  background: #4d57f6;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -2702,9 +2702,9 @@ header.header {
   --cp-pink: #ff3d93;
   --cp-text: #d6e8ff;
   --cp-dim: #8a9ac0;
-  --highlight-background: #0b1324;
+  --highlight-background: #08101b;
   --highlight-foreground: #d6e8ff;
-  --highlight-gutter-background: #070f1d;
+  --highlight-gutter-background: #08101b;
   --highlight-gutter-foreground: #6f88b3;
   --mx: 50vw;
   --my: 50vh;
@@ -3256,6 +3256,13 @@ body.toc-layout-hidden .article-toc-reopen {
 }
 .post-body figure.highlight .gutter pre {
   border-right: 1px solid rgba(0,255,218,0.18);
+}
+.post-body figure.highlight table,
+.post-body figure.highlight td,
+.post-body figure.highlight .gutter pre,
+.post-body figure.highlight .code pre,
+.post-body figure.highlight .code pre .hljs {
+  background: transparent !important;
 }
 .post-tags a {
   border: 1px solid rgba(0,255,218,0.35);
