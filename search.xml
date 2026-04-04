@@ -62,7 +62,7 @@
   <entry>
     <title>everything i should kown about control</title>
     <url>/2026/04/02/everything-i-should-kown-about-control/</url>
-    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="单片机构成（mcu）"><a href="#单片机构成（mcu）" class="headerlink" title="单片机构成（mcu）"></a>单片机构成（mcu）</h2><p><img src="/images/control/1.png"></p>
+    <content><![CDATA[<h1 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h1><h2 id="单片机构成（mcu）"><a href="#单片机构成（mcu）" class="headerlink" title="单片机构成（mcu）"></a>单片机构成（mcu）</h2><p><img src="/images/control/1.png"> </p>
 <ul>
 <li><p>运算器：负责执行算术和逻辑运算。</p>
 </li>
@@ -715,6 +715,82 @@
 <p>省流版：<strong>外设提请求，NVIC 排队和裁决，CPU 去执行。</strong></p>
 <h2 id="some-definitions"><a href="#some-definitions" class="headerlink" title="some definitions"></a>some definitions</h2><h3 id="程序计数器（PC）"><a href="#程序计数器（PC）" class="headerlink" title="程序计数器（PC）"></a>程序计数器（PC）</h3><p>处理器系统在执行代码的时候，会从存储器依次取出指令和数据，这种能力需要在处理器里保存一个存储器的地址，就是所谓的<strong>程序计数器</strong>（Program Counter，PC），也叫程序指针。</p>
 <h3 id="EXTI（外部中断）"><a href="#EXTI（外部中断）" class="headerlink" title="EXTI（外部中断）"></a>EXTI（外部中断）</h3><p>当连接到某个GPIO引脚的中断线检测到预设的电平变化或边沿变化时，就会产生一个中断请求，使CPU暂停当前任务，转而去执行相应的中断服务程序。这样，单片机就能够及时地处理外部事件，提高了系统的实时性和灵活性。</p>
+<p><img src="/images/control/12.png"></p>
+<p>按键没按下时</p>
+<ul>
+<li>GPIO 通过 10K 电阻被拉到 <code>VCC</code></li>
+<li>所以此时引脚读到的是 <strong>高电平 1</strong></li>
+</ul>
+<p>按键按下时</p>
+<ul>
+<li>开关闭合</li>
+<li>GPIO 被直接接到地</li>
+<li>此时引脚读到的是 <strong>低电平 0</strong></li>
+</ul>
+<p><img src="/images/control/13.png"></p>
+<h4 id="三种触发模式"><a href="#三种触发模式" class="headerlink" title="三种触发模式"></a>三种触发模式</h4><ul>
+<li><p><code>External Interrupt Mode with Rising edge trigger detection</code></p>
+<p>只在 <strong>0 变 1</strong> 时触发中断。</p>
+<p>比如这个按键电路里：</p>
+<ul>
+<li>按键松开那一瞬间：0 变 1</li>
+<li>会触发中断</li>
+</ul>
+</li>
+<li><p><code>External Interrupt Mode with Falling edge trigger detection</code></p>
+<p>只在 <strong>1 变 0</strong> 时触发中断。</p>
+<p>比如：</p>
+<ul>
+<li>按键按下那一瞬间：1 变 0</li>
+<li>会触发中断</li>
+</ul>
+<p>这个在按键检测里很常用，因为一般更关心“按下”的那一刻。</p>
+</li>
+<li><p><code>External Interrupt Mode with Rising/Falling edge trigger detection</code></p>
+<p><strong>上升沿和下降沿都触发</strong></p>
+<p>也就是：</p>
+<ul>
+<li>按下触发一次</li>
+<li>松开再触发一次</li>
+</ul>
+<p>适合既想知道“按下”，又想知道“松开”的场景。</p>
+</li>
+</ul>
+<h4 id="EXTI-线路复用关系"><a href="#EXTI-线路复用关系" class="headerlink" title="EXTI 线路复用关系"></a>EXTI 线路复用关系</h4><p><strong>STM32 的 EXTI 线是怎么和 GPIO 引脚对应起来的。</strong></p>
+<p><img src="/images/control/14.png"></p>
+<p>从图中可见：<strong>相同编号的引脚，共用同一条 EXTI 线</strong></p>
+<h5 id="中间的“选择器”是什么意思"><a href="#中间的“选择器”是什么意思" class="headerlink" title="中间的“选择器”是什么意思"></a>中间的“选择器”是什么意思</h5><p>图里像多路开关一样的那个结构，表示：</p>
+<p><strong>同一条 EXTI 线只能从若干候选 GPIO 里选一个。</strong></p>
+<p>例如 EXTI0：</p>
+<ul>
+<li>候选有 PA0、PB0、PC0、PD0…</li>
+<li>但最终只能选其中一个接到 EXTI0</li>
+</ul>
+<p>不能同时让：</p>
+<ul>
+<li>PA0 触发 EXTI0</li>
+<li>PB0 也触发 EXTI0</li>
+</ul>
+<p>因为它们抢的是同一条线。</p>
+<h5 id="所以一个特别重要的结论"><a href="#所以一个特别重要的结论" class="headerlink" title="所以一个特别重要的结论"></a>所以一个特别重要的结论</h5><p><code>PA0</code> 和 <code>PB0</code> <strong>不能同时作为独立外部中断源</strong>使用</p>
+<p>因为它们都占 <strong>EXTI0</strong></p>
+<p>同理：</p>
+<ul>
+<li><code>PA1</code> 和 <code>PC1</code> 不能同时独立用 EXTI1</li>
+<li><code>PA13</code> 和 <code>PB13</code> 不能同时独立用 EXTI13</li>
+</ul>
+<h5 id="AFIO-EXTICR-是什么"><a href="#AFIO-EXTICR-是什么" class="headerlink" title="AFIO_EXTICR 是什么"></a><code>AFIO_EXTICR</code> 是什么</h5><p>图上写了：</p>
+<ul>
+<li>在 <code>AFIO_EXTICR1</code> 寄存器的 EXTI0[3:0] 位</li>
+<li>在 <code>AFIO_EXTICR1</code> 寄存器的 EXTI1[3:0] 位</li>
+<li>…</li>
+<li>在 <code>AFIO_EXTICR4</code> 寄存器的 EXTI15[3:0] 位</li>
+</ul>
+<p>这说明：</p>
+<p>STM32 通过这些寄存器来决定：</p>
+<p><strong>EXTI0 到底接 PA0 还是 PB0 还是 PC0</strong><br><strong>EXTI1 到底接 PA1 还是 PB1 还是 PC1</strong></p>
+<p>也就是说，这些寄存器就是“选择器的控制开关”。</p>
+<p>如果你在 CubeMX 里配置了某个引脚为外部中断，CubeMX 最终就是帮你改这些寄存器。</p>
 <h3 id="中断事件的优先级"><a href="#中断事件的优先级" class="headerlink" title="中断事件的优先级"></a>中断事件的优先级</h3><ul>
 <li><p>抢占优先级，高的可以直接中断掉低优先级的中断服务函数直接处理</p>
 </li>
@@ -771,6 +847,258 @@
 <ul>
 <li>子优先级 0 比 2 高</li>
 <li>先执行按键中断</li>
+</ul>
+<h2 id="需要用到的函数"><a href="#需要用到的函数" class="headerlink" title="需要用到的函数"></a>需要用到的函数</h2><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">外部引脚变化</span><br><span class="line">   ↓</span><br><span class="line">EXTI 检测到边沿</span><br><span class="line">   ↓</span><br><span class="line">NVIC 允许这个中断进入 CPU</span><br><span class="line">   ↓</span><br><span class="line">进入 EXTIx_IRQHandler()</span><br><span class="line">   ↓</span><br><span class="line">HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_x)</span><br><span class="line">   ↓</span><br><span class="line">HAL_GPIO_EXTI_Callback(GPIO_PIN_x)</span><br><span class="line">   ↓</span><br><span class="line">你自己写的业务代码</span><br></pre></td></tr></table></figure>
+
+<h3 id="HAL-NVIC-SetPriorityGrouping-uint32-t-PriorityGroup"><a href="#HAL-NVIC-SetPriorityGrouping-uint32-t-PriorityGroup" class="headerlink" title=" HAL_NVIC_SetPriorityGrouping(uint32_t PriorityGroup) "></a><code> HAL_NVIC_SetPriorityGrouping(uint32_t PriorityGroup) </code></h3><p>设置 <strong>中断优先级分组</strong></p>
+<p>例：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_2);</span><br></pre></td></tr></table></figure>
+
+<p>表示通常把优先级位分成：</p>
+<ul>
+<li>2 位抢占优先级</li>
+<li>2 位子优先级</li>
+</ul>
+<p>一般在系统初始化时设置一次就行。</p>
+<h3 id="HAL-NVIC-SetPriority-IRQn-Type-IRQn-uint32-t-PreemptPriority-uint32-t-SubPriority"><a href="#HAL-NVIC-SetPriority-IRQn-Type-IRQn-uint32-t-PreemptPriority-uint32-t-SubPriority" class="headerlink" title="HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)"></a><code>HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)</code></h3><p>设置 <strong>某个具体中断</strong> 的优先级。</p>
+<ul>
+<li><code>IRQn</code>：中断号</li>
+<li><code>PreemptPriority</code>：抢占优先级</li>
+<li><code>SubPriority</code>：子优先级</li>
+</ul>
+<p>例：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HAL_NVIC_SetPriority(EXTI9_5_IRQn, <span class="number">1</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>设置 <code>EXTI9_5_IRQn</code> 这个中断</li>
+<li>抢占优先级 &#x3D; 1</li>
+<li>子优先级 &#x3D; 0</li>
+</ul>
+<h3 id="HAL-NVIC-EnableIRQ-IRQn-Type-IRQn"><a href="#HAL-NVIC-EnableIRQ-IRQn-Type-IRQn" class="headerlink" title="HAL_NVIC_EnableIRQ(IRQn_Type IRQn)"></a><code>HAL_NVIC_EnableIRQ(IRQn_Type IRQn)</code></h3><p><strong>使能某个中断</strong>。</p>
+<p>例：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);</span><br></pre></td></tr></table></figure>
+
+<p>意思是把 <code>EXTI9_5_IRQn</code> 这个中断在 NVIC 里打开</p>
+<p>为什么需要它：</p>
+<p>即使：</p>
+<ul>
+<li>GPIO 配好了</li>
+<li>EXTI 配好了</li>
+<li>边沿也来了</li>
+</ul>
+<p>如果 NVIC 里没使能，CPU 还是不会进去执行中断函数。</p>
+<p>所以你可以把它理解成：</p>
+<p><strong>给这个中断发“通行证”</strong></p>
+<h3 id="EXTI9-5-IRQHandler-void"><a href="#EXTI9-5-IRQHandler-void" class="headerlink" title=" EXTI9_5_IRQHandler(void)"></a><code> EXTI9_5_IRQHandler(void)</code></h3><p>这是 <strong>真正的中断服务函数入口</strong></p>
+<p>当 <code>EXTI5 ~ EXTI9</code> 这些外部中断线触发时，CPU 会进入这个函数。</p>
+<p>例如如果你用的是 <code>PA6</code> 做外部中断，那一般就会进这个函数，因为 6 属于 5~9 这一组。</p>
+<h4 id="为什么叫-EXTI9-5-IRQHandler"><a href="#为什么叫-EXTI9-5-IRQHandler" class="headerlink" title="为什么叫 EXTI9_5_IRQHandler"></a>为什么叫 <code>EXTI9_5_IRQHandler</code></h4><p>因为 STM32 的 EXTI 中断不是每条线都单独一个 IRQ。</p>
+<p>常见分组是：</p>
+<ul>
+<li><code>EXTI0_IRQn</code> → EXTI0</li>
+<li><code>EXTI1_IRQn</code> → EXTI1</li>
+<li><code>EXTI2_IRQn</code> → EXTI2</li>
+<li><code>EXTI3_IRQn</code> → EXTI3</li>
+<li><code>EXTI4_IRQn</code> → EXTI4</li>
+<li><code>EXTI9_5_IRQn</code> → EXTI5 ~ EXTI9</li>
+<li><code>EXTI15_10_IRQn</code> → EXTI10 ~ EXTI15</li>
+</ul>
+<p>所以：</p>
+<ul>
+<li>GPIO5~9 的外部中断，共用 <code>EXTI9_5_IRQHandler</code></li>
+<li>GPIO10~15 的外部中断，共用 <code>EXTI15_10_IRQHandler</code></li>
+</ul>
+<p>例：</p>
+<p>你通常不会在这个函数里直接写业务代码，  而是调用 HAL 提供的处理函数：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">EXTI9_5_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="HAL-GPIO-EXTI-Callback-uint16-t-GPIO-Pin"><a href="#HAL-GPIO-EXTI-Callback-uint16-t-GPIO-Pin" class="headerlink" title=" HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) "></a><code> HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) </code></h3><p>这是 <strong>HAL 给你预留的回调函数</strong>，当 HAL 确认某个 EXTI 线触发后，会调用它。</p>
+<p>例：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">HAL_GPIO_EXTI_Callback</span><span class="params">(<span class="type">uint16_t</span> GPIO_Pin)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(GPIO_Pin == GPIO_PIN_6)</span><br><span class="line">    &#123;</span><br><span class="line">        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果是 6 号引脚触发了中断</li>
+<li>就翻转一次 LED</li>
+</ul>
+<p>为什么要判断 <code>GPIO_Pin</code>:</p>
+<p>因为一个回调函数可能服务多个引脚, 所以通常要用 <code>if</code> 或 <code>switch</code> 区分。</p>
+<h3 id="这几个函数的调用关系"><a href="#这几个函数的调用关系" class="headerlink" title="这几个函数的调用关系"></a>这几个函数的调用关系</h3><p>一个“按下按键翻转 LED”的简单例子</p>
+<p>假设：</p>
+<ul>
+<li>按键接在 <code>PA6</code></li>
+<li>LED 接在 <code>PC13</code></li>
+<li>按键为上拉输入，按下产生下降沿</li>
+<li>使用 EXTI6，所以会进 <code>EXTI9_5_IRQHandler</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 1. 初始化</span></span><br><span class="line">HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_2);</span><br><span class="line">HAL_NVIC_SetPriority(EXTI9_5_IRQn, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 中断入口</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI9_5_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_6);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 回调处理</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">HAL_GPIO_EXTI_Callback</span><span class="params">(<span class="type">uint16_t</span> GPIO_Pin)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(GPIO_Pin == GPIO_PIN_6)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 这里写你的逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="虚函数（-weak"><a href="#虚函数（-weak" class="headerlink" title="虚函数（_weak)"></a>虚函数（_weak)</h2><h3 id="弱函数"><a href="#弱函数" class="headerlink" title="弱函数"></a>弱函数</h3><p><code>__weak</code> 的作用，就是给库函数留一个“默认版本”，你如果自己写了同名函数，就优先用你写的那个。</p>
+<p>比如 HAL 库里有这样一个函数(弱定义：空实现)</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//弱函数</span></span><br><span class="line">__weak <span class="type">void</span> <span class="title function_">HAL_GPIO_EXTI_Callback</span><span class="params">(<span class="type">uint16_t</span> GPIO_Pin)</span></span><br><span class="line">&#123;</span><br><span class="line">    UNUSED(GPIO_Pin);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>库先给你放了一个<strong>空壳版本</strong>。你需要时，可以自己在用户文件里写一个同名函数把它顶掉。</p>
+<h3 id="实函数"><a href="#实函数" class="headerlink" title="实函数"></a>实函数</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">HAL_GPIO_EXTI_Callback</span><span class="params">(<span class="type">uint16_t</span> GPIO_Pin)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(GPIO_Pin == GPIO_PIN_6)</span><br><span class="line">    &#123;</span><br><span class="line">        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>优先级更高</li>
+<li>一旦存在，就会替代弱定义版本</li>
+<li>一般只能有一个同名定义，否则链接报错</li>
+</ul>
+<h3 id="编译器最终怎么选"><a href="#编译器最终怎么选" class="headerlink" title="编译器最终怎么选"></a>编译器最终怎么选</h3><ul>
+<li>只有弱函数，没有你自己写的普通函数</li>
+</ul>
+<p>        那就用库里那个弱函数。</p>
+<p>        也就是执行空壳版本，通常什么都不做。</p>
+<ul>
+<li>你自己写了一个同名普通函数</li>
+</ul>
+<p>        那就用你写的普通函数。也就是说：</p>
+<p>        <strong>你的函数把 HAL 库那个 <code>__weak</code> 版本覆盖了。</strong></p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><h3 id="按键控制LED亮灭"><a href="#按键控制LED亮灭" class="headerlink" title="按键控制LED亮灭"></a>按键控制LED亮灭</h3><ul>
+<li><p>把PB9设置为GPIO_EXTI模式</p>
+</li>
+<li><p>设置上拉电阻</p>
+</li>
+<li><p>设置为下降沿触发</p>
+</li>
+<li><p>设置中断优先级分组</p>
+</li>
+<li><p>设置EXTI优先级</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* main.c */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;main.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">uint32_t</span> last_key_time = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">SystemClock_Config</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">MX_GPIO_Init</span><span class="params">(<span class="type">void</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HAL_Init();</span><br><span class="line">    SystemClock_Config();</span><br><span class="line">    MX_GPIO_Init();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PC13 初始输出高电平，常见小蓝板上对应 LED 熄灭</span></span><br><span class="line">    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// EXTI 回调函数：PB9 按下后翻转 LED</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">HAL_GPIO_EXTI_Callback</span><span class="params">(<span class="type">uint16_t</span> GPIO_Pin)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(GPIO_Pin == GPIO_PIN_9)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">uint32_t</span> now = HAL_GetTick();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 20ms 软件消抖</span></span><br><span class="line">        <span class="keyword">if</span>(now - last_key_time &gt; <span class="number">20</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            last_key_time = now;</span><br><span class="line">            HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> <span class="title function_">MX_GPIO_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    GPIO_InitTypeDef GPIO_InitStruct = &#123;<span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 开启 GPIOB、GPIOC、AFIO 时钟</span></span><br><span class="line">    __HAL_RCC_GPIOB_CLK_ENABLE();</span><br><span class="line">    __HAL_RCC_GPIOC_CLK_ENABLE();</span><br><span class="line">    __HAL_RCC_AFIO_CLK_ENABLE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PC13 配置为推挽输出，用来控制 LED</span></span><br><span class="line">    HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);</span><br><span class="line">    GPIO_InitStruct.Pin = GPIO_PIN_13;</span><br><span class="line">    GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;</span><br><span class="line">    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;</span><br><span class="line">    HAL_GPIO_Init(GPIOC, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// PB9 配置为下降沿触发外部中断，上拉输入</span></span><br><span class="line">    GPIO_InitStruct.Pin = GPIO_PIN_9;</span><br><span class="line">    GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;</span><br><span class="line">    GPIO_InitStruct.Pull = GPIO_PULLUP;</span><br><span class="line">    HAL_GPIO_Init(GPIOB, &amp;GPIO_InitStruct);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 配置并使能 EXTI9_5 中断</span></span><br><span class="line">    HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_2);</span><br><span class="line">    HAL_NVIC_SetPriority(EXTI9_5_IRQn, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* stm32f1xx_it.c */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;main.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stm32f1xx_it.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// EXTI5~9 共用这个中断入口，PB9 属于其中</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">EXTI9_5_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_9);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="按键消抖"><a href="#按键消抖" class="headerlink" title="按键消抖"></a>按键消抖</h2><p><strong>按键抖动</strong>指的是在机械按键在按下或释放时由于机械元件的特性，导致开关多次闭合或断开，从而在单片机IO口上检测到电压信号出现抖动的现象</p>
+<p><img src="/images/control/15.png"></p>
+<h3 id="硬件消抖原理"><a href="#硬件消抖原理" class="headerlink" title="硬件消抖原理"></a>硬件消抖原理</h3><p>硬件消抖通常通过‌<strong>RC电路</strong>实现。在RC消抖电路中，电阻起到限流的作用，电容则用来储存电荷。当输入信号发生变化时，电容会通过电阻进行充放电，从而实现对信号的平滑处理。通过合理选择电阻和电容的数值，可以达到最佳的消抖效果。</p>
+<p><img src="/images/control/16.png"></p>
+<blockquote>
+<p>RC 电路:<strong>由电阻 R（Resistor）和电容 C（Capacitor）组成的电路</strong></p>
+</blockquote>
+<h3 id="软件消抖方法"><a href="#软件消抖方法" class="headerlink" title="软件消抖方法"></a>软件消抖方法</h3><h4 id="延时消抖法"><a href="#延时消抖法" class="headerlink" title="延时消抖法"></a>延时消抖法</h4><p>在检测到按键按下时延时一段时间（比如10ms）再次读取按键IO的电平，检测两次读取的结果是否相同，相同则认为按键被按下。</p>
+<ul>
+<li><p>按下按键进入中断回调函数</p>
+</li>
+<li><p>在函数中把某个变量置1</p>
+</li>
+<li><p>在主函数里开始延时</p>
+</li>
+<li><p>延时后再读取引脚电平，如果发现是低电平即认为按键被按下</p>
+</li>
+</ul>
+<h4 id="计数消抖法"><a href="#计数消抖法" class="headerlink" title="计数消抖法"></a>计数消抖法</h4><p><strong>周期执行按键扫描程序</strong>在检测到按键变化时备份输入状态，清零计数器并开始计数，直到检测到按键弹起，如果计数值大于某个设定值则认为按键动作有效，否则按键动作无效</p>
+<h1 id="TIM（Timer定时器）"><a href="#TIM（Timer定时器）" class="headerlink" title="TIM（Timer定时器）"></a>TIM（Timer定时器）</h1><h2 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h2><p><img src="/images/control/17.png"></p>
+<h2 id="3个重要的参数"><a href="#3个重要的参数" class="headerlink" title="3个重要的参数"></a>3个重要的参数</h2><h3 id="PSC-定时器分频系数"><a href="#PSC-定时器分频系数" class="headerlink" title="PSC (定时器分频系数)"></a>PSC (定时器分频系数)</h3><p>它的作用就是：<strong>把输入给定时器的时钟先“降速”</strong></p>
+<p>比如定时器输入时钟是 72 MHz，说明 1 秒钟来 7200 万个计数脉冲。  这个速度太快了，直接计数不方便，所以先用 PSC 分频。</p>
+<p>STM32 里通常可以理解成：</p>
+<p><strong>计数频率 &#x3D; 定时器时钟 &#x2F; (PSC + 1)</strong></p>
+<p>例：</p>
+<p>如果定时器时钟是 72 MHz：</p>
+<ul>
+<li>PSC &#x3D; 71</li>
+<li>那么计数频率 &#x3D; 72 MHz &#x2F; (71 + 1) &#x3D; 1 MHz</li>
+</ul>
+<p>这就表示：<strong>计数器每 1 微秒加 1 次</strong></p>
+<p>所以 PSC 决定的是：<strong>定时器“走得多快”</strong></p>
+<h3 id="ARR-（自动重装载值）"><a href="#ARR-（自动重装载值）" class="headerlink" title="ARR （自动重装载值）"></a>ARR （自动重装载值）</h3><p>它的作用是：<strong>规定计数器最多数到多少</strong></p>
+<p>计数器不是无限加下去的。  它从 0 开始数，数到 ARR 之后，就会产生一次更新事件，然后重新开始。</p>
+<p>通常可以理解成：</p>
+<ul>
+<li>从 0 数到 ARR</li>
+<li>一共会经历 <strong>ARR + 1</strong> 个计数</li>
+</ul>
+<p>所以定时器溢出周期一般是：<strong>定时时间 &#x3D; (PSC + 1) × (ARR + 1) &#x2F; 定时器时钟</strong></p>
+<h3 id="一个完整例子"><a href="#一个完整例子" class="headerlink" title="一个完整例子"></a>一个完整例子</h3><p>假设：</p>
+<ul>
+<li>定时器时钟 &#x3D; 72 MHz</li>
+<li>PSC &#x3D; 7199</li>
+<li>ARR &#x3D; 9999</li>
+</ul>
+<p>先算分频后频率：</p>
+<ul>
+<li>72 MHz &#x2F; (7199 + 1) &#x3D; 10 kHz</li>
+</ul>
+<p>也就是计数器每 <strong>0.1 ms</strong> 加 1。</p>
+<p>再数到 ARR&#x3D;9999：</p>
+<ul>
+<li>一共 10000 次</li>
+</ul>
+<p>所以总时间：</p>
+<ul>
+<li>10000 × 0.1 ms &#x3D; 1000 ms &#x3D; 1 s</li>
+</ul>
+<p>也就是说：</p>
+<p><strong>这个定时器每 1 秒触发一次更新事件&#x2F;中断</strong></p>
+<h3 id="Counter-Mode（计数模式-）"><a href="#Counter-Mode（计数模式-）" class="headerlink" title="Counter Mode（计数模式 ）"></a>Counter Mode（计数模式 ）</h3><p>计数模式决定的是：<strong>计数器 CNT 按什么方式变化</strong></p>
+<p><img src="/images/control/18.png"></p>
+<h4 id="边沿对齐模式"><a href="#边沿对齐模式" class="headerlink" title="边沿对齐模式"></a>边沿对齐模式</h4><p>一般就是：</p>
+<ul>
+<li>从 0 一直加到 ARR</li>
+<li>然后回到 0</li>
+<li>再继续加</li>
+</ul>
+<p>这叫 <strong>向上计数</strong></p>
+<p>也可能反过来：</p>
+<ul>
+<li>从 ARR 往下减到 0</li>
+</ul>
+<p>这叫 <strong>向下计数</strong></p>
+<p>这种模式因为计数过程只朝一个方向走，所以叫“边沿对齐”。</p>
+<p><img src="/images/control/19.png"></p>
+<h4 id="中心对齐模式"><a href="#中心对齐模式" class="headerlink" title="中心对齐模式"></a>中心对齐模式</h4><ul>
+<li>先从 0 数到 ARR</li>
+<li>再从 ARR 数回 0</li>
+<li>然后再上去</li>
+</ul>
+<h2 id="周期计算公式"><a href="#周期计算公式" class="headerlink" title="周期计算公式"></a>周期计算公式</h2><p>$$<br>\text{frequency} &#x3D; \frac{\text{main_frequency}}{(PSC + 1) \times (ARR + 1)}<br>$$</p>
+<p>定时器输出的频率取决于：</p>
+<ol>
+<li><strong>主频</strong>：即 MCU 的主时钟频率，通常是 72 MHz</li>
+<li><strong>PSC</strong>：定时器的预分频器，它控制定时器的输入频率</li>
+<li><strong>ARR</strong>：定时器的自动重载寄存器，它决定计数器达到多少就会触发事件</li>
+</ol>
+<h3 id="例"><a href="#例" class="headerlink" title="例"></a>例</h3><p> 假设我们有以下信息：</p>
+<ul>
+<li>MCU 主频 &#x3D; 72 MHz</li>
+<li><strong>PSC &#x3D; 3600 - 1</strong>，即 <strong>PSC &#x3D; 3599</strong></li>
+<li><strong>ARR &#x3D; 10000 - 1</strong>，即 <strong>ARR &#x3D; 9999</strong></li>
+</ul>
+<p><strong>我们想让 LED 闪烁 1 次每 0.5 秒。</strong></p>
+<h4 id="计算定时器的主频"><a href="#计算定时器的主频" class="headerlink" title="计算定时器的主频"></a>计算定时器的主频</h4><p>首先，定时器的输入时钟频率：</p>
+<p><code>主频=72 MHz=72,000,000 Hz</code></p>
+<h4 id="计算定时器分频后的频率"><a href="#计算定时器分频后的频率" class="headerlink" title="计算定时器分频后的频率"></a>计算定时器分频后的频率</h4><p>根据公式：</p>
+<p>$$<br>\text{定时器频率} &#x3D; \frac{\text{主频}}{(PSC + 1) \times (ARR + 1)}<br>$$</p>
+<p>代入数值：</p>
+<p>$$<br>\text{定时器频率} &#x3D; \frac{72,000,000}{(3600) \times (10000)} &#x3D; \frac{72,000,000}{36,000,000} &#x3D; 2 \text{ Hz}<br>$$</p>
+<h4 id="结果分析"><a href="#结果分析" class="headerlink" title="结果分析"></a>结果分析</h4><p>定时器的频率是 <strong>2 Hz</strong>，这意味着每 0.5 秒触发一次更新事件。</p>
+<h2 id="相关函数"><a href="#相关函数" class="headerlink" title="相关函数"></a>相关函数</h2><h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><p><strong>开启定时器 → 定时器溢出 → 进入中断入口函数 → HAL 处理中断 → 调用用户回调函数</strong></p>
+<h3 id="HAL-TIM-Base-Start"><a href="#HAL-TIM-Base-Start" class="headerlink" title="HAL_TIM_Base_Start() "></a><code>HAL_TIM_Base_Start() </code></h3><p><strong>启动定时器基础计数功能，但不开中断</strong></p>
+<h3 id="HAL-TIM-Base-Start-IT"><a href="#HAL-TIM-Base-Start-IT" class="headerlink" title="HAL_TIM_Base_Start_IT()"></a><code>HAL_TIM_Base_Start_IT()</code></h3><p><strong>启动定时器，同时使能更新中断</strong></p>
+<h3 id="TIM3-IRQHandler-void"><a href="#TIM3-IRQHandler-void" class="headerlink" title="TIM3_IRQHandler(void)"></a><code>TIM3_IRQHandler(void)</code></h3><p><strong>中断服务函数</strong></p>
+<p>它是定时器 TIM3 对应的<strong>中断入口</strong>函数。</p>
+<p>当 TIM3 真的发生中断时，CPU 会先跳到这里来。</p>
+<p>比如 TIM3 更新中断来了，执行流程首先到：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">TIM3_IRQHandler</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    HAL_TIM_IRQHandler(&amp;htim3);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个函数通常在 <code>stm32xx_it.c</code> 里。</p>
+<p>特点：</p>
+<ul>
+<li>这是 <strong>硬件中断入口</strong></li>
+<li>名字基本是固定的，和中断向量表对应</li>
+<li>一般不要在里面写太多自己的业务逻辑</li>
+<li>通常只调用 HAL 提供的中断处理函数</li>
+</ul>
+<h3 id="HAL-TIM-PeriodElapsedCallback"><a href="#HAL-TIM-PeriodElapsedCallback" class="headerlink" title="HAL_TIM_PeriodElapsedCallback()"></a><code>HAL_TIM_PeriodElapsedCallback()</code></h3><p><strong>定时器更新中断回调函数</strong></p>
+<p>当 HAL 帮你处理完底层中断标志以后，如果确认是“周期到达&#x2F;溢出更新中断”，就会调用这个回调函数。</p>
+<p>也就是说：<strong>真正写你自己定时任务代码的地方，通常就在这里</strong></p>
+<p>常见写法例如：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">HAL_TIM_PeriodElapsedCallback</span><span class="params">(TIM_HandleTypeDef *htim)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (htim-&gt;Instance == TIM3)</span><br><span class="line">    &#123;</span><br><span class="line">        HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_13);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果当前触发回调的是 TIM3</li>
+<li>那就翻转一次 LED</li>
 </ul>
 ]]></content>
       <categories>
