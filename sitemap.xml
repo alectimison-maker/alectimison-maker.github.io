@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://aliouswe.com/2026/04/05/everything%20i%20should%20kown%20before%20learning%20control/</loc>
+    
+    <lastmod>2026-04-04</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/</loc>
     
     <lastmod>2026-04-04</lastmod>
@@ -141,6 +150,13 @@
   
   <url>
     <loc>https://aliouswe.com/tags/%E5%A4%B1%E8%AF%AD/</loc>
+    <lastmod>2026-04-04</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://aliouswe.com/tags/prerequisite/</loc>
     <lastmod>2026-04-04</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
