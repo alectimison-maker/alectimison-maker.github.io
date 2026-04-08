@@ -1,3 +1,4 @@
+https://aliouswe.com/2026/04/08/everything%20i%20kown%20about%20PID/
 https://aliouswe.com/article/index.html
 https://aliouswe.com/2026/04/05/everything%20i%20should%20kown%20before%20learning%20control/
 https://aliouswe.com/2026/04/02/everything-i-should-kown-about-control/
@@ -17,5 +18,6 @@ https://aliouswe.com/tags/prerequisite/
 https://aliouswe.com/tags/robomaster/
 https://aliouswe.com/tags/riddle-but-philosophy/
 https://aliouswe.com/tags/%E5%A4%B1%E8%AF%AD/
+https://aliouswe.com/tags/PID/
 https://aliouswe.com/categories/article/
 https://aliouswe.com/categories/article/control/
