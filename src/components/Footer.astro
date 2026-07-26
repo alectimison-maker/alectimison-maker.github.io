@@ -1,0 +1,35 @@
+---
+import { SITE } from '../lib/site'
+---
+
+<footer class="site-footer">
+  <div class="footer-grid container">
+    <div class="footer-signature">
+      <img src="/avatar.webp" width="56" height="56" alt="" />
+      <div><strong>{SITE.author}</strong><span>{SITE.description}</span></div>
+    </div>
+    <nav aria-label="页脚导航">
+      <a href="/contact/">写信给我</a>
+      <a href="/privacy/">隐私说明</a>
+      <a href="/rss.xml">RSS</a>
+      <a href={SITE.github} rel="me">GitHub</a>
+    </nav>
+    <p>© {new Date().getFullYear()} {SITE.author}. All rights reserved.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { padding-block: 3rem; border-top: 1px solid var(--line); }
+  .footer-grid { display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; }
+  .footer-signature { display: flex; align-items: center; gap: .9rem; }
+  .footer-signature img { border-radius: 50%; }
+  .footer-signature div { display: grid; gap: .2rem; }
+  .footer-signature strong { font: 600 1rem/1 var(--serif); }
+  .footer-signature span, .footer-grid p { color: var(--muted); font: .72rem/1.4 var(--mono); }
+  .footer-grid nav { display: flex; gap: 1rem; font: .72rem/1 var(--mono); }
+  .footer-grid p { grid-column: 1 / -1; margin: 0; padding-top: 1rem; border-top: 1px solid var(--line); }
+  @media (max-width: 700px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-grid nav { flex-wrap: wrap; }
+  }
+</style>

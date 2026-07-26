@@ -1,0 +1,92 @@
+[
+  {
+    "id": "cowboy-bebop",
+    "type": "jazz",
+    "title": "COWBOY BEBOP",
+    "cover": "/media/images/jazz/albums/cowboy-bebop.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 0
+  },
+  {
+    "id": "forever",
+    "type": "jazz",
+    "title": "FOREVER",
+    "cover": "/media/images/jazz/albums/forever.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 1
+  },
+  {
+    "id": "help-ever-hurt-never",
+    "type": "jazz",
+    "title": "HELP EVER HURT NEVER",
+    "cover": "/media/images/jazz/albums/help-ever-hurt-never.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 2
+  },
+  {
+    "id": "kind-of-blue",
+    "type": "jazz",
+    "title": "Kind Of Blue",
+    "cover": "/media/images/jazz/albums/kind-of-blue.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 3
+  },
+  {
+    "id": "live-2022",
+    "type": "jazz",
+    "title": "Live 2022",
+    "cover": "/media/images/jazz/albums/live-2022.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 4
+  },
+  {
+    "id": "love-all-cover-all",
+    "type": "jazz",
+    "title": "LOVE ALL COVER ALL",
+    "cover": "/media/images/jazz/albums/love-all-cover-all.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 5
+  },
+  {
+    "id": "love-all-serve-all",
+    "type": "jazz",
+    "title": "LOVE ALL SERVE ALL",
+    "cover": "/media/images/jazz/albums/love-all-serve-all.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 6
+  },
+  {
+    "id": "moanin",
+    "type": "jazz",
+    "title": "Moanin'",
+    "cover": "/media/images/jazz/albums/moanin.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 7
+  },
+  {
+    "id": "scene",
+    "type": "jazz",
+    "title": "Scene",
+    "cover": "/media/images/jazz/albums/scene.webp",
+    "shelves": [
+      "Albums"
+    ],
+    "order": 8
+  }
+]

@@ -1,0 +1,632 @@
+---
+title: "everything i kown about PID"
+description: "PID 本质上是一个基于误差的反馈控制器."
+date: "2026-04-08"
+publishedAt: "2026-04-08T07:12:00.000Z"
+updatedAt: "2026-04-08T17:24:52.091Z"
+space: article
+tags: ["control","robomaster","PID"]
+lang: mixed
+draft: false
+featured: false
+legacyPath: "/2026/04/08/everything i kown about PID/"
+---
+
+# PID算法原理
+
+## 算法简易原理图
+
+PID 本质上是一个**基于误差的反馈控制器**.
+
+![文章图片（待补充说明）](/media/images/control/23.png)
+
+## 核心公式
+
+先定义几个量：
+
+-   设定值：`rin(t)`
+-   实际输出：`rout(t)`
+-   误差：`err(t) = rin(t) - rout(t)`
+
+控制器输出：
+
+这里的 `u(t)` 就是控制量。
+
+`u(t)`在工程里实际是：
+
+-   PWM 占空比
+    
+    占空比高电平时间一个周期的总时间
+    
+-   电压参考值
+    
+-   电流参考值
+    
+-   力矩参考值
+    
+
+所以 **PID 的输出必须和执行器建立映射关系**。
+
+## 三个环节
+
+### 比例P
+
+看当前误差有多大，误差大就给大一点的控制，误差小就给小一点的控制。
+
+作用：
+
+-   提高响应速度
+-   快速把系统往目标拉过去
+
+问题：
+
+-   `Kp` 太大会超调、震荡
+-   `Kp` 太小会反应迟钝
+
+### 积分I
+
+积分看的是**误差的累积**。  
+哪怕误差一直很小，只要长期存在，积分项就会慢慢变大，把系统继续往目标推。
+
+作用：
+
+-   消除稳态误差（静差）
+
+问题：
+
+-   容易积分累积过多，造成**积分饱和**
+-   会带来超调
+
+### 微分D
+
+微分看的是**误差变化趋势**。  
+如果误差正在快速变小或变大，微分项就提前做出反应。
+
+作用：
+
+-   抑制超调
+-   改善动态性能
+-   提前“刹车”
+
+问题：
+
+-   对噪声敏感
+-   `Kd` 太大可能让系统抖动，或者响应变慢
+
+# PID算法的离散化
+
+> 单片机不可能真正连续计算，它是**每隔一个采样周期 T 算一次**，所以必须把连续 PID 变成离散 PID
+
+## 离散后的三个环节
+
+设采样周期为 `T`，第 `k` 次采样时：
+
+### 比例P
+
+### 积分I
+
+积分用累加代替：
+
+### 微分D
+
+微分用差分代替：
+
+## 离散PID公式
+
+## 两种离散形式
+
+### 位置型PID
+
+直接算当前位置的控制输出 `u(k)`。
+
+特点：
+
+-   输出是“完整控制量”
+-   积分项容易越积越大
+
+### 增量型PID
+
+不直接算 `u(k)`，而是算：
+
+最后：
+
+增量型离散式和最近三次误差有关：
+
+特点：
+
+-   只和最近几次误差有关
+-   不容易因为积分累计导致数值过大
+
+# 位置型 PID 的 C 语言实现
+
+## 前置工作
+
+为了方便举例，定义一个结构体并初始化：
+
+```c
+
+#include <stdio.h>
+/* 位置型 PID 结构体 */
+typedef struct
+{
+    float SetSpeed;      // 目标值
+    float ActualSpeed;   // 当前实际值
+    float err;           // 当前误差
+    float err_last;      // 上一次误差
+
+    float Kp;            // 比例系数
+    float Ki;            // 积分系数
+    float Kd;            // 微分系数
+
+    float voltage;       // 控制输出
+    float integral;      // 误差积分累计
+} PID_TypeDef;
+
+/* 定义一个 PID 控制器实例 */
+PID_TypeDef pid;
+
+/* PID 参数与变量初始化 */
+void PID_Init(void)
+{
+    pid.SetSpeed = 0.0f;
+    pid.ActualSpeed = 0.0f;
+    pid.err = 0.0f;
+    pid.err_last = 0.0f;
+    pid.voltage = 0.0f;
+    pid.integral = 0.0f;
+
+    /* 这里的参数可根据实际系统再调 */
+    pid.Kp = 0.2f;
+    pid.Ki = 0.015f;
+    pid.Kd = 0.2f;
+}
+```
+
+实际调参时主要调`Kp`，`Ki`，`Kd`这三个值。
+
+## 核心控制算法
+
+位置型 PID 的核心代码思想是（伪代码）：
+
+```c
+err = SetSpeed - ActualSpeed;
+integral += err;
+voltage = Kp*err + Ki*integral + Kd*(err - err_last);
+err_last = err;
+```
+
+-   先算当前误差
+-   再把误差累加进积分项
+-   然后按 PID 公式求控制量
+-   保存本次误差供下一次微分用
+
+搭配前面结构体的实际代码：
+
+```c
+/* 位置型 PID 计算函数 */
+float PID_Realize(float target)
+{
+    pid.SetSpeed = target;                          // 更新目标值
+    pid.err = pid.SetSpeed - pid.ActualSpeed;       // 计算当前误差
+    pid.integral += pid.err;                        // 误差积分累加
+
+    /* 位置型 PID 公式 */
+    pid.voltage = pid.Kp * pid.err
+                + pid.Ki * pid.integral
+                + pid.Kd * (pid.err - pid.err_last);
+
+    pid.err_last = pid.err;                         // 保存本次误差
+
+    /* 
+       这里为了演示，直接假设：
+       控制输出 voltage 经过执行器后，实际值就等于 voltage
+       真正工程里这里应该换成电机/被控对象的实际响应
+    */
+    pid.ActualSpeed = pid.voltage;
+
+    return pid.ActualSpeed;                         // 返回当前实际值
+}
+```
+
+## main函数
+
+```c
+int main(void)
+{
+    int count = 0;
+    float target_speed = 200.0f;    // 设定目标值
+
+    PID_Init();
+
+    printf("Position PID Demo Start\n");
+
+    while (count < 100)
+    {
+        float speed = PID_Realize(target_speed);
+
+        printf("step=%3d  target=%7.2f  actual=%7.2f  err=%7.2f\n",
+               count, pid.SetSpeed, speed, pid.err);
+
+        count++;
+    }
+
+    return 0;
+}
+```
+
+# 增量型 PID 的 C 语言实现
+
+增量型不是直接求控制输出，而是求：
+
+代码本质类似：
+
+```c
+increment = Kp*(err - err_next)
+          + Ki*err
+          + Kd*(err - 2*err_next + err_last);//本质是保存当前误差，上一次误差和上上次误差。
+
+ActualSpeed += increment;
+err_last = err_next;
+err_next = err;
+```
+
+具体代码结构跟位置型相似，参考上一节即可。
+
+# 积分分离PID
+
+## 背景
+
+这个改进是为了解决一个很经典的问题： **误差特别大时，积分项不应该参与太多。**
+
+在启动阶段、目标突变阶段，误差往往很大。  
+如果这时还疯狂积分，就会导致：
+
+-   积分项积得很大
+-   控制器输出过大
+-   超调严重
+-   甚至震荡
+
+所以思路是：
+
+-   **误差大：关闭积分**
+-   **误差小：开启积分**
+
+## 代码实现逻辑
+
+相当于在积分项前面加一个**开关**
+
+```c
+if(abs(err) > 200)
+    index = 0;      // 不积分
+else
+{
+    index = 1;      // 允许积分
+    integral += err;
+}
+```
+
+然后：
+
+```ini
+voltage = Kp*err + index*Ki*integral + Kd*(err-err_last);
+```
+
+# 抗积分饱和 PID
+
+## 背景
+
+当执行器有物理极限时，比如：
+
+-   PWM 占空比最多 100%
+-   电压最多 24V
+-   电流最多 10A
+
+如果 PID 还在不断因为误差大而累加积分，控制器内部 `u(k)` 会越来越大，但执行器根本做不到，这就叫**积分饱和**。
+
+## 核心思想
+
+先判断控制输出是否已经超限：
+
+-   如果已经大于上限，只允许累加负误差
+-   如果已经小于下限，只允许累加正误差
+-   如果在正常范围，正常积分
+
+伪代码：
+
+```text
+if (输出 > 上限)
+{
+    只允许累加负误差;
+}
+else if (输出 < 下限)
+{
+    只允许累加正误差;
+}
+else
+{
+    正常积分;
+}
+```
+
+# 梯形积分PID
+
+## 背景和定义
+
+最简单积分是矩形积分：
+
+它的积分精度有限。 如果想积分更精确，可以用数值分析里的**梯形积分**。
+
+-   矩形积分只看当前误差。
+    
+-   梯形积分看的是**当前误差和上一次误差的平均值**。
+    
+
+更像是：
+
+这样能让数值积分更准确。
+
+## 核心代码修改
+
+只需要把原来的积分项改成：
+
+```c
+pid.Ki * pid.integral / 2
+```
+
+# 变积分PID
+
+这是比积分分离更一般化的一种方法
+
+## 核心思想
+
+普通 PID 里 `Ki` 是常数。  
+但实际中应该是：
+
+-   误差大时，积分慢一点甚至没有
+-   误差小时，积分快一点
+
+所以变积分就是：
+
+其中 `index` 随误差变化。
+
+例子：
+
+-   `|err| < 180`：`index = 1`
+-   `180 < |err| < 200`：`index = (200 - |err|)/20`
+-   `|err| > 200`：`index = 0`
+
+所以：
+
+-   误差很大：完全不积分
+-   误差中等：积分逐渐变弱
+-   误差很小：全积分
+
+测试结果显示，变积分 PID 稳定很快。
+
+# 专家 PID 与模糊 PID
+
+这一节开始进入“**智能调参**”思想。
+
+## 背景
+
+普通 PID 的难点不是公式，而是：
+
+-   `Kp` 怎么调
+-   `Ki` 怎么调
+-   `Kd` 怎么调
+
+如果系统是：
+
+-   非线性的
+-   模型不明确的
+
+固定参数 PID 可能不够好。
+
+于是就引入：
+
+-   专家 PID
+-   模糊 PID
+
+## 专家PID
+
+### 本质
+
+利用**经验规则**去**动态**调整 PID 参数或控制策略
+
+比如：
+
+-   误差特别大 → 先别积分
+-   误差在变大 → 增大比例
+-   误差很小 → 加强积分
+-   接近稳定 → 保持输出
+
+前面看到的：
+
+-   积分分离
+-   变积分
+-   抗积分饱和
+
+都可以看成专家规则的特例。
+
+### 主要判断依据
+
+-   `e`：误差大小（反映偏得多远
+-   `ec`：误差变化率（反映偏差变化趋势
+
+### 核心控制算法
+
+```c
+float ExpertPID_Realize(ExpertPID *pid, float target, float actual)
+{
+    float e, ec;
+    float abs_e;
+
+    e = target - actual;          // 当前误差
+    ec = e - pid->err_last;       // 误差变化率
+    abs_e = fabsf(e);
+
+    /* -------- 专家规则部分 -------- */
+
+    /* 规则1：误差特别大，强控制，近似开环 */
+    if (abs_e > 100.0f)
+    {
+        pid->output = (e > 0) ? 100.0f : -100.0f;
+    }
+
+    /* 规则2：误差还在变大，加强比例，抑制积分 */
+    else if (e * ec > 0)
+    {
+        pid->integral += 0.3f * e;   // 少量积分
+        pid->output = 0.8f * e + 0.05f * pid->integral + 0.1f * ec;
+    }
+
+    /* 规则3：误差在减小，减弱干预，避免过冲 */
+    else if (e * ec < 0)
+    {
+        pid->integral += 0.1f * e;   // 更弱积分
+        pid->output = 0.5f * e + 0.02f * pid->integral + 0.2f * ec;
+    }
+
+    /* 规则4：误差很小，增强积分，消除静差 */
+    if (abs_e < 5.0f)
+    {
+        pid->integral += e;
+        pid->output = 0.3f * e + 0.15f * pid->integral;
+    }
+
+    /* 保存误差历史 */
+    pid->err_prev = pid->err_last;
+    pid->err_last = e;
+    pid->err = e;
+
+    return pid->output;
+}
+```
+
+## 模糊算法
+
+### 模糊算法不是真的“模糊”
+
+它不是乱调，而是把人类经验语言数学化。
+
+比如你平时会说：
+
+-   误差很大
+-   误差有点大
+-   误差中等
+-   误差很小
+
+这些词虽然不是精确数值，但人能理解。  
+模糊控制就是让**程序也能理解**这种“语言规则”。
+
+### 隶属度
+
+隶属度是一个 `0~1` 之间的数，用来表示：
+
+> 某个输入值，对某个模糊概念的“**符合程度**”有多大。
+
+比如对 `6°` 来说，可以设定：
+
+-   属于“小”的隶属度 = `0.3`
+-   属于“中”的隶属度 = `0.7`
+-   属于“大”的隶属度 = `0`
+
+意思就是：
+
+-   它有一点像“小”
+-   更像“中”
+-   完全不像“大”
+
+### 隶属函数
+
+隶属函数就是把一个精确输入映射成“属于某个模糊集合的程度”的函数。  
+隶属度范围通常在 `[0,1]`。
+
+### 本质
+
+模糊 PID **不是直接替代** PID，  
+而是根据误差 `e` 和误差变化率 `ec` 去在线调整`Kp`，`Ki`，`Kd`。
+
+所以本质是：
+
+**模糊控制负责调参数，PID 负责执行控制。**
+
+### 调参规则
+
+到底应该怎样**根据系统状态**调整 `Kp, Ki, Kd`？
+
+-   当前误差 `e`
+-   误差变化率 `ec`
+
+我们制定规则：
+
+-   如果 `e` 很大，`ec` 也在变大  
+    → 增大 `Kp`，减小 `Ki`，适当给 `Kd`
+-   如果 `e` 很小，但还有静差  
+    → 增大 `Ki`
+-   如果系统正在快速逼近目标，可能超调  
+    → 增大 `Kd`，适当减小 `Kp`
+
+### 核心控制算法
+
+```text
+float FuzzyPID_Realize(FuzzyPID *pid, float target, float actual)
+{
+    float e = target - actual;         // 误差
+    float ec = e - pid->err_last;      // 误差变化率
+
+    /* ---------- 第一步：模糊化 ---------- */
+    /* 这里把误差分成：小 Small、中 Medium、大 Big */
+    float e_small  = triangle_membership(fabsf(e), 0.0f, 0.0f, 50.0f);
+    float e_medium = triangle_membership(fabsf(e), 0.0f, 50.0f, 100.0f);
+    float e_big    = triangle_membership(fabsf(e), 50.0f, 100.0f, 150.0f);
+
+    /* 误差变化率也分成：小、中、大 */
+    float ec_small  = triangle_membership(fabsf(ec), 0.0f, 0.0f, 10.0f);
+    float ec_medium = triangle_membership(fabsf(ec), 0.0f, 10.0f, 20.0f);
+    float ec_big    = triangle_membership(fabsf(ec), 10.0f, 20.0f, 30.0f);
+
+    /* ---------- 第二步：模糊规则 ---------- */
+    /* 根据误差和误差变化率，动态调整PID参数 */
+
+    /* 误差大：增大Kp，减小Ki，适当增大Kd */
+    if (e_big > 0.0f)
+    {
+        pid->kp = 1.0f + 0.5f * e_big;
+        pid->ki = 0.005f;
+        pid->kd = 0.15f;
+    }
+    /* 误差中：适中控制 */
+    else if (e_medium > 0.0f)
+    {
+        pid->kp = 0.8f;
+        pid->ki = 0.01f;
+        pid->kd = 0.12f;
+    }
+    /* 误差小：减小Kp，增大Ki，减小Kd */
+    else if (e_small > 0.0f)
+    {
+        pid->kp = 0.5f;
+        pid->ki = 0.03f;
+        pid->kd = 0.05f;
+    }
+
+    /* 如果误差变化率大，说明系统变化快，适当增强微分抑制超调 */
+    if (ec_big > 0.0f)
+    {
+        pid->kd += 0.05f * ec_big;
+    }
+
+    /* ---------- 第三步：PID计算 ---------- */
+    pid->integral += e;
+
+    pid->output = pid->kp * e
+                + pid->ki * pid->integral
+                + pid->kd * (e - pid->err_last);
+
+    pid->err_last = e;
+    pid->err = e;
+
+    return pid->output;
+}
+```

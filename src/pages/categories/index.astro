@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+<BaseLayout title="Categories">
+  <section class="taxonomy container">
+    <p class="eyebrow">LEGACY / CATEGORIES</p>
+    <h1>CATEGORIES</h1>
+    <div><a href="/article/">Article</a><a href="/nonsense/">Nonsense</a><a href="/jazz/">Jazz</a><a href="/anime/">Anime</a><a href="/coffee/">Coffee</a></div>
+  </section>
+</BaseLayout>
+<style>.taxonomy{min-height:70vh;padding-block:clamp(4rem,10vw,10rem)}h1{margin:.5rem 0 3rem;font:600 clamp(4rem,14vw,12rem)/.75 var(--serif);letter-spacing:-.08em}.taxonomy div{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr))}.taxonomy a{min-height:10rem;padding:1rem;display:flex;align-items:end;border:1px solid var(--line);text-decoration:none;font:2rem/1 var(--serif)}</style>

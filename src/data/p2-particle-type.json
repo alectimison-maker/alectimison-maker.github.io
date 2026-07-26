@@ -1,0 +1,20 @@
+{
+  "preset": "type",
+  "particleCount": 2450,
+  "integrator": "verlet",
+  "fieldMode": "vortex",
+  "fieldStrength": 760,
+  "fieldRadius": 245,
+  "homeStrength": 18,
+  "drag": 3.6,
+  "turbulence": 60,
+  "maxSpeed": 520,
+  "fixedDt": 0.016666666666666666,
+  "substeps": 2,
+  "sampleGap": 5,
+  "showTrails": false,
+  "showGlow": true,
+  "showField": true,
+  "scene": "morph",
+  "text": "aliouswe's nonsense"
+}

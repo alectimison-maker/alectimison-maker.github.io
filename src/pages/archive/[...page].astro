@@ -1,0 +1,47 @@
+---
+import { getCollection } from 'astro:content'
+import type { GetStaticPaths, Page } from 'astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import ArchiveRelease from '../../components/physics/ArchiveRelease'
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = (await getCollection('posts', ({ data }) => !data.draft))
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  return paginate(posts, { pageSize: 10 })
+}) satisfies GetStaticPaths
+
+const { page } = Astro.props as { page: Page<Awaited<ReturnType<typeof getCollection<'posts'>>>[number]> }
+const archivePosts = page.data.map((post) => ({
+  id: post.id,
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date.toISOString(),
+  space: post.data.space,
+  tags: post.data.tags,
+  href: `/posts/${post.id}/`,
+  readingMinutes: Math.max(1, Math.ceil((post.body?.length ?? post.data.description?.length ?? 500) / 900)),
+}))
+---
+
+<BaseLayout title={page.currentPage === 1 ? 'Archive' : `Archive · ${page.currentPage}`}>
+  <header class="archive-head container">
+    <p class="eyebrow">CHRONOLOGICAL / ALL POSTS</p>
+    <h1>ARCHIVE</h1>
+    <p>{page.total} 篇文章，按 Markdown 写作日期排列。</p>
+  </header>
+  <section class="archive-list container"><ArchiveRelease client:visible posts={archivePosts} /></section>
+  <nav class="pagination container" aria-label="归档分页">
+    {page.url.prev ? <a class="button" href={page.url.prev}>← 上一页</a> : <span />}
+    <span>{page.currentPage} / {page.lastPage}</span>
+    {page.url.next ? <a class="button" href={page.url.next}>下一页 →</a> : <span />}
+  </nav>
+</BaseLayout>
+
+<style>
+  .archive-head { padding-block: clamp(4rem, 10vw, 10rem); border-bottom: 1px solid var(--line); }
+  .archive-head h1 { margin: .5rem 0 1rem; font: 600 clamp(4rem, 16vw, 14rem)/.78 var(--serif); letter-spacing: -.07em; }
+  .archive-head > p:last-child { color: var(--muted); }
+  .archive-list { padding-block: 3rem; }
+  .pagination { padding-bottom: 4rem; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; }
+  .pagination > :last-child { justify-self: end; }
+</style>

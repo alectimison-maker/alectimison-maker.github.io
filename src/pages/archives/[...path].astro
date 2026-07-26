@@ -1,0 +1,17 @@
+---
+export function getStaticPaths() {
+  const paths = [undefined, '2025', '2025/12', '2026', '2026/01', '2026/04', '2026/05']
+  return paths.map((path) => ({ params: { path } }))
+}
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href="https://aliouswe.com/archive/" />
+    <meta http-equiv="refresh" content="0;url=/archive/" />
+    <title>Archive moved</title>
+  </head>
+  <body><p>归档已移动到 <a href="/archive/">/archive/</a>。</p></body>
+</html>

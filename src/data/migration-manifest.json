@@ -1,0 +1,67 @@
+{
+  "sourceCommit": "7d20f15",
+  "posts": [
+    {
+      "slug": "hows-the-coffee",
+      "title": "How's the coffee?",
+      "legacyPath": "/2026/05/25/How's the coffee/",
+      "media": 17
+    },
+    {
+      "slug": "when-i-am-a-exile",
+      "title": "When I am a exile.",
+      "legacyPath": "/2026/05/22/When I am a exile/",
+      "media": 0
+    },
+    {
+      "slug": "everything-i-kown-about-pid",
+      "title": "everything i kown about PID",
+      "legacyPath": "/2026/04/08/everything i kown about PID/",
+      "media": 1
+    },
+    {
+      "slug": "everything-i-should-kown-before-learning-control",
+      "title": "everything i should kown before learning control",
+      "legacyPath": "/2026/04/05/everything i should kown before learning control/",
+      "media": 3
+    },
+    {
+      "slug": "everything-i-should-kown-about-control",
+      "title": "everything i should kown about control",
+      "legacyPath": "/2026/04/02/everything-i-should-kown-about-control/",
+      "media": 19
+    },
+    {
+      "slug": "aliouswe-2048-whiteout",
+      "title": "的2048aliouswe第眠昼失白~",
+      "legacyPath": "/2026/01/12/的2048aliouswe第眠昼失白/",
+      "media": 0
+    },
+    {
+      "slug": "behind-the-door",
+      "title": "Behind The Door",
+      "legacyPath": "/2025/12/07/The-Door/",
+      "media": 0
+    },
+    {
+      "slug": "hackey-8011-many-times",
+      "title": "在Hackey纪元8011年，aliouswe拥有了多种时间",
+      "legacyPath": "/2025/12/03/在Hackey纪元8011年，aliouswe拥有了多种时间/",
+      "media": 0
+    }
+  ],
+  "sourceCounts": {
+    "posts": 8,
+    "jazz": 9,
+    "anime": 83,
+    "coffee": 6,
+    "media": 249,
+    "collectionSourcePages": 2
+  },
+  "normalizedCounts": {
+    "posts": 8,
+    "jazz": 9,
+    "anime": 82,
+    "coffee": 5
+  }
+}

@@ -1,0 +1,19 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SpaceIntro from '../../components/SpaceIntro.astro'
+import TensionCollection from '../../components/physics/TensionCollection'
+import PostCard from '../../components/PostCard.astro'
+import items from '../../data/coffee.json'
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft && data.space === 'coffee'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+---
+<BaseLayout title="Coffee" space="coffee">
+  <SpaceIntro space="coffee" />
+  <section class="section-block container">
+    <div class="section-heading"><div><span class="eyebrow">TASTING / RECORDS</span><h2>咖啡记录</h2></div></div>
+    <TensionCollection client:visible items={items} space="coffee" />
+  </section>
+  {posts.length > 0 && <section class="section-block container"><div class="section-heading"><h2>Coffee Notes</h2></div>{posts.map((post) => <PostCard post={post} />)}</section>}
+</BaseLayout>

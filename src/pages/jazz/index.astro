@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SpaceIntro from '../../components/SpaceIntro.astro'
+import TensionCollection from '../../components/physics/TensionCollection'
+import items from '../../data/jazz.json'
+---
+<BaseLayout title="Jazz" space="jazz">
+  <SpaceIntro space="jazz" />
+  <section class="section-block container">
+    <div class="section-heading"><div><span class="eyebrow">COLLECTION / ALBUMS</span><h2>Albums</h2></div></div>
+    <TensionCollection client:visible items={items} space="jazz" />
+  </section>
+</BaseLayout>

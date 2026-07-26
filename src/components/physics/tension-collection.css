@@ -1,0 +1,28 @@
+.tension-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem; padding-bottom: 1rem; }
+.tension-tabs { display: flex; gap: .45rem; overflow-x: auto; }
+.tension-tabs button, .tension-mode { flex: none; padding: .65rem .85rem; border: 1px solid var(--line); color: var(--text); background: transparent; font: .68rem/1 var(--mono); }
+.tension-tabs button.active, .tension-mode { color: var(--paper); background: var(--text); }
+.tension-tabs span { color: var(--accent); }
+.tension-note { color: var(--muted); font: .7rem/1.5 var(--mono); }
+.tension-stage { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+.tension-card { position: relative; min-width: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--paper); }
+.tension-card__open { width: 100%; height: 100%; padding: .75rem; display: grid; gap: .75rem; border: 0; color: var(--text); text-align: left; background: transparent; cursor: pointer; }
+.tension-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: var(--surface); }
+.tension-card span { min-height: 2.6em; font: .75rem/1.3 var(--mono); }
+.tension-collection.is-suspended .tension-stage { height: min(78vh, 820px); min-height: 620px; display: block; overflow: hidden; border: 1px solid var(--line); background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 44px 44px; }
+.tension-collection.is-suspended .tension-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; color: var(--accent); pointer-events: none; }
+.tension-collection.is-suspended .tension-stage line { stroke: currentColor; stroke-width: 1.5; }
+.tension-collection.is-suspended .tension-card { position: absolute; top: 0; left: 0; width: 154px; height: 216px; border: 1px solid var(--line); will-change: transform; }
+.tension-handle { position: absolute; z-index: 2; right: .35rem; bottom: .35rem; width: 2rem; height: 2rem; border: 1px solid var(--line); color: var(--text); background: var(--paper); cursor: grab; touch-action: none; }
+.tension-dialog { position: fixed; z-index: 200; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: 1rem; border: 0; color: var(--text); background: rgba(0,0,0,.75); }
+.tension-dialog > div { position: relative; width: min(92vw, 38rem); max-height: 92vh; margin: 2vh auto; padding: 1rem; overflow: auto; background: var(--paper); }
+.tension-dialog img { width: 100%; max-height: 68vh; object-fit: contain; }
+.tension-dialog h2 { margin: 1rem 0 .5rem; font: 500 2rem/1 var(--serif); }
+.tension-dialog p { color: var(--muted); font: .7rem/1.4 var(--mono); }
+.tension-dialog__close { position: absolute; z-index: 1; top: 1.5rem; right: 1.5rem; width: 2.5rem; height: 2.5rem; border: 1px solid var(--line); color: var(--text); background: var(--paper); font-size: 1.4rem; }
+@media(max-width:700px){
+  .tension-toolbar{grid-template-columns:1fr}
+  .tension-mode{justify-self:start}
+  .tension-stage{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tension-collection.is-suspended .tension-card{width:128px;height:184px}
+}

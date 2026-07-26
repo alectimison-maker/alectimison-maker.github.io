@@ -1,0 +1,178 @@
+---
+const currentPath = Astro.url.pathname
+const links = [
+  ['/article/', 'Article'],
+  ['/nonsense/', 'Nonsense'],
+  ['/jazz/', 'Jazz'],
+  ['/anime/', 'Anime'],
+  ['/coffee/', 'Coffee'],
+  ['/archive/', 'Archive'],
+] as const
+---
+
+<header class="site-header" data-header>
+  <a class="brand-avatar" href="/" aria-label="返回首页" data-spring>
+    <img src="/avatar.webp" width="44" height="44" alt="Aliouswe 的 GitHub 头像" />
+    <span aria-hidden="true" />
+  </a>
+
+  <nav class="desktop-nav" aria-label="主导航">
+    {links.map(([href, label]) => (
+      <a href={href} aria-current={currentPath.startsWith(href) ? 'page' : undefined}>{label}</a>
+    ))}
+  </nav>
+
+  <div class="header-actions">
+    <a class="search-link" href="/search/" aria-label="搜索"><span aria-hidden="true">⌘K</span> Search</a>
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <nav aria-label="移动端导航">
+      {links.map(([href, label], index) => (
+        <a href={href}><span>{String(index + 1).padStart(2, '0')}</span>{label}</a>
+      ))}
+      <a href="/search/"><span>07</span>Search</a>
+      <a href="/contact/"><span>08</span>Contact</a>
+    </nav>
+    <div class="menu-settings">
+      <span>THEME</span>
+      <button type="button" data-theme-value="light">Light</button>
+      <button type="button" data-theme-value="dark">Dark</button>
+      <button type="button" data-theme-value="system">System</button>
+    </div>
+    <div class="menu-settings">
+      <span>MOTION</span>
+      <button type="button" data-motion-value="full">Full</button>
+      <button type="button" data-motion-value="reduced">Reduced</button>
+    </div>
+    <div class="menu-settings">
+      <span>QUALITY</span>
+      <button type="button" data-quality-value="energy">节能</button>
+      <button type="button" data-quality-value="balanced">平衡</button>
+      <button type="button" data-quality-value="full">完整</button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')
+  const menuButton = header?.querySelector<HTMLButtonElement>('.menu-button')
+  const menu = header?.querySelector<HTMLElement>('.mobile-menu')
+
+  const setMenu = (open: boolean) => {
+    if (!menuButton || !menu) return
+    menuButton.setAttribute('aria-expanded', String(open))
+    menu.hidden = !open
+    document.documentElement.style.overflow = open ? 'hidden' : ''
+  }
+
+  menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'))
+  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)))
+
+  header?.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const value = button.dataset.themeValue
+      if (value === 'system') {
+        delete document.documentElement.dataset.theme
+        localStorage.removeItem('aliouswe-theme')
+      } else if (value === 'light' || value === 'dark') {
+        document.documentElement.dataset.theme = value
+        localStorage.setItem('aliouswe-theme', value)
+      }
+    })
+  })
+  header?.querySelectorAll<HTMLButtonElement>('[data-motion-value]').forEach((button) => {
+    button.addEventListener('click', () => {
+      localStorage.setItem('aliouswe-motion', button.dataset.motionValue ?? 'full')
+      window.location.reload()
+    })
+  })
+  header?.querySelectorAll<HTMLButtonElement>('[data-quality-value]').forEach((button) => {
+    button.addEventListener('click', () => {
+      localStorage.setItem('aliouswe-quality', button.dataset.qualityValue ?? 'balanced')
+      window.location.reload()
+    })
+  })
+
+  document.addEventListener('keydown', (event) => {
+    const target = event.target as HTMLElement | null
+    const editing = target?.matches('input, textarea, select, [contenteditable="true"]')
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k' || (!editing && event.key === '/')) {
+      event.preventDefault()
+      window.location.assign('/search/')
+    }
+    if (event.key === 'Escape') setMenu(false)
+  })
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    z-index: 100;
+    top: 0;
+    height: var(--header-height);
+    padding: 0 var(--page-pad);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(18px);
+  }
+  .brand-avatar {
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: block;
+    border-radius: 50%;
+  }
+  .brand-avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
+  .brand-avatar span {
+    position: absolute;
+    inset: -.24rem;
+    border: 1px solid var(--accent);
+    border-radius: inherit;
+    transition: transform .25s cubic-bezier(.2,.8,.2,1);
+  }
+  .brand-avatar:hover span { transform: translate(3px, -2px); }
+  .desktop-nav { display: flex; gap: clamp(.8rem, 2vw, 1.7rem); }
+  .desktop-nav a, .search-link, .menu-button {
+    color: var(--muted);
+    font: 650 .7rem/1 var(--mono);
+    letter-spacing: .08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .desktop-nav a[aria-current="page"], .desktop-nav a:hover, .search-link:hover { color: var(--text); }
+  .header-actions { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
+  .search-link span { color: var(--accent); }
+  .menu-button { display: none; padding: .7rem; border: 1px solid var(--line); background: none; }
+  .mobile-menu {
+    position: fixed;
+    z-index: -1;
+    inset: var(--header-height) 0 auto;
+    height: calc(100dvh - var(--header-height));
+    padding: clamp(2rem, 8vw, 5rem) var(--page-pad);
+    color: var(--text);
+    background: var(--paper);
+    overflow: auto;
+  }
+  .mobile-menu nav { display: grid; }
+  .mobile-menu nav a {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    padding: .75rem 0;
+    border-bottom: 1px solid var(--line);
+    font: 500 clamp(2.2rem, 10vw, 4rem)/1 var(--serif);
+    text-decoration: none;
+  }
+  .mobile-menu nav span, .menu-settings > span { font: 700 .65rem/1 var(--mono); color: var(--accent); }
+  .menu-settings { padding-top: 2rem; display: flex; gap: .75rem; align-items: center; }
+  .menu-settings button { padding: .6rem .8rem; border: 1px solid var(--line); color: var(--text); background: transparent; }
+  @media (max-width: 900px) {
+    .site-header { grid-template-columns: 1fr auto; }
+    .desktop-nav, .search-link { display: none; }
+    .menu-button { display: inline-flex; }
+  }
+</style>

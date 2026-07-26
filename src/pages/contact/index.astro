@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+const formId = import.meta.env.PUBLIC_FORMSPREE_FORM_ID
+---
+
+<BaseLayout title="Contact">
+  <section class="contact-page container">
+    <header>
+      <p class="eyebrow">CONTACT / WRITE DIRECTLY</p>
+      <h1>写信给我</h1>
+      <p>内容将经 Formspree 转发到我的邮箱。不会公开你的地址。</p>
+    </header>
+
+    <form action={formId ? `https://formspree.io/f/${formId}` : undefined} method="POST" data-contact-form>
+      <label><span>称呼 <small>可选</small></span><input type="text" name="name" autocomplete="name" /></label>
+      <label><span>回复邮箱</span><input type="email" name="email" autocomplete="email" required /></label>
+      <label><span>主题 <small>可选</small></span><input type="text" name="subject" /></label>
+      <label><span>内容</span><textarea name="message" rows="10" required /></label>
+      <label class="consent"><input type="checkbox" name="privacy-consent" value="accepted" required /><span>我已阅读<a href="/privacy/">隐私说明</a>，同意通过 Formspree 发送这段内容。</span></label>
+      <label class="honeypot" aria-hidden="true"><span>Leave empty</span><input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+      <input type="hidden" name="_subject" value="New message from aliouswe.com" />
+      <button class="button" type="submit" disabled={!formId}>发送内容</button>
+      <p class="form-status" role="status" data-form-status>{formId ? '发送后请留在本页，直到出现成功回执。' : '联系表单尚未配置 Formspree ID。'}</p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('[data-contact-form]')
+  const status = document.querySelector<HTMLElement>('[data-form-status]')
+  form?.addEventListener('submit', async (event) => {
+    if (!form.action) return
+    event.preventDefault()
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')
+    if (button) button.disabled = true
+    if (status) status.textContent = '正在发送…'
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { Accept: 'application/json' },
+      })
+      if (!response.ok) throw new Error('提交失败')
+      form.reset()
+      if (status) status.textContent = `发送成功 · 回执 ${Date.now().toString(36).toUpperCase()}`
+    } catch {
+      if (status) status.textContent = '暂时无法发送。内容仍保留在页面中，请稍后重试或先复制保存。'
+    } finally {
+      if (button) button.disabled = false
+    }
+  })
+</script>
+
+<style>
+  .contact-page { padding-block: clamp(4rem, 10vw, 10rem); display: grid; grid-template-columns: minmax(0, .8fr) minmax(20rem, 1fr); gap: clamp(3rem, 10vw, 10rem); }
+  header h1 { margin: .5rem 0 1rem; font: 550 clamp(3.5rem, 9vw, 8rem)/.85 var(--serif); letter-spacing: -.06em; }
+  header > p:last-child { max-width: 28rem; color: var(--muted); line-height: 1.6; }
+  form { display: grid; gap: 1.25rem; }
+  form > label:not(.consent):not(.honeypot) { display: grid; gap: .45rem; }
+  label > span { font: 700 .68rem/1.3 var(--mono); text-transform: uppercase; }
+  label small { color: var(--muted); font-weight: 400; }
+  input, textarea { width: 100%; padding: .85rem; border: 1px solid var(--line); border-radius: 0; color: var(--text); background: var(--surface); }
+  textarea { resize: vertical; line-height: 1.6; }
+  .consent { display: flex; align-items: start; gap: .65rem; color: var(--muted); }
+  .consent input { width: auto; margin-top: .15rem; }
+  .consent span { font: .78rem/1.5 var(--sans); text-transform: none; }
+  .honeypot { position: absolute; left: -9999px; }
+  .form-status { color: var(--muted); font: .7rem/1.4 var(--mono); }
+  @media(max-width:760px){.contact-page{grid-template-columns:1fr}}
+</style>

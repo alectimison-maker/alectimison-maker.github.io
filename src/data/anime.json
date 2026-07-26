@@ -1,0 +1,823 @@
+[
+  {
+    "id": "春物-第二季",
+    "type": "anime",
+    "title": "春物 （第二季）",
+    "cover": "/media/anime/启蒙番/春物 （第二季）.webp",
+    "shelves": [
+      "启蒙番"
+    ],
+    "order": 0
+  },
+  {
+    "id": "春物-第三季",
+    "type": "anime",
+    "title": "春物 （第三季）",
+    "cover": "/media/anime/启蒙番/春物 （第三季）.webp",
+    "shelves": [
+      "启蒙番"
+    ],
+    "order": 1
+  },
+  {
+    "id": "春物-第一季",
+    "type": "anime",
+    "title": "春物 （第一季）",
+    "cover": "/media/anime/启蒙番/春物 （第一季）.webp",
+    "shelves": [
+      "启蒙番"
+    ],
+    "order": 2
+  },
+  {
+    "id": "欢迎光临樱兰高校",
+    "type": "anime",
+    "title": "欢迎光临樱兰高校",
+    "cover": "/media/anime/群像番/欢迎光临樱兰高校.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 3
+  },
+  {
+    "id": "僵尸百分百",
+    "type": "anime",
+    "title": "僵尸百分百",
+    "cover": "/media/anime/群像番/僵尸百分百.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 4
+  },
+  {
+    "id": "漂流少年",
+    "type": "anime",
+    "title": "漂流少年",
+    "cover": "/media/anime/群像番/漂流少年.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 5
+  },
+  {
+    "id": "天国大魔镜",
+    "type": "anime",
+    "title": "天国大魔镜",
+    "cover": "/media/anime/群像番/天国大魔镜.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 6
+  },
+  {
+    "id": "无头骑士异闻录",
+    "type": "anime",
+    "title": "无头骑士异闻录",
+    "cover": "/media/anime/群像番/无头骑士异闻录.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 7
+  },
+  {
+    "id": "弦音-风舞高中弓道部",
+    "type": "anime",
+    "title": "弦音-风舞高中弓道部",
+    "cover": "/media/anime/群像番/弦音-风舞高中弓道部.webp",
+    "shelves": [
+      "群像番"
+    ],
+    "order": 8
+  },
+  {
+    "id": "超时空辉夜姬",
+    "type": "anime",
+    "title": "超时空辉夜姬",
+    "cover": "/media/anime/神番（无需多言）/超时空辉夜姬.webp",
+    "shelves": [
+      "神番（无需多言）",
+      "最近在看"
+    ],
+    "order": 9
+  },
+  {
+    "id": "吊带袜天使",
+    "type": "anime",
+    "title": "吊带袜天使",
+    "cover": "/media/anime/神番（无需多言）/吊带袜天使.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 10
+  },
+  {
+    "id": "灰与幻想的格林姆迦尔",
+    "type": "anime",
+    "title": "灰与幻想的格林姆迦尔",
+    "cover": "/media/anime/神番（无需多言）/灰与幻想的格林姆迦尔.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 11
+  },
+  {
+    "id": "蓝色巨人",
+    "type": "anime",
+    "title": "蓝色巨人",
+    "cover": "/media/anime/神番（无需多言）/蓝色巨人.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 12
+  },
+  {
+    "id": "星际牛仔",
+    "type": "anime",
+    "title": "星际牛仔",
+    "cover": "/media/anime/神番（无需多言）/星际牛仔.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 13
+  },
+  {
+    "id": "终将成为你",
+    "type": "anime",
+    "title": "终将成为你",
+    "cover": "/media/anime/神番（无需多言）/终将成为你.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 14
+  },
+  {
+    "id": "acca13区监察课",
+    "type": "anime",
+    "title": "ACCA13区监察课",
+    "cover": "/media/anime/神番（无需多言）/ACCA13区监察课.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 15
+  },
+  {
+    "id": "flcl",
+    "type": "anime",
+    "title": "flcl",
+    "cover": "/media/anime/神番（无需多言）/flcl.webp",
+    "shelves": [
+      "神番（无需多言）"
+    ],
+    "order": 16
+  },
+  {
+    "id": "春夏秋冬代行者-春之舞",
+    "type": "anime",
+    "title": "春夏秋冬代行者 春之舞",
+    "cover": "/media/anime/最近在看/春夏秋冬代行者 春之舞.webp",
+    "shelves": [
+      "最近在看"
+    ],
+    "order": 18
+  },
+  {
+    "id": "异国日记",
+    "type": "anime",
+    "title": "异国日记",
+    "cover": "/media/anime/最近在看/异国日记.webp",
+    "shelves": [
+      "最近在看"
+    ],
+    "order": 19
+  },
+  {
+    "id": "葬送的芙莉莲-第二季",
+    "type": "anime",
+    "title": "葬送的芙莉莲 （第二季）",
+    "cover": "/media/anime/最近在看/葬送的芙莉莲 （第二季）.webp",
+    "shelves": [
+      "最近在看"
+    ],
+    "order": 20
+  },
+  {
+    "id": "咒术回战-第三季",
+    "type": "anime",
+    "title": "咒术回战（第三季）",
+    "cover": "/media/anime/最近在看/咒术回战（第三季）.webp",
+    "shelves": [
+      "最近在看"
+    ],
+    "order": 21
+  },
+  {
+    "id": "罪恶王冠",
+    "type": "anime",
+    "title": "罪恶王冠",
+    "cover": "/media/anime/最近在看/罪恶王冠.webp",
+    "shelves": [
+      "最近在看"
+    ],
+    "order": 22
+  },
+  {
+    "id": "86不存在的战区",
+    "type": "anime",
+    "title": "86不存在的战区",
+    "cover": "/media/anime/beloved热血少年漫/86不存在的战区.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 23
+  },
+  {
+    "id": "东京喰种",
+    "type": "anime",
+    "title": "东京喰种",
+    "cover": "/media/anime/beloved热血少年漫/东京喰种.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 24
+  },
+  {
+    "id": "灌篮高手",
+    "type": "anime",
+    "title": "灌篮高手",
+    "cover": "/media/anime/beloved热血少年漫/灌篮高手.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 25
+  },
+  {
+    "id": "黑色四叶草",
+    "type": "anime",
+    "title": "黑色四叶草",
+    "cover": "/media/anime/beloved热血少年漫/黑色四叶草.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 26
+  },
+  {
+    "id": "羁绊者",
+    "type": "anime",
+    "title": "羁绊者",
+    "cover": "/media/anime/beloved热血少年漫/羁绊者.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 27
+  },
+  {
+    "id": "蓝色时期",
+    "type": "anime",
+    "title": "蓝色时期",
+    "cover": "/media/anime/beloved热血少年漫/蓝色时期.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 28
+  },
+  {
+    "id": "排球少年",
+    "type": "anime",
+    "title": "排球少年",
+    "cover": "/media/anime/beloved热血少年漫/排球少年.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 29
+  },
+  {
+    "id": "枪神",
+    "type": "anime",
+    "title": "枪神",
+    "cover": "/media/anime/beloved热血少年漫/枪神.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 30
+  },
+  {
+    "id": "赛博朋克-边缘行者",
+    "type": "anime",
+    "title": "赛博朋克：边缘行者",
+    "cover": "/media/anime/beloved热血少年漫/赛博朋克：边缘行者.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 31
+  },
+  {
+    "id": "文豪野犬",
+    "type": "anime",
+    "title": "文豪野犬",
+    "cover": "/media/anime/beloved热血少年漫/文豪野犬.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 32
+  },
+  {
+    "id": "无限滑板",
+    "type": "anime",
+    "title": "无限滑板",
+    "cover": "/media/anime/beloved热血少年漫/无限滑板.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 33
+  },
+  {
+    "id": "夏日重现",
+    "type": "anime",
+    "title": "夏日重现",
+    "cover": "/media/anime/beloved热血少年漫/夏日重现.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 34
+  },
+  {
+    "id": "血界战线",
+    "type": "anime",
+    "title": "血界战线",
+    "cover": "/media/anime/beloved热血少年漫/血界战线.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 35
+  },
+  {
+    "id": "终结的炽天使",
+    "type": "anime",
+    "title": "终结的炽天使",
+    "cover": "/media/anime/beloved热血少年漫/终结的炽天使.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 36
+  },
+  {
+    "id": "charlotte",
+    "type": "anime",
+    "title": "Charlotte",
+    "cover": "/media/anime/beloved热血少年漫/Charlotte.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 37
+  },
+  {
+    "id": "darling-in-the-franxx",
+    "type": "anime",
+    "title": "DARLING in the FRANXX",
+    "cover": "/media/anime/beloved热血少年漫/DARLING in the FRANXX.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 38
+  },
+  {
+    "id": "eva",
+    "type": "anime",
+    "title": "EVA",
+    "cover": "/media/anime/beloved热血少年漫/EVA.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 39
+  },
+  {
+    "id": "fate",
+    "type": "anime",
+    "title": "Fate",
+    "cover": "/media/anime/beloved热血少年漫/Fate.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 40
+  },
+  {
+    "id": "re-从零开始的异世界生活",
+    "type": "anime",
+    "title": "Re：从零开始的异世界生活",
+    "cover": "/media/anime/beloved热血少年漫/Re：从零开始的异世界生活.webp",
+    "shelves": [
+      "beloved热血少年漫"
+    ],
+    "order": 41
+  },
+  {
+    "id": "乔西与虎与鱼",
+    "type": "anime",
+    "title": "乔西与虎与鱼",
+    "cover": "/media/anime/my 2021/乔西与虎与鱼.webp",
+    "shelves": [
+      "my 2021"
+    ],
+    "order": 42
+  },
+  {
+    "id": "虚构推理",
+    "type": "anime",
+    "title": "虚构推理",
+    "cover": "/media/anime/my 2021/虚构推理.webp",
+    "shelves": [
+      "my 2021"
+    ],
+    "order": 43
+  },
+  {
+    "id": "萤火虫之森",
+    "type": "anime",
+    "title": "萤火虫之森",
+    "cover": "/media/anime/my 2021/萤火虫之森.webp",
+    "shelves": [
+      "my 2021"
+    ],
+    "order": 44
+  },
+  {
+    "id": "侦探已死",
+    "type": "anime",
+    "title": "侦探已死",
+    "cover": "/media/anime/my 2021/侦探已死.webp",
+    "shelves": [
+      "my 2021"
+    ],
+    "order": 45
+  },
+  {
+    "id": "昨日之歌",
+    "type": "anime",
+    "title": "昨日之歌",
+    "cover": "/media/anime/my 2021/昨日之歌.webp",
+    "shelves": [
+      "my 2021"
+    ],
+    "order": 46
+  },
+  {
+    "id": "海兽之子",
+    "type": "anime",
+    "title": "海兽之子",
+    "cover": "/media/anime/my 2022/海兽之子.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 47
+  },
+  {
+    "id": "没落要塞",
+    "type": "anime",
+    "title": "没落要塞",
+    "cover": "/media/anime/my 2022/没落要塞.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 48
+  },
+  {
+    "id": "女神异闻录5",
+    "type": "anime",
+    "title": "女神异闻录5",
+    "cover": "/media/anime/my 2022/女神异闻录5.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 49
+  },
+  {
+    "id": "夏日幻魂",
+    "type": "anime",
+    "title": "夏日幻魂",
+    "cover": "/media/anime/my 2022/夏日幻魂.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 50
+  },
+  {
+    "id": "异度侵入",
+    "type": "anime",
+    "title": "异度侵入",
+    "cover": "/media/anime/my 2022/异度侵入.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 51
+  },
+  {
+    "id": "紫罗兰永恒花园",
+    "type": "anime",
+    "title": "紫罗兰永恒花园",
+    "cover": "/media/anime/my 2022/紫罗兰永恒花园.webp",
+    "shelves": [
+      "my 2022"
+    ],
+    "order": 52
+  },
+  {
+    "id": "东京残响",
+    "type": "anime",
+    "title": "东京残响",
+    "cover": "/media/anime/my 2023/东京残响.webp",
+    "shelves": [
+      "my 2023"
+    ],
+    "order": 53
+  },
+  {
+    "id": "孤独摇滚",
+    "type": "anime",
+    "title": "孤独摇滚",
+    "cover": "/media/anime/my 2023/孤独摇滚.webp",
+    "shelves": [
+      "my 2023"
+    ],
+    "order": 54
+  },
+  {
+    "id": "堀与宫村",
+    "type": "anime",
+    "title": "堀与宫村",
+    "cover": "/media/anime/my 2023/堀与宫村.webp",
+    "shelves": [
+      "my 2023"
+    ],
+    "order": 55
+  },
+  {
+    "id": "杀戮天使",
+    "type": "anime",
+    "title": "杀戮天使",
+    "cover": "/media/anime/my 2023/杀戮天使.webp",
+    "shelves": [
+      "my 2023"
+    ],
+    "order": 56
+  },
+  {
+    "id": "坂道上的阿波罗",
+    "type": "anime",
+    "title": "坂道上的阿波罗",
+    "cover": "/media/anime/my 2024/坂道上的阿波罗.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 57
+  },
+  {
+    "id": "古见同学有交流障碍症",
+    "type": "anime",
+    "title": "古见同学有交流障碍症",
+    "cover": "/media/anime/my 2024/古见同学有交流障碍症.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 58
+  },
+  {
+    "id": "鬼灭之刃-柱训练篇",
+    "type": "anime",
+    "title": "鬼灭之刃 柱训练篇",
+    "cover": "/media/anime/my 2024/鬼灭之刃 柱训练篇.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 59
+  },
+  {
+    "id": "绝园的暴风雨",
+    "type": "anime",
+    "title": "绝园的暴风雨",
+    "cover": "/media/anime/my 2024/绝园的暴风雨.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 60
+  },
+  {
+    "id": "莉可丽丝",
+    "type": "anime",
+    "title": "莉可丽丝",
+    "cover": "/media/anime/my 2024/莉可丽丝.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 61
+  },
+  {
+    "id": "迷宫饭",
+    "type": "anime",
+    "title": "迷宫饭",
+    "cover": "/media/anime/my 2024/迷宫饭.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 62
+  },
+  {
+    "id": "通往夏天的隧道-再见的出口",
+    "type": "anime",
+    "title": "通往夏天的隧道 再见的出口",
+    "cover": "/media/anime/my 2024/通往夏天的隧道 再见的出口.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 63
+  },
+  {
+    "id": "我推的孩子",
+    "type": "anime",
+    "title": "我推的孩子",
+    "cover": "/media/anime/my 2024/我推的孩子.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 64
+  },
+  {
+    "id": "我心里危险的东西",
+    "type": "anime",
+    "title": "我心里危险的东西",
+    "cover": "/media/anime/my 2024/我心里危险的东西.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 65
+  },
+  {
+    "id": "物理魔法使马修",
+    "type": "anime",
+    "title": "物理魔法使马修",
+    "cover": "/media/anime/my 2024/物理魔法使马修.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 66
+  },
+  {
+    "id": "摇曳露营",
+    "type": "anime",
+    "title": "摇曳露营",
+    "cover": "/media/anime/my 2024/摇曳露营.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 67
+  },
+  {
+    "id": "有顶天家族",
+    "type": "anime",
+    "title": "有顶天家族",
+    "cover": "/media/anime/my 2024/有顶天家族.webp",
+    "shelves": [
+      "my 2024"
+    ],
+    "order": 68
+  },
+  {
+    "id": "坂本日常",
+    "type": "anime",
+    "title": "坂本日常",
+    "cover": "/media/anime/my 2025/坂本日常.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 69
+  },
+  {
+    "id": "彻夜之歌-第二季",
+    "type": "anime",
+    "title": "彻夜之歌 （第二季）",
+    "cover": "/media/anime/my 2025/彻夜之歌 （第二季）.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 70
+  },
+  {
+    "id": "电锯人-蕾赛篇",
+    "type": "anime",
+    "title": "电锯人 蕾赛篇",
+    "cover": "/media/anime/my 2025/电锯人 蕾赛篇.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 71
+  },
+  {
+    "id": "国王排名",
+    "type": "anime",
+    "title": "国王排名",
+    "cover": "/media/anime/my 2025/国王排名.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 72
+  },
+  {
+    "id": "进击的巨人",
+    "type": "anime",
+    "title": "进击的巨人",
+    "cover": "/media/anime/my 2025/进击的巨人.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 73
+  },
+  {
+    "id": "青春猪头少年不会梦到圣诞服女郎",
+    "type": "anime",
+    "title": "青春猪头少年不会梦到圣诞服女郎",
+    "cover": "/media/anime/my 2025/青春猪头少年不会梦到圣诞服女郎.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 74
+  },
+  {
+    "id": "失忆投捕",
+    "type": "anime",
+    "title": "失忆投捕",
+    "cover": "/media/anime/my 2025/失忆投捕.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 75
+  },
+  {
+    "id": "四月是你的谎言",
+    "type": "anime",
+    "title": "四月是你的谎言",
+    "cover": "/media/anime/my 2025/四月是你的谎言.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 76
+  },
+  {
+    "id": "我独自升级-第二季",
+    "type": "anime",
+    "title": "我独自升级 （第二季）",
+    "cover": "/media/anime/my 2025/我独自升级 （第二季）.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 77
+  },
+  {
+    "id": "想吃掉我的非人少女",
+    "type": "anime",
+    "title": "想吃掉我的非人少女",
+    "cover": "/media/anime/my 2025/想吃掉我的非人少女.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 78
+  },
+  {
+    "id": "小市民",
+    "type": "anime",
+    "title": "小市民",
+    "cover": "/media/anime/my 2025/小市民.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 79
+  },
+  {
+    "id": "药物少女的呢喃-第二季",
+    "type": "anime",
+    "title": "药物少女的呢喃（第二季）",
+    "cover": "/media/anime/my 2025/药物少女的呢喃（第二季）.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 80
+  },
+  {
+    "id": "章鱼哔的原罪",
+    "type": "anime",
+    "title": "章鱼哔的原罪",
+    "cover": "/media/anime/my 2025/章鱼哔的原罪.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 81
+  },
+  {
+    "id": "jojo的奇妙冒险-黄金之风",
+    "type": "anime",
+    "title": "JOJO的奇妙冒险 黄金之风",
+    "cover": "/media/anime/my 2025/JOJO的奇妙冒险 黄金之风.webp",
+    "shelves": [
+      "my 2025"
+    ],
+    "order": 82
+  }
+]

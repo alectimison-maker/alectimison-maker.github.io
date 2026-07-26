@@ -1,0 +1,188 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import BaseLayout from './BaseLayout.astro'
+import { estimateReadingMinutes, formatDate, SITE } from '../lib/site'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+  headings: Array<{ depth: number; slug: string; text: string }>
+  canonical?: string
+  previous?: CollectionEntry<'posts'>
+  next?: CollectionEntry<'posts'>
+  noindex?: boolean
+  searchable?: boolean
+}
+
+const { post, headings, canonical, previous, next, noindex = false, searchable = true } = Astro.props
+const { title, description, date, updatedAt, tags, lang, space } = post.data
+const displayLang = lang === 'mixed' ? 'zh-CN' : lang
+const readingMinutes = estimateReadingMinutes(post.body)
+---
+
+<BaseLayout title={title} description={description} canonical={canonical} image={`/og/${post.id}.png`} type="article" lang={displayLang} space={space} noindex={noindex} searchable={searchable}>
+  <article class="article-shell container">
+    <header class="article-header">
+      <p class="eyebrow">{space} / {date.getFullYear()}</p>
+      <h1>{title}</h1>
+      {description && <p class="article-deck">{description}</p>}
+      <div class="article-meta">
+        <time datetime={date.toISOString()}>{formatDate(date)}</time>
+        <span>约 {readingMinutes} 分钟阅读</span>
+        {updatedAt && updatedAt.getTime() !== date.getTime() && <span>更新于 {formatDate(updatedAt)}</span>}
+        {tags.length > 0 && <span>{tags.map((tag) => `#${tag}`).join(' · ')}</span>}
+      </div>
+    </header>
+
+    <div class="article-grid">
+      <div class="article-content prose">
+        <slot />
+      </div>
+      {headings.length > 1 && (
+        <aside class="article-toc">
+          <span>CONTENTS</span>
+          <nav aria-label="文章目录">
+            {headings.filter((heading) => heading.depth <= 3).map((heading) => (
+              <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>
+            ))}
+          </nav>
+        </aside>
+      )}
+    </div>
+
+    <footer class="article-footer">
+      <div class="author-strip">
+        <img src="/avatar.webp" width="58" height="58" alt="" />
+        <div><strong>{SITE.author}</strong><span>{SITE.description}</span></div>
+        <a href={SITE.github}>GitHub ↗</a>
+      </div>
+      <div class="article-actions">
+        <button type="button" data-copy-link>复制链接</button>
+        <button type="button" data-native-share hidden>分享</button>
+      </div>
+      <nav class="post-navigation" aria-label="相邻文章">
+        {previous ? <a href={`/posts/${previous.id}/`}><span>上一篇</span>{previous.data.title}</a> : <span />}
+        {next ? <a href={`/posts/${next.id}/`}><span>下一篇</span>{next.data.title}</a> : <span />}
+      </nav>
+      <div class="comments">
+        <button class="button" type="button" data-load-comments>展开讨论</button>
+        <p data-comments-status>评论由 GitHub Discussions 提供，仅在主动展开后连接。</p>
+        <div data-comments-root />
+      </div>
+    </footer>
+  </article>
+</BaseLayout>
+
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-link]')
+  copyButton?.addEventListener('click', async () => {
+    await navigator.clipboard.writeText(window.location.href)
+    copyButton.textContent = '已复制'
+  })
+
+  const shareButton = document.querySelector<HTMLButtonElement>('[data-native-share]')
+  if (shareButton && navigator.share) {
+    shareButton.hidden = false
+    shareButton.addEventListener('click', () => navigator.share({ title: document.title, url: window.location.href }))
+  }
+
+  document.querySelector<HTMLButtonElement>('[data-load-comments]')?.addEventListener('click', (event) => {
+    const button = event.currentTarget as HTMLButtonElement
+    const root = document.querySelector<HTMLElement>('[data-comments-root]')
+    const status = document.querySelector<HTMLElement>('[data-comments-status]')
+    if (!root || root.childElementCount > 0) return
+    const values = {
+      repo: import.meta.env.PUBLIC_GISCUS_REPO,
+      repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID,
+      category: import.meta.env.PUBLIC_GISCUS_CATEGORY,
+      categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID,
+    }
+    if (!values.repo || !values.repoId || !values.category || !values.categoryId) {
+      if (status) status.textContent = '评论尚未完成站点配置。'
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://giscus.app/client.js'
+    script.async = true
+    script.crossOrigin = 'anonymous'
+    script.dataset.repo = values.repo
+    script.dataset.repoId = values.repoId
+    script.dataset.category = values.category
+    script.dataset.categoryId = values.categoryId
+    script.dataset.mapping = 'pathname'
+    script.dataset.strict = '1'
+    script.dataset.reactionsEnabled = '1'
+    script.dataset.emitMetadata = '0'
+    script.dataset.inputPosition = 'top'
+    script.dataset.theme = 'preferred_color_scheme'
+    script.dataset.lang = 'zh-CN'
+    root.append(script)
+    button.hidden = true
+    if (status) status.textContent = ''
+  })
+
+  document.querySelectorAll<HTMLElement>('.prose pre').forEach((pre) => {
+    const wrapper = document.createElement('div')
+    wrapper.className = 'code-block'
+    pre.before(wrapper)
+    wrapper.append(pre)
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'code-copy'
+    button.textContent = '复制'
+    button.setAttribute('aria-label', '复制代码')
+    button.addEventListener('click', async () => {
+      await navigator.clipboard.writeText(pre.textContent ?? '')
+      button.textContent = '已复制'
+      window.setTimeout(() => { button.textContent = '复制' }, 1600)
+    })
+    wrapper.append(button)
+  })
+</script>
+
+<style>
+  .article-shell { padding-block: clamp(3rem, 8vw, 8rem); }
+  .article-header { max-width: 84rem; padding-bottom: clamp(3rem, 7vw, 6rem); border-bottom: 1px solid var(--line); }
+  .article-header h1 { max-width: 15ch; margin: .7rem 0 1.5rem; font: 550 clamp(3rem, 8vw, 7.5rem)/.92 var(--serif); letter-spacing: -.055em; }
+  .article-deck { max-width: 48rem; color: var(--muted); font: 1.2rem/1.55 var(--serif); }
+  .article-meta { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-top: 2rem; color: var(--muted); font: .7rem/1.4 var(--mono); }
+  .article-grid { display: grid; grid-template-columns: minmax(0, var(--reading)) minmax(12rem, 1fr); gap: clamp(3rem, 8vw, 10rem); justify-content: center; padding-block: clamp(3rem, 7vw, 7rem); }
+  .article-content { min-width: 0; }
+  .article-toc { position: sticky; top: calc(var(--header-height) + 2rem); height: max-content; border-left: 1px solid var(--line); padding-left: 1.2rem; }
+  .article-toc > span { color: var(--accent); font: 700 .65rem/1 var(--mono); }
+  .article-toc nav { display: grid; gap: .65rem; margin-top: 1rem; }
+  .article-toc a { color: var(--muted); font-size: .82rem; line-height: 1.35; text-decoration: none; }
+  .article-toc a[data-depth="3"] { padding-left: 1rem; }
+  .prose :global(h2), .prose :global(h3), .prose :global(h4) { scroll-margin-top: calc(var(--header-height) + 1.5rem); font-family: var(--serif); line-height: 1.15; }
+  .prose :global(h2) { margin: 2.4em 0 .7em; font-size: clamp(2rem, 4vw, 3.5rem); letter-spacing: -.035em; }
+  .prose :global(h3) { margin: 2em 0 .6em; font-size: 1.65rem; }
+  .prose :global(p), .prose :global(li) { font: 1.05rem/1.85 var(--serif); }
+  .prose :global(p) { margin: 0 0 1.35em; }
+  .prose :global(a) { text-decoration-color: var(--accent); text-underline-offset: .2em; }
+  .prose :global(blockquote) { margin: 2rem 0; padding: .5rem 1.5rem; border-left: .25rem solid var(--accent); color: var(--muted); }
+  .prose :global(.code-block) { position: relative; margin-block: 1.5rem; }
+  .prose :global(pre) { margin: 0; padding: 2.5rem 1rem 1rem; overflow: auto; border: 1px solid var(--line); background: #0d1117; }
+  .prose :global(.code-copy) { position: absolute; z-index: 1; top: .5rem; right: .5rem; padding: .3rem .55rem; border: 1px solid #455148; color: #d9fff3; background: #151d18; font: .65rem/1 var(--mono); cursor: pointer; }
+  .prose :global(code) { font-family: var(--mono); font-size: .86em; }
+  .prose :global(:not(pre) > code) { padding: .15em .35em; background: var(--surface); }
+  .prose :global(img) { display: block; margin: 2rem auto; border: 1px solid var(--line); }
+  .prose :global(table) { width: 100%; border-collapse: collapse; overflow: auto; }
+  .prose :global(th), .prose :global(td) { padding: .65rem; border: 1px solid var(--line); text-align: left; }
+  .article-footer { max-width: var(--reading); margin-inline: auto; border-top: 1px solid var(--line); }
+  .author-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: 1.5rem 0; }
+  .author-strip img { border-radius: 50%; }
+  .author-strip div { display: grid; gap: .25rem; }
+  .author-strip span { color: var(--muted); font-size: .8rem; }
+  .author-strip a { font: .7rem/1 var(--mono); }
+  .article-actions { display: flex; gap: .75rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+  .article-actions button { padding: .6rem .85rem; border: 1px solid var(--line); color: var(--text); background: transparent; }
+  .post-navigation { display: grid; grid-template-columns: 1fr 1fr; border-block: 1px solid var(--line); }
+  .post-navigation a { padding: 1.5rem 0; font: 1rem/1.35 var(--serif); text-decoration: none; }
+  .post-navigation a:last-child { text-align: right; }
+  .post-navigation span { display: block; margin-bottom: .35rem; color: var(--muted); font: .65rem/1 var(--mono); }
+  .comments { padding-top: 2rem; }
+  .comments p { color: var(--muted); font-size: .78rem; }
+  @media (max-width: 860px) {
+    .article-grid { grid-template-columns: minmax(0, 1fr); }
+    .article-toc { position: static; order: -1; border-left: 0; border-block: 1px solid var(--line); padding: 1rem 0; }
+  }
+</style>

@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import SpaceIntro from '../../components/SpaceIntro.astro'
+import TensionCollection from '../../components/physics/TensionCollection'
+import items from '../../data/anime.json'
+---
+<BaseLayout title="Anime" space="anime">
+  <SpaceIntro space="anime" />
+  <section class="section-block container">
+    <div class="section-heading"><div><span class="eyebrow">COLLECTION / WATCHED</span><h2>动画收藏</h2></div></div>
+    <TensionCollection client:visible items={items} space="anime" />
+  </section>
+</BaseLayout>

@@ -1,0 +1,90 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Search" noindex searchable={false}>
+  <section class="search-page container">
+    <header>
+      <p class="eyebrow">LOCAL INDEX / PAGEFIND</p>
+      <h1>SEARCH</h1>
+      <p>搜索标题、正文、栏目与标签。索引完全在构建时生成。</p>
+    </header>
+    <label class="search-box">
+      <span class="sr-only">搜索站内内容</span>
+      <input type="search" inputmode="search" autocomplete="off" placeholder="输入关键词…" autofocus data-search-input />
+      <kbd>ESC</kbd>
+    </label>
+    <p class="search-status" data-search-status>输入关键词开始搜索。</p>
+    <ol class="search-results" data-search-results />
+  </section>
+</BaseLayout>
+
+<script is:inline type="module">
+  const input = document.querySelector('[data-search-input]')
+  const results = document.querySelector('[data-search-results]')
+  const status = document.querySelector('[data-search-status]')
+  let pagefind
+
+  const ensurePagefind = async () => {
+    if (pagefind) return pagefind
+    try {
+      pagefind = await import('/pagefind/pagefind.js')
+      await pagefind.init()
+      return pagefind
+    } catch {
+      status.textContent = '本地开发环境尚未生成索引；运行 npm run build 后可用。'
+      return null
+    }
+  }
+
+  let request = 0
+  input.addEventListener('input', async () => {
+    const query = input.value.trim()
+    const current = ++request
+    if (!query) {
+      results.innerHTML = ''
+      status.textContent = '输入关键词开始搜索。'
+      return
+    }
+    const engine = await ensurePagefind()
+    if (!engine) return
+    const search = await engine.search(query)
+    const data = await Promise.all(search.results.slice(0, 20).map((result) => result.data()))
+    if (current !== request) return
+    status.textContent = `找到 ${search.results.length} 条结果`
+    results.replaceChildren(...data.map((item) => {
+      const row = document.createElement('li')
+      const link = document.createElement('a')
+      const title = document.createElement('span')
+      const excerpt = document.createElement('p')
+      link.href = item.url
+      title.textContent = item.meta?.title || item.url
+      excerpt.textContent = (item.excerpt || '').replace(/<[^>]+>/g, '')
+      link.append(title, excerpt)
+      row.append(link)
+      return row
+    }))
+  })
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      input.value = ''
+      results.innerHTML = ''
+      status.textContent = '输入关键词开始搜索。'
+    }
+  })
+</script>
+
+<style>
+  .search-page { min-height: 75vh; padding-block: clamp(4rem, 10vw, 10rem); }
+  header h1 { margin: .5rem 0; font: 600 clamp(4rem, 16vw, 13rem)/.8 var(--serif); letter-spacing: -.07em; }
+  header > p:last-child { color: var(--muted); }
+  .search-box { margin-top: 3rem; display: grid; grid-template-columns: 1fr auto; border-bottom: 2px solid var(--text); }
+  input { min-width: 0; padding: 1rem 0; border: 0; outline: 0; color: var(--text); background: transparent; font: clamp(1.4rem, 4vw, 3rem)/1.2 var(--serif); }
+  kbd { align-self: center; padding: .35rem; border: 1px solid var(--line); color: var(--muted); font: .6rem/1 var(--mono); }
+  .search-status { color: var(--muted); font: .7rem/1.4 var(--mono); }
+  .search-results { padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .search-results :global(li) { border-bottom: 1px solid var(--line); }
+  .search-results :global(a) { display: block; padding: 1.2rem 0; text-decoration: none; }
+  .search-results :global(span) { font: 500 1.4rem/1.2 var(--serif); }
+  .search-results :global(p) { color: var(--muted); line-height: 1.5; }
+</style>

@@ -1,0 +1,14 @@
+---
+import { getCollection } from 'astro:content'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+const posts = await getCollection('posts', ({ data }) => !data.draft)
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b))
+---
+<BaseLayout title="Tags">
+  <section class="taxonomy container">
+    <p class="eyebrow">TAXONOMY / TAGS</p>
+    <h1>TAGS</h1>
+    <div>{tags.map((tag) => <a href={`/tags/${tag}/`}>#{tag}</a>)}</div>
+  </section>
+</BaseLayout>
+<style>.taxonomy{min-height:70vh;padding-block:clamp(4rem,10vw,10rem)}h1{margin:.5rem 0 3rem;font:600 clamp(5rem,18vw,15rem)/.75 var(--serif);letter-spacing:-.08em}.taxonomy div{display:flex;flex-wrap:wrap;gap:.6rem}.taxonomy a{padding:.8rem 1rem;border:1px solid var(--line);text-decoration:none;font:1rem/1 var(--mono)}</style>

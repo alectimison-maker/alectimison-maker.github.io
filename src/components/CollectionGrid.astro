@@ -1,0 +1,102 @@
+---
+import ResponsiveImage from './ResponsiveImage.astro'
+
+interface CollectionItem {
+  id: string
+  title: string
+  cover: string
+  shelves: string[]
+  order: number
+}
+
+interface Props {
+  items: CollectionItem[]
+  space: 'jazz' | 'anime' | 'coffee'
+}
+
+const { items, space } = Astro.props
+const shelves = [...new Set(items.flatMap((item) => item.shelves))]
+---
+
+<div class="collection-view" data-collection={space}>
+  <div class="collection-tabs" role="group" aria-label="收藏分组">
+    <button type="button" class="active" data-shelf="all">全部 <span>{items.length}</span></button>
+    {shelves.map((shelf) => <button type="button" data-shelf={shelf}>{shelf}</button>)}
+  </div>
+
+  <div class="collection-grid">
+    {items.map((item) => (
+      <article class="collection-card" data-shelves={JSON.stringify(item.shelves)}>
+        <button type="button" data-card-open aria-label={`查看 ${item.title}`}>
+          <ResponsiveImage src={item.cover} alt={`${item.title} 封面`} />
+          <span>{item.title}</span>
+        </button>
+      </article>
+    ))}
+  </div>
+
+  <dialog class="collection-dialog">
+    <button type="button" class="dialog-close" aria-label="关闭">×</button>
+    <img data-dialog-image alt="" />
+    <h2 data-dialog-title />
+    <p data-dialog-shelves />
+  </dialog>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-collection]').forEach((view) => {
+    const cards = [...view.querySelectorAll<HTMLElement>('.collection-card')]
+    view.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((button) => {
+      button.addEventListener('click', () => {
+        view.querySelectorAll('[data-shelf]').forEach((item) => item.classList.remove('active'))
+        button.classList.add('active')
+        const shelf = button.dataset.shelf
+        cards.forEach((card) => {
+          const shelves = JSON.parse(card.dataset.shelves ?? '[]') as string[]
+          card.hidden = shelf !== 'all' && !shelves.includes(shelf ?? '')
+        })
+      })
+    })
+
+    const dialog = view.querySelector<HTMLDialogElement>('.collection-dialog')
+    cards.forEach((card) => {
+      card.querySelector('[data-card-open]')?.addEventListener('click', () => {
+        const sourceImage = card.querySelector<HTMLImageElement>('img')
+        const sourceTitle = card.querySelector<HTMLElement>('span')
+        const image = dialog?.querySelector<HTMLImageElement>('[data-dialog-image]')
+        const title = dialog?.querySelector<HTMLElement>('[data-dialog-title]')
+        const shelves = dialog?.querySelector<HTMLElement>('[data-dialog-shelves]')
+        if (image && sourceImage) {
+          image.src = sourceImage.src
+          image.alt = sourceImage.alt
+        }
+        if (title) title.textContent = sourceTitle?.textContent ?? ''
+        if (shelves) shelves.textContent = (JSON.parse(card.dataset.shelves ?? '[]') as string[]).join(' / ')
+        dialog?.showModal()
+      })
+    })
+    dialog?.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close())
+    dialog?.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close()
+    })
+  })
+</script>
+
+<style>
+  .collection-tabs { display: flex; gap: .5rem; padding-bottom: 1rem; overflow-x: auto; }
+  .collection-tabs button { flex: none; padding: .65rem .9rem; border: 1px solid var(--line); color: var(--text); background: transparent; font: .68rem/1 var(--mono); }
+  .collection-tabs button.active { color: var(--paper); background: var(--text); }
+  .collection-tabs span { color: var(--accent); }
+  .collection-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .collection-card { min-width: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .collection-card button { width: 100%; height: 100%; padding: .75rem; display: grid; gap: .75rem; border: 0; color: var(--text); text-align: left; background: transparent; cursor: pointer; }
+  .collection-card img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; background: var(--surface); }
+  .collection-card span { min-height: 2.6em; font: .75rem/1.3 var(--mono); }
+  .collection-dialog { width: min(90vw, 36rem); max-height: 90vh; padding: 1rem; border: 1px solid var(--line); color: var(--text); background: var(--paper); }
+  .collection-dialog::backdrop { background: rgba(0,0,0,.72); }
+  .collection-dialog img { width: 100%; max-height: 65vh; object-fit: contain; }
+  .collection-dialog h2 { margin: 1rem 0 .5rem; font: 500 2rem/1 var(--serif); }
+  .collection-dialog p { color: var(--muted); font: .7rem/1.4 var(--mono); }
+  .dialog-close { position: absolute; top: .5rem; right: .5rem; width: 2.5rem; height: 2.5rem; border: 1px solid var(--line); color: var(--text); background: var(--paper); font-size: 1.4rem; }
+  @media (max-width: 540px) { .collection-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>

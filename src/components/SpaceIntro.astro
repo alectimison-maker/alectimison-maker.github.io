@@ -1,0 +1,35 @@
+---
+import { SPACE_META, type SpaceName } from '../lib/site'
+import ParticleTitle from './physics/ParticleTitle'
+
+interface Props {
+  space: SpaceName
+}
+
+const { space } = Astro.props
+const meta = SPACE_META[space]
+---
+
+<header class:list={['space-intro', `space-intro--${space}`]}>
+  <div class="container">
+    <p class="eyebrow">CONTENT SPACE / {space}</p>
+    <div class="space-particle-shell" data-particle-host>
+      <h1>{meta.label}</h1>
+      <ParticleTitle client:visible lines={[{ text: meta.label }]} />
+    </div>
+    <p>{meta.description}</p>
+  </div>
+</header>
+
+<style>
+  .space-intro { padding-block: clamp(5rem, 13vw, 12rem); border-bottom: 1px solid var(--line); }
+  .space-particle-shell { position: relative; height: clamp(15rem, 34vw, 28rem); }
+  .space-intro h1 { position: absolute; inset: 0; margin: 0; display: grid; place-items: center; font: 600 clamp(4rem, 15vw, 13rem)/.8 var(--serif); letter-spacing: -.07em; text-align: center; transition: opacity .35s ease; }
+  .space-particle-shell.is-live h1 { opacity: 0; }
+  .space-intro p:last-child { max-width: 35rem; margin-left: auto; color: var(--muted); font: 1.15rem/1.5 var(--serif); }
+  .space-intro--article { --accent: #ef3038; }
+  .space-intro--nonsense { color: #dffcf2; background: #04110d; --accent: #b7ff45; --muted: #9ebfb4; --line: rgba(220,255,243,.2); }
+  .space-intro--jazz { color: #f3eee2; background: #131612; --accent: #ff654d; --muted: #bbb7ac; --line: rgba(243,238,226,.2); }
+  .space-intro--anime { color: #f7f0dd; background: #21409a; --accent: #edff31; --muted: #d6d8e9; --line: rgba(255,255,255,.25); }
+  .space-intro--coffee { color: #2d160e; background: #efe2ce; --accent: #e05232; --muted: #775c4f; --line: rgba(45,22,14,.2); }
+</style>

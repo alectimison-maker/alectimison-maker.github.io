@@ -1,0 +1,84 @@
+---
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import SpringUI from '../components/SpringUI.astro'
+import { SITE } from '../lib/site'
+import '../styles/global.css'
+
+interface Props {
+  title?: string
+  description?: string
+  canonical?: string
+  image?: string
+  type?: 'website' | 'article'
+  lang?: string
+  noindex?: boolean
+  space?: string
+  searchable?: boolean
+}
+
+const {
+  title,
+  description = SITE.description,
+  canonical = Astro.url.pathname,
+  image = '/avatar.webp',
+  type = 'website',
+  lang = 'zh-CN',
+  noindex = false,
+  space,
+  searchable = true,
+} = Astro.props
+
+const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name
+const canonicalUrl = new URL(canonical, SITE.origin)
+const imageUrl = new URL(image, SITE.origin)
+const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
+---
+
+<!doctype html>
+<html lang={lang} data-space={space}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/avatar.webp" type="image/webp" />
+    <link rel="apple-touch-icon" href="/avatar.webp" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name} RSS`} href="/rss.xml" />
+    <link rel="alternate" type="application/atom+xml" title={`${SITE.name} Atom`} href="/atom.xml" />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" content="#07110d" />
+    <title>{pageTitle}</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('aliouswe-theme')
+        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved
+      })()
+    </script>
+    {umamiId && (
+      <script
+        is:inline
+        defer
+        src="https://cloud.umami.is/script.js"
+        data-website-id={umamiId}
+      />
+    )}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到正文</a>
+    <Header />
+    <main id="main-content" class="page-shell" data-pagefind-body={searchable ? true : undefined}>
+      <slot />
+    </main>
+    <Footer />
+    <SpringUI />
+  </body>
+</html>
