@@ -2,7 +2,7 @@
 interface Props {
   text?: string
   items?: string[]
-  tone: 'blue' | 'acid' | 'red' | 'mint'
+  tone: 'blue' | 'acid' | 'red' | 'mint' | 'orange'
   duration?: string
 }
 
@@ -50,6 +50,11 @@ const accessibleText = items?.length ? items.join(' · ') : text
   .flow-ticker--mint {
     color: #04110d;
     background: #58fbd2;
+  }
+
+  .flow-ticker--orange {
+    color: #fff;
+    background: #ff5c35;
   }
 
   .flow-ticker__track {

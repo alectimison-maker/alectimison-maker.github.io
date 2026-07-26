@@ -1,0 +1,15 @@
+{
+  "preset": "experience",
+  "gravity": 720,
+  "airDamping": 0.34,
+  "restitution": 0.82,
+  "surfaceFriction": 0.08,
+  "fixedDt": 0.00833333333333333,
+  "substeps": 2,
+  "timeScale": 1,
+  "maxFrameDelta": 0.1,
+  "particleCount": 64,
+  "showVelocity": false,
+  "showTrails": true,
+  "showBounds": true
+}
