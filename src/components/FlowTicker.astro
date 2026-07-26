@@ -1,0 +1,84 @@
+---
+interface Props {
+  text?: string
+  items?: string[]
+  tone: 'blue' | 'acid' | 'red' | 'mint'
+  duration?: string
+}
+
+const { text = '', items, tone, duration = '24s' } = Astro.props
+const tickerItems = items?.length ? items : Array.from({ length: 6 }, () => text)
+const accessibleText = items?.length ? items.join(' · ') : text
+---
+
+<div
+  class:list={['flow-ticker', `flow-ticker--${tone}`]}
+  style={`--ticker-duration: ${duration}`}
+  role="region"
+  aria-label={accessibleText}
+>
+  <div class="flow-ticker__track" aria-hidden="true">
+    <div class="flow-ticker__group">
+      {tickerItems.map((item) => <span>{item}</span>)}
+    </div>
+    <div class="flow-ticker__group">
+      {tickerItems.map((item) => <span>{item}</span>)}
+    </div>
+  </div>
+</div>
+
+<style>
+  .flow-ticker {
+    width: 100%;
+    height: 35px;
+    overflow: hidden;
+    color: #fff4d3;
+    background: #2447ff;
+    pointer-events: none;
+  }
+
+  .flow-ticker--acid {
+    color: #04110d;
+    background: #baff58;
+  }
+
+  .flow-ticker--red {
+    color: #fff4d3;
+    background: #ef3038;
+  }
+
+  .flow-ticker--mint {
+    color: #04110d;
+    background: #58fbd2;
+  }
+
+  .flow-ticker__track {
+    width: max-content;
+    height: 100%;
+    display: flex;
+    animation: ticker-flow var(--ticker-duration) linear infinite;
+    will-change: transform;
+  }
+
+  .flow-ticker__group {
+    min-width: 100vw;
+    height: 100%;
+    padding-inline: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 30px;
+    flex-shrink: 0;
+  }
+
+  .flow-ticker span {
+    font: 700 clamp(.68rem, .65vw, .82rem)/1 var(--mono);
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  @keyframes ticker-flow {
+    to { transform: translate3d(-50%, 0, 0); }
+  }
+</style>

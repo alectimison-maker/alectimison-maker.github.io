@@ -17,7 +17,8 @@ interface Props {
 interface Point { x: number; y: number }
 
 const CONFIG = typePreset
-const COLORS = ['#baff58', '#58fbd2', '#d9fff3', '#ff6d91']
+const DARK_COLORS = ['#baff58', '#58fbd2', '#d9fff3', '#ff6d91']
+const LIGHT_COLORS = ['#173ea5', '#a51d3f', '#006854', '#17140f']
 
 const createGlowSprite = (color: string): HTMLCanvasElement => {
   const sprite = document.createElement('canvas')
@@ -85,10 +86,12 @@ export default function ParticleTitle({ lines }: Props) {
     const renderingContext = canvas.getContext('2d')
     if (!renderingContext) return
     const context: CanvasRenderingContext2D = renderingContext
-    const sprites = COLORS.map(createGlowSprite)
+    const darkSprites = DARK_COLORS.map(createGlowSprite)
+    const lightSprites = LIGHT_COLORS.map(createGlowSprite)
 
     let width = 1
     let height = 1
+    let lightSurface = false
     let active = true
     let visible = true
     let initialized = false
@@ -122,6 +125,25 @@ export default function ParticleTitle({ lines }: Props) {
     canvas.dataset.integrator = CONFIG.integrator
     canvas.dataset.glow = String(CONFIG.showGlow)
 
+    const refreshPalette = () => {
+      let element: HTMLElement | null = host
+      let red = 4
+      let green = 17
+      let blue = 13
+      while (element) {
+        const background = getComputedStyle(element).backgroundColor
+        const channels = background.match(/[\d.]+/g)?.map(Number)
+        if (channels && channels.length >= 3 && (channels[3] === undefined || channels[3] > 0)) {
+          ;[red, green, blue] = channels
+          break
+        }
+        element = element.parentElement
+      }
+      const luminance = (red * 0.2126 + green * 0.7152 + blue * 0.0722) / 255
+      lightSurface = luminance > 0.55
+      canvas.dataset.palette = lightSurface ? 'light' : 'dark'
+    }
+
     const random = () => {
       randomSeed = (randomSeed * 1664525 + 1013904223) >>> 0
       return randomSeed / 0x100000000
@@ -154,7 +176,7 @@ export default function ParticleTitle({ lines }: Props) {
         ty[index] = y[index]
         radius[index] = 0.7 + random() * 1.8
         phase[index] = random() * Math.PI * 2
-        color[index] = Math.floor(random() * COLORS.length)
+        color[index] = Math.floor(random() * DARK_COLORS.length)
       }
     }
 
@@ -168,6 +190,7 @@ export default function ParticleTitle({ lines }: Props) {
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       context.setTransform(dpr, 0, 0, dpr, 0, 0)
+      refreshPalette()
       if (!initialized) {
         resetParticles()
         initialized = true
@@ -267,10 +290,10 @@ export default function ParticleTitle({ lines }: Props) {
 
     function draw() {
       context.globalCompositeOperation = 'source-over'
-      context.fillStyle = '#04110d'
-      context.fillRect(0, 0, width, height)
+      context.clearRect(0, 0, width, height)
 
-      context.globalCompositeOperation = CONFIG.showGlow ? 'lighter' : 'source-over'
+      context.globalCompositeOperation = CONFIG.showGlow && !lightSurface ? 'lighter' : 'source-over'
+      const sprites = lightSurface ? lightSprites : darkSprites
       for (let index = 0; index < count; index += 1) {
         const spriteSize = radius[index] * (width < 600 ? 4.5 : 7)
         context.drawImage(
@@ -282,19 +305,6 @@ export default function ParticleTitle({ lines }: Props) {
         )
       }
       context.globalCompositeOperation = 'source-over'
-
-      if (CONFIG.showField && pointerActive) {
-        context.strokeStyle = '#baff58bb'
-        context.lineWidth = 1
-        context.setLineDash([8, 7])
-        context.beginPath()
-        context.arc(pointerX, pointerY, CONFIG.fieldRadius, 0, Math.PI * 2)
-        context.stroke()
-        context.setLineDash([])
-        context.fillStyle = '#d9fff3'
-        context.font = '9px "Cascadia Code", monospace'
-        context.fillText('VORTEX', pointerX + 13, pointerY - 13)
-      }
     }
 
     const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -347,6 +357,10 @@ export default function ParticleTitle({ lines }: Props) {
       canvas.setPointerCapture(event.pointerId)
     }
     const visibility = () => { active = document.visibilityState === 'visible' }
+    const themeObserver = new MutationObserver(() => {
+      refreshPalette()
+      draw()
+    })
 
     const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting }, { rootMargin: '100px' })
     observer.observe(host)
@@ -357,6 +371,7 @@ export default function ParticleTitle({ lines }: Props) {
     canvas.addEventListener('pointerleave', leavePointer)
     canvas.addEventListener('pointerdown', downPointer)
     document.addEventListener('visibilitychange', visibility)
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     resize()
     document.fonts?.ready.then(() => {
       if (active) {
@@ -369,6 +384,7 @@ export default function ParticleTitle({ lines }: Props) {
       unsubscribe()
       observer.disconnect()
       resizeObserver.disconnect()
+      themeObserver.disconnect()
       document.removeEventListener('visibilitychange', visibility)
       canvas.removeEventListener('pointerenter', enterPointer)
       canvas.removeEventListener('pointermove', movePointer)
@@ -378,6 +394,7 @@ export default function ParticleTitle({ lines }: Props) {
       delete canvas.dataset.particles
       delete canvas.dataset.preset
       delete canvas.dataset.integrator
+      delete canvas.dataset.palette
       host.classList.remove('is-live')
     }
   }, [text])

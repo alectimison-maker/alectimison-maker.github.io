@@ -2,18 +2,46 @@
 import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import SpaceIntro from '../../components/SpaceIntro.astro'
-import PostCard from '../../components/PostCard.astro'
+import KineticPostGrid from '../../components/physics/KineticPostGrid'
+import { estimateReadingMinutes } from '../../lib/site'
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft && data.space === 'article'))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+const kineticPosts = posts.map((post) => ({
+  id: post.id,
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date.toISOString(),
+  space: post.data.space,
+  tags: post.data.tags,
+  href: `/posts/${post.id}/`,
+  readingMinutes: estimateReadingMinutes(post.body),
+}))
 ---
 
 <BaseLayout title="Article" space="article">
   <SpaceIntro space="article" />
   <section class="section-block container">
-    <div class="section-heading"><div><span class="eyebrow">ALL NOTES</span><h2>技术与学习</h2></div></div>
-    <div class="post-list">{posts.map((post) => <PostCard post={post} />)}</div>
+    <div class="section-heading">
+      <div class="section-title-stack">
+        <span class="eyebrow">ALL NOTES</span>
+        <h2 class="script-section-title">As a RMer</h2>
+      </div>
+    </div>
+    <KineticPostGrid client:visible posts={kineticPosts} />
   </section>
 </BaseLayout>
 
-<style>.post-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); } @media(max-width:700px){.post-list{grid-template-columns:1fr}}</style>
+<style>
+  .section-title-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(2rem, 3vw, 3.25rem);
+  }
+  .section-heading h2.script-section-title {
+    margin: 0;
+    font: 400 clamp(5rem, 9vw, 9.5rem)/.72 var(--display-script);
+    letter-spacing: 0;
+  }
+</style>

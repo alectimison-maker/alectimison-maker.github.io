@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import FlowTicker from '../components/FlowTicker.astro'
 import PostCard from '../components/PostCard.astro'
 import ParticleTitle from '../components/physics/ParticleTitle'
 import KineticPostGrid from '../components/physics/KineticPostGrid'
+import MagneticSpaceGrid from '../components/physics/MagneticSpaceGrid'
 import { SPACE_META } from '../lib/site'
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
@@ -20,13 +22,22 @@ const recentKinetic = recent.map((post) => ({
   href: `/posts/${post.id}/`,
   readingMinutes: Math.max(1, Math.ceil((post.body?.length ?? post.data.description?.length ?? 500) / 900)),
 }))
+const spaces = Object.entries(SPACE_META).map(([space, meta], index) => ({
+  href: `/${space}/`,
+  number: String(index + 1).padStart(2, '0'),
+  label: `${meta.label.charAt(0)}${meta.label.slice(1).toLowerCase()}`,
+  description: meta.description,
+}))
 ---
 
 <BaseLayout>
   <section class="home-hero">
+    <div class="home-hero-ticker">
+      <FlowTicker text="aliouswe’s nonsense" tone="blue" duration="22s" />
+    </div>
     <div class="hero-grid" aria-hidden="true" />
     <div class="hero-copy container">
-      <p class="eyebrow">WRITING / COLLECTIONS / INTERACTION</p>
+      <p class="eyebrow">Warning！Warning！</p>
       <div class="particle-title-shell" data-particle-host>
         <h1><span>aliouswe's</span><span>nonsense</span></h1>
         <ParticleTitle
@@ -40,55 +51,76 @@ const recentKinetic = recent.map((post) => ({
     </div>
   </section>
 
+  <FlowTicker text="Jazzy Fuzzy But Cozzy" tone="acid" duration="20s" />
+
   {featured && (
-    <section class="section-block container" id="latest">
-      <div class="section-heading"><div><span class="eyebrow">FEATURED / 01</span><h2>本期头条</h2></div></div>
+    <section class="home-content-section section-block container" id="latest">
+      <div class="section-heading"><div class="section-title-stack"><span class="eyebrow">FEATURED / 01</span><h2 class="script-section-title">So?</h2></div></div>
       <PostCard post={featured} featured />
     </section>
   )}
 
-  <section class="section-block container">
-    <div class="section-heading"><div><span class="eyebrow">RECENT / 02</span><h2>最近写下</h2></div><a href="/archive/">全部归档 ↗</a></div>
+  <FlowTicker
+    items={[
+      'Stan Getz',
+      'Art Blakey',
+      'Joe Pass',
+      'Chet Baker',
+      'Charlie Parker',
+      'ADOY',
+      'Toshiki Soejima',
+      'Louis Armstrong',
+      'Buddy Rich',
+      'Miles Davis',
+      'John Coltrane',
+      'Bill Evans',
+    ]}
+    tone="red"
+    duration="34s"
+  />
+
+  <section class="home-content-section section-block container">
+    <div class="section-heading"><div class="section-title-stack"><span class="eyebrow">RECENT / 02</span><h2 class="script-section-title">What?</h2></div><a href="/archive/">全部归档 ↗</a></div>
     <KineticPostGrid client:visible posts={recentKinetic} />
   </section>
 
-  <section class="spaces section-block">
+  <FlowTicker
+    items={[
+      'Desafinado',
+      'Just the Two of Us',
+      'Waltz for Debby',
+      'Misty',
+      'Autumn Leaves',
+      'It Could Happen To You',
+      'But Beautiful',
+      'Night and Day',
+      'Someday My Prince Will Come',
+    ]}
+    tone="mint"
+    duration="32s"
+  />
+
+  <section class="spaces home-content-section section-block">
     <div class="container">
-      <div class="section-heading"><div><span class="eyebrow">SPACES / 03</span><h2>五个内容空间</h2></div></div>
-      <div class="space-grid">
-        {Object.entries(SPACE_META).map(([space, meta], index) => (
-          <a href={`/${space}/`} data-space={space}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <h3>{meta.label}</h3>
-            <p>{meta.description}</p>
-            <b>↗</b>
-          </a>
-        ))}
-      </div>
+      <div class="section-heading"><div class="section-title-stack"><span class="eyebrow">SPACES / 03</span><h2 class="script-section-title">Take Five</h2></div></div>
+      <MagneticSpaceGrid client:visible spaces={spaces} />
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .home-hero { position: relative; min-height: clamp(42rem, 86svh, 62rem); display: grid; align-items: center; overflow: hidden; color: #d9fff3; background: #04110d; }
-  .hero-grid { position: absolute; inset: 0; opacity: .22; background-image: linear-gradient(rgba(98,247,210,.18) 1px, transparent 1px), linear-gradient(90deg, rgba(98,247,210,.18) 1px, transparent 1px); background-size: 8vw 8vw; mask-image: linear-gradient(to bottom, black, transparent 90%); }
+  .home-hero { position: relative; min-height: clamp(42rem, 86svh, 62rem); display: grid; align-items: center; overflow: hidden; color: #121814; background: #f3eee2; }
+  .home-hero-ticker { position: absolute; z-index: 3; inset: 0 0 auto; }
+  .hero-grid { position: absolute; inset: 0; opacity: .2; background-image: linear-gradient(rgba(35,80,220,.2) 1px, transparent 1px), linear-gradient(90deg, rgba(35,80,220,.2) 1px, transparent 1px); background-size: 8vw 8vw; mask-image: linear-gradient(to bottom, black, transparent 90%); }
   .hero-copy { position: relative; z-index: 1; width: min(100%, 96rem); padding-block: 4rem; }
-  .hero-copy .eyebrow { color: #62f7d2; }
+  .hero-copy .eyebrow { color: #2350dc; }
   .particle-title-shell { position: relative; height: clamp(25rem, 58vw, 48rem); margin-block: 1rem; }
   .hero-copy h1 { position: absolute; inset: 0; margin: 0; display: grid; place-content: center; gap: .16em; text-align: center; font-family: "Bodoni 72", "Iowan Old Style", var(--serif); font-size: min(20vw, 20rem); font-weight: 800; line-height: 1; transition: opacity .35s ease; }
   .particle-title-shell.is-live h1 { opacity: 0; }
   .hero-copy > p:not(.eyebrow) { width: max-content; margin: 0 auto; font: clamp(1rem, 2vw, 1.3rem)/1.4 var(--serif); }
-  .hero-copy > a { position: absolute; right: var(--page-pad); bottom: 0; color: #62f7d2; font: .65rem/1 var(--mono); text-transform: uppercase; text-decoration: none; }
+  .hero-copy > a { position: absolute; right: var(--page-pad); bottom: 0; color: #2350dc; font: .65rem/1 var(--mono); text-transform: uppercase; text-decoration: none; }
+  .section-title-stack { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(2rem, 3vw, 3.25rem); }
+  .section-heading h2.script-section-title { margin: 0; font: 400 clamp(5rem, 9vw, 9.5rem)/.72 var(--display-script); letter-spacing: 0; }
+  .home-content-section { padding-block: clamp(2.5rem, 4vw, 4rem); }
   .spaces { background: var(--surface); }
-  .space-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
-  .space-grid a { min-height: 25rem; padding: 1rem; display: flex; flex-direction: column; border-right: 1px solid var(--line); text-decoration: none; }
-  .space-grid a:first-child { border-left: 1px solid var(--line); }
-  .space-grid span { color: var(--accent); font: .65rem/1 var(--mono); }
-  .space-grid h3 { margin: auto 0 1rem; font: 500 clamp(1.5rem, 3vw, 3rem)/1 var(--serif); }
-  .space-grid p { color: var(--muted); font-size: .8rem; line-height: 1.5; }
-  .space-grid b { font-size: 1.4rem; font-weight: 400; }
-  @media (max-width: 850px) {
-    .space-grid { grid-template-columns: 1fr; }
-    .space-grid a { min-height: 15rem; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-  }
 </style>

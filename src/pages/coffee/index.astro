@@ -15,5 +15,10 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft && data.sp
     <div class="section-heading"><div><span class="eyebrow">TASTING / RECORDS</span><h2>咖啡记录</h2></div></div>
     <TensionCollection client:visible items={items} space="coffee" />
   </section>
-  {posts.length > 0 && <section class="section-block container"><div class="section-heading"><h2>Coffee Notes</h2></div>{posts.map((post) => <PostCard post={post} />)}</section>}
+  {posts.length > 0 && (
+    <section class="section-block container">
+      <div class="section-heading"><h2>Coffee Notes</h2></div>
+      {posts.map((post) => <PostCard post={post} featured={post.id === 'hows-the-coffee'} />)}
+    </section>
+  )}
 </BaseLayout>

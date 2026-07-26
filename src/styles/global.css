@@ -5,6 +5,14 @@
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "katex/dist/katex.min.css";
 
+@font-face {
+  font-family: "Lavishly Yours";
+  src: url("/fonts/lavishly-yours/LavishlyYours-Regular.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
   color-scheme: light dark;
   --ink: #07110d;
@@ -22,6 +30,7 @@
   --reading: 70ch;
   --page-pad: clamp(1rem, 3vw, 2.5rem);
   --serif: "Bodoni Moda Variable", "Noto Serif SC Variable", serif;
+  --display-script: "Lavishly Yours", "Bodoni Moda Variable", serif;
   --sans: "Noto Sans SC Variable", sans-serif;
   --mono: "IBM Plex Mono", monospace;
 }
