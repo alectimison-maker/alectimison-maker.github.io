@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
+const analyticsEnabled = Boolean(import.meta.env.PUBLIC_UMAMI_WEBSITE_ID)
+const formspreeEnabled = Boolean(import.meta.env.PUBLIC_FORMSPREE_FORM_ID)
 ---
 <BaseLayout title="Privacy">
   <article class="privacy container">
@@ -7,11 +9,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
     <h1>隐私说明</h1>
     <p>本站尽量少收集数据，并让所有外部连接延迟到确有需要时发生。</p>
     <h2>匿名统计</h2>
-    <p>本站使用 Umami 记录匿名页面访问与基础性能信息，不使用 Cookie，不建立个人画像。</p>
+    <p>{analyticsEnabled
+      ? '本站使用 Umami 记录匿名页面访问与基础性能信息，不使用 Cookie，不建立个人画像。'
+      : '本站目前没有启用第三方访问统计。'}</p>
     <h2>评论</h2>
     <p>评论由 Giscus 和 GitHub Discussions 提供。只有你主动展开评论区时才会连接 GitHub，登录与评论数据受 GitHub 条款约束。</p>
     <h2>联系表单</h2>
-    <p>联系内容、回复邮箱和可选称呼会通过 Formspree 转发到站长邮箱，用于阅读与回复，不公开展示。</p>
+    <p>{formspreeEnabled
+      ? '联系内容、回复邮箱和可选称呼会通过 Formspree 转发到站长邮箱，用于阅读与回复，不公开展示。'
+      : '联系页目前调用你的本机邮件应用；在你确认发送前，本站与第三方表单服务都不会收到填写内容。'}</p>
     <h2>本地设置</h2>
     <p>明暗模式、动态效果和性能档可保存在浏览器本地存储中，不会发送到服务器。</p>
   </article>
