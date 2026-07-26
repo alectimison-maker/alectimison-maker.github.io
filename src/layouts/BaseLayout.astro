@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import SpringUI from '../components/SpringUI.astro'
+import P1CursorTrail from '../components/physics/P1CursorTrail'
 import { SITE } from '../lib/site'
 import '../styles/global.css'
 
@@ -80,5 +81,6 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
     </main>
     <Footer />
     <SpringUI />
+    <P1CursorTrail client:load />
   </body>
 </html>

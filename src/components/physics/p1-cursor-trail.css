@@ -1,0 +1,38 @@
+.p1-cursor-trail {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  pointer-events: none;
+}
+
+.p1-cursor-trail span {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #17140f;
+  border-radius: 50%;
+  background: #ff5c35;
+  opacity: 0;
+  will-change: transform;
+}
+
+.p1-cursor-trail span[data-node="0"] {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #2447ff;
+  background: transparent;
+}
+
+@media (pointer: coarse) {
+  .p1-cursor-trail {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p1-cursor-trail {
+    display: none;
+  }
+}

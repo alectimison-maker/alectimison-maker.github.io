@@ -27,6 +27,23 @@ interface MotionState {
   pointerY: number
 }
 
+interface MagnetState {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  targetX: number
+  targetY: number
+}
+
+const MAGNET_STIFFNESS = 120
+const MAGNET_DAMPING = 18
+const MAGNET_MASS = 1
+const MAGNETIC_STRENGTH = 0.32
+const MAGNETIC_RADIUS = 180
+const MAGNET_FIXED_DT = 1 / 60
+const MAGNET_SUBSTEPS = 2
+
 export default function KineticPostGrid({ posts }: { posts: KineticPost[] }) {
   const cardRefs = useRef<Array<HTMLElement | null>>([])
   const states = useRef<MotionState[]>(posts.map((post) => ({
@@ -41,10 +58,63 @@ export default function KineticPostGrid({ posts }: { posts: KineticPost[] }) {
     pointerX: 0,
     pointerY: 0,
   })))
+  const magnets = useRef<MagnetState[]>(posts.map(() => ({
+    x: 0,
+    y: 0,
+    vx: 0,
+    vy: 0,
+    targetX: 0,
+    targetY: 0,
+  })))
 
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce), (max-width: 700px)').matches || localStorage.getItem('aliouswe-motion') === 'reduced') return
+    let magnetAccumulator = 0
+
+    const trackPointer = (event: PointerEvent) => {
+      magnets.current.forEach((magnet, index) => {
+        const card = cardRefs.current[index]
+        if (!card) return
+        const rect = card.getBoundingClientRect()
+        const centerX = rect.left + rect.width / 2 - magnet.x
+        const centerY = rect.top + rect.height / 2 - magnet.y
+        const dx = event.clientX - centerX
+        const dy = event.clientY - centerY
+        const distance = Math.hypot(dx, dy)
+        if (distance < MAGNETIC_RADIUS) {
+          const falloff = 1 - distance / MAGNETIC_RADIUS
+          magnet.targetX = dx * MAGNETIC_STRENGTH * falloff
+          magnet.targetY = dy * MAGNETIC_STRENGTH * falloff
+        } else {
+          magnet.targetX = 0
+          magnet.targetY = 0
+        }
+      })
+    }
+    const releaseMagnets = () => {
+      magnets.current.forEach((magnet) => {
+        magnet.targetX = 0
+        magnet.targetY = 0
+      })
+    }
+
     const unsubscribe = sharedFrameScheduler.subscribe((delta) => {
+      magnetAccumulator = Math.min(magnetAccumulator + delta, 0.1)
+      while (magnetAccumulator >= MAGNET_FIXED_DT) {
+        const subDt = MAGNET_FIXED_DT / MAGNET_SUBSTEPS
+        for (let substep = 0; substep < MAGNET_SUBSTEPS; substep += 1) {
+          magnets.current.forEach((magnet) => {
+            const forceX = -MAGNET_STIFFNESS * (magnet.x - magnet.targetX) - MAGNET_DAMPING * magnet.vx
+            const forceY = -MAGNET_STIFFNESS * (magnet.y - magnet.targetY) - MAGNET_DAMPING * magnet.vy
+            magnet.vx += forceX / MAGNET_MASS * subDt
+            magnet.vy += forceY / MAGNET_MASS * subDt
+            magnet.x += magnet.vx * subDt
+            magnet.y += magnet.vy * subDt
+          })
+        }
+        magnetAccumulator -= MAGNET_FIXED_DT
+      }
+
       states.current.forEach((state, index) => {
         if (state.dragging) {
           const targetX = state.pointerX
@@ -65,10 +135,22 @@ export default function KineticPostGrid({ posts }: { posts: KineticPost[] }) {
           state.angle += state.angularVelocity * delta
         }
         const element = cardRefs.current[index]
-        if (element) element.style.transform = `translate3d(${state.x}px, ${state.y}px, 0) rotate(${state.angle}deg)`
+        const magnet = magnets.current[index]
+        if (element && magnet) {
+          element.style.transform = `translate3d(${state.x + magnet.x}px, ${state.y + magnet.y}px, 0) rotate(${state.angle}deg)`
+          element.dataset.magnetOffset = `${magnet.x.toFixed(1)},${magnet.y.toFixed(1)}`
+        }
       })
     })
-    return unsubscribe
+    window.addEventListener('pointermove', trackPointer, { passive: true })
+    window.addEventListener('blur', releaseMagnets)
+    document.documentElement.addEventListener('mouseleave', releaseMagnets)
+    return () => {
+      unsubscribe()
+      window.removeEventListener('pointermove', trackPointer)
+      window.removeEventListener('blur', releaseMagnets)
+      document.documentElement.removeEventListener('mouseleave', releaseMagnets)
+    }
   }, [])
 
   const startDrag = (index: number, event: React.PointerEvent<HTMLButtonElement>) => {

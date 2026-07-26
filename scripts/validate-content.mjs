@@ -39,6 +39,18 @@ try {
   for (const postFile of posts) {
     const content = await readFile(path.join(root, 'src', 'content', 'posts', postFile), 'utf8')
     for (const match of content.matchAll(/\]\((\/media\/[^)\s]+)/g)) await validateMediaPath(match[1], postFile)
+
+    const body = content.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '')
+    let fenced = false
+    for (const [index, line] of body.split(/\r?\n/).entries()) {
+      if (/^\s*(```|~~~)/.test(line)) {
+        fenced = !fenced
+        continue
+      }
+      if (!fenced && /^#\s/.test(line)) {
+        fail(`${postFile}:${index + 1} contains a body-level H1; the page title is already H1`)
+      }
+    }
   }
 
   for (const name of ['jazz', 'anime', 'coffee']) {
@@ -51,7 +63,9 @@ try {
   }
 
   await access(path.join(root, 'public', 'CNAME'))
-  console.log(`Validated ${posts.length} posts, ${mediaFiles.length} media assets, and all collection manifests.`)
+  if (!process.exitCode) {
+    console.log(`Validated ${posts.length} posts, ${mediaFiles.length} media assets, and all collection manifests.`)
+  }
 } catch (error) {
   fail(error.message)
 }

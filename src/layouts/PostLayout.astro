@@ -38,9 +38,17 @@ const readingMinutes = estimateReadingMinutes(post.body)
         <slot />
       </div>
       {headings.length > 1 && (
-        <aside class="article-toc">
-          <span>CONTENTS</span>
-          <nav aria-label="文章目录">
+        <aside class="article-toc" data-article-toc>
+          <div class="article-toc__header">
+            <span>CONTENTS</span>
+            <button
+              type="button"
+              aria-expanded="true"
+              aria-controls="article-toc-nav"
+              data-toc-toggle
+            >隐藏</button>
+          </div>
+          <nav id="article-toc-nav" aria-label="文章目录" data-toc-nav>
             {headings.filter((heading) => heading.depth <= 3).map((heading) => (
               <a href={`#${heading.slug}`} data-depth={heading.depth}>{heading.text}</a>
             ))}
@@ -83,6 +91,34 @@ const readingMinutes = estimateReadingMinutes(post.body)
   if (shareButton && navigator.share) {
     shareButton.hidden = false
     shareButton.addEventListener('click', () => navigator.share({ title: document.title, url: window.location.href }))
+  }
+
+  const toc = document.querySelector<HTMLElement>('[data-article-toc]')
+  const tocGrid = toc?.closest<HTMLElement>('.article-grid')
+  const tocNav = toc?.querySelector<HTMLElement>('[data-toc-nav]')
+  const tocToggle = toc?.querySelector<HTMLButtonElement>('[data-toc-toggle]')
+  const setTocHidden = (hidden: boolean) => {
+    if (!toc || !tocGrid || !tocNav || !tocToggle) return
+    toc.classList.toggle('is-collapsed', hidden)
+    tocGrid.classList.toggle('toc-collapsed', hidden)
+    tocNav.hidden = hidden
+    tocToggle.textContent = hidden ? '显示目录' : '隐藏'
+    tocToggle.setAttribute('aria-expanded', String(!hidden))
+    tocToggle.setAttribute('aria-label', hidden ? '显示文章目录' : '隐藏文章目录')
+  }
+  if (tocToggle) {
+    let initiallyHidden = false
+    try {
+      initiallyHidden = localStorage.getItem('aliouswe-toc-hidden') === 'true'
+    } catch {}
+    setTocHidden(initiallyHidden)
+    tocToggle.addEventListener('click', () => {
+      const hidden = tocToggle.getAttribute('aria-expanded') === 'true'
+      setTocHidden(hidden)
+      try {
+        localStorage.setItem('aliouswe-toc-hidden', String(hidden))
+      } catch {}
+    })
   }
 
   document.querySelector<HTMLButtonElement>('[data-load-comments]')?.addEventListener('click', (event) => {
@@ -141,20 +177,32 @@ const readingMinutes = estimateReadingMinutes(post.body)
 
 <style>
   .article-shell { padding-block: clamp(3rem, 8vw, 8rem); }
-  .article-header { max-width: 84rem; padding-bottom: clamp(3rem, 7vw, 6rem); border-bottom: 1px solid var(--line); }
+  .article-header { width: min(100%, 76rem); margin-inline: auto; padding-bottom: clamp(3rem, 7vw, 6rem); border-bottom: 1px solid var(--line); }
   .article-header h1 { max-width: 15ch; margin: .7rem 0 1.5rem; font: 550 clamp(3rem, 8vw, 7.5rem)/.92 var(--serif); letter-spacing: -.055em; }
   .article-deck { max-width: 48rem; color: var(--muted); font: 1.2rem/1.55 var(--serif); }
   .article-meta { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; margin-top: 2rem; color: var(--muted); font: .7rem/1.4 var(--mono); }
-  .article-grid { display: grid; grid-template-columns: minmax(0, var(--reading)) minmax(12rem, 1fr); gap: clamp(3rem, 8vw, 10rem); justify-content: center; padding-block: clamp(3rem, 7vw, 7rem); }
-  .article-content { min-width: 0; }
-  .article-toc { position: sticky; top: calc(var(--header-height) + 2rem); height: max-content; border-left: 1px solid var(--line); padding-left: 1.2rem; }
-  .article-toc > span { color: var(--accent); font: 700 .65rem/1 var(--mono); }
+  .article-grid { width: min(100%, 76rem); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr) clamp(12rem, 17vw, 15rem); gap: clamp(2rem, 4vw, 4rem); padding-block: clamp(3rem, 7vw, 7rem); transition: grid-template-columns .25s ease, gap .25s ease; }
+  .article-grid.toc-collapsed { grid-template-columns: minmax(0, 1fr) auto; gap: 1.25rem; }
+  .article-content { min-width: 0; grid-column: 1; }
+  .article-toc { position: sticky; top: calc(var(--header-height) + 2rem); max-height: calc(100vh - var(--header-height) - 4rem); height: max-content; border-left: 1px solid var(--line); padding-left: 1.2rem; overflow: auto; }
+  .article-toc { grid-column: 2; }
+  .article-toc__header { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+  .article-toc__header > span { color: var(--accent); font: 700 .65rem/1 var(--mono); }
+  .article-toc__header button { padding: .25rem 0; border: 0; color: var(--muted); background: transparent; font: .62rem/1 var(--mono); cursor: pointer; }
+  .article-toc__header button:hover { color: var(--accent); }
   .article-toc nav { display: grid; gap: .65rem; margin-top: 1rem; }
+  .article-toc nav[hidden] { display: none; }
   .article-toc a { color: var(--muted); font-size: .82rem; line-height: 1.35; text-decoration: none; }
   .article-toc a[data-depth="3"] { padding-left: 1rem; }
-  .prose :global(h2), .prose :global(h3), .prose :global(h4) { scroll-margin-top: calc(var(--header-height) + 1.5rem); font-family: var(--serif); line-height: 1.15; }
+  .article-toc.is-collapsed { border-left: 0; padding-left: 0; overflow: visible; }
+  .article-toc.is-collapsed .article-toc__header > span { display: none; }
+  .article-toc.is-collapsed .article-toc__header button { padding: .5rem .65rem; border: 1px solid var(--line); white-space: nowrap; }
+  .prose :global(h2), .prose :global(h3), .prose :global(h4), .prose :global(h5), .prose :global(h6) { scroll-margin-top: calc(var(--header-height) + 1.5rem); font-family: var(--serif); line-height: 1.15; }
   .prose :global(h2) { margin: 2.4em 0 .7em; font-size: clamp(2rem, 4vw, 3.5rem); letter-spacing: -.035em; }
   .prose :global(h3) { margin: 2em 0 .6em; font-size: 1.65rem; }
+  .prose :global(h4) { margin: 1.8em 0 .55em; font-size: 1.3rem; }
+  .prose :global(h5) { margin: 1.65em 0 .5em; font-size: 1.12rem; }
+  .prose :global(h6) { margin: 1.5em 0 .45em; font-size: 1rem; }
   .prose :global(p), .prose :global(li) { font: 1.05rem/1.85 var(--serif); }
   .prose :global(p) { margin: 0 0 1.35em; }
   .prose :global(a) { text-decoration-color: var(--accent); text-underline-offset: .2em; }
@@ -181,8 +229,12 @@ const readingMinutes = estimateReadingMinutes(post.body)
   .post-navigation span { display: block; margin-bottom: .35rem; color: var(--muted); font: .65rem/1 var(--mono); }
   .comments { padding-top: 2rem; }
   .comments p { color: var(--muted); font-size: .78rem; }
-  @media (max-width: 860px) {
-    .article-grid { grid-template-columns: minmax(0, 1fr); }
-    .article-toc { position: static; order: -1; border-left: 0; border-block: 1px solid var(--line); padding: 1rem 0; }
+  @media (max-width: 1100px) {
+    .article-grid, .article-grid.toc-collapsed { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+    .article-content { grid-column: 1; }
+    .article-toc, .article-toc.is-collapsed { position: static; order: -1; max-height: none; border-left: 0; border-block: 1px solid var(--line); padding: 1rem 0; overflow: visible; }
+    .article-toc { grid-column: 1; }
+    .article-toc.is-collapsed .article-toc__header > span { display: block; }
+    .article-toc.is-collapsed .article-toc__header button { padding: .25rem 0; border: 0; }
   }
 </style>
