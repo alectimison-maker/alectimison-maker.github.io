@@ -17,6 +17,14 @@ const { post, headings, canonical, previous, next, noindex = false, searchable =
 const { title, description, date, updatedAt, tags, lang, space } = post.data
 const displayLang = lang === 'mixed' ? 'zh-CN' : lang
 const readingMinutes = estimateReadingMinutes(post.body)
+const giscusConfig = {
+  repo: import.meta.env.PUBLIC_GISCUS_REPO,
+  repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID,
+  category: import.meta.env.PUBLIC_GISCUS_CATEGORY,
+  categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID,
+}
+const commentsConfigured = Object.values(giscusConfig).every(Boolean)
+const discussionsUrl = `https://github.com/${giscusConfig.repo || 'alectimison-maker/alectimison-maker.github.io'}/discussions`
 ---
 
 <BaseLayout title={title} description={description} canonical={canonical} image={`/og/${post.id}.png`} type="article" lang={displayLang} space={space} noindex={noindex} searchable={searchable}>
@@ -70,11 +78,34 @@ const readingMinutes = estimateReadingMinutes(post.body)
         {previous ? <a href={`/posts/${previous.id}/`}><span>上一篇</span>{previous.data.title}</a> : <span />}
         {next ? <a href={`/posts/${next.id}/`}><span>下一篇</span>{next.data.title}</a> : <span />}
       </nav>
-      <div class="comments">
-        <button class="button" type="button" data-load-comments>展开讨论</button>
-        <p data-comments-status>评论由 GitHub Discussions 提供，仅在主动展开后连接。</p>
+      <section
+        class="comments"
+        id="comments"
+        aria-labelledby="comments-title"
+        data-comments
+        data-comment-term={post.id}
+        data-comments-configured={String(commentsConfigured)}
+      >
+        <div class="comments__heading">
+          <div>
+            <p class="eyebrow">GITHUB DISCUSSIONS</p>
+            <h2 id="comments-title">评论</h2>
+          </div>
+          <button class="button" type="button" data-load-comments disabled={!commentsConfigured}>展开讨论</button>
+        </div>
+        <p data-comments-status aria-live="polite">
+          {commentsConfigured
+            ? '评论由 GitHub Discussions 提供，仅在主动展开后连接。'
+            : '评论组件尚未完成配置，你仍可前往 GitHub Discussions 留言。'}
+        </p>
+        <p class="comments__fallback">
+          <a href={discussionsUrl} target="_blank" rel="noreferrer">前往 Discussions ↗</a>
+          <span aria-hidden="true">·</span>
+          <a href={`mailto:${SITE.email}`}>通过邮件联系</a>
+        </p>
         <div data-comments-root />
-      </div>
+        <noscript><p>浏览器未启用 JavaScript，请直接前往 GitHub Discussions 参与讨论。</p></noscript>
+      </section>
     </footer>
   </article>
 </BaseLayout>
@@ -120,11 +151,18 @@ const readingMinutes = estimateReadingMinutes(post.body)
     })
   }
 
-  document.querySelector<HTMLButtonElement>('[data-load-comments]')?.addEventListener('click', (event) => {
-    const button = event.currentTarget as HTMLButtonElement
-    const root = document.querySelector<HTMLElement>('[data-comments-root]')
-    const status = document.querySelector<HTMLElement>('[data-comments-status]')
-    if (!root || root.childElementCount > 0) return
+  const comments = document.querySelector<HTMLElement>('[data-comments]')
+  const commentsButton = comments?.querySelector<HTMLButtonElement>('[data-load-comments]')
+  const commentsRoot = comments?.querySelector<HTMLElement>('[data-comments-root]')
+  const commentsStatus = comments?.querySelector<HTMLElement>('[data-comments-status]')
+  let commentsLoading = false
+
+  const loadComments = () => {
+    if (!comments || !commentsButton || !commentsRoot || commentsLoading || commentsRoot.childElementCount > 0) return
+    if (comments.dataset.commentsConfigured !== 'true') {
+      commentsStatus && (commentsStatus.textContent = '评论组件尚未完成配置，请先前往 GitHub Discussions 留言。')
+      return
+    }
     const values = {
       repo: import.meta.env.PUBLIC_GISCUS_REPO,
       repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID,
@@ -132,9 +170,13 @@ const readingMinutes = estimateReadingMinutes(post.body)
       categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID,
     }
     if (!values.repo || !values.repoId || !values.category || !values.categoryId) {
-      if (status) status.textContent = '评论尚未完成站点配置。'
+      commentsStatus && (commentsStatus.textContent = '评论配置不完整，请先前往 GitHub Discussions 留言。')
       return
     }
+    commentsLoading = true
+    commentsButton.disabled = true
+    commentsButton.textContent = '载入中…'
+    commentsStatus && (commentsStatus.textContent = '正在连接 GitHub Discussions…')
     const script = document.createElement('script')
     script.src = 'https://giscus.app/client.js'
     script.async = true
@@ -143,17 +185,31 @@ const readingMinutes = estimateReadingMinutes(post.body)
     script.dataset.repoId = values.repoId
     script.dataset.category = values.category
     script.dataset.categoryId = values.categoryId
-    script.dataset.mapping = 'pathname'
+    script.dataset.mapping = 'specific'
+    script.dataset.term = comments.dataset.commentTerm ?? window.location.pathname
     script.dataset.strict = '1'
     script.dataset.reactionsEnabled = '1'
     script.dataset.emitMetadata = '0'
     script.dataset.inputPosition = 'top'
     script.dataset.theme = 'preferred_color_scheme'
     script.dataset.lang = 'zh-CN'
-    root.append(script)
-    button.hidden = true
-    if (status) status.textContent = ''
-  })
+    script.addEventListener('load', () => {
+      commentsLoading = false
+      commentsButton.hidden = true
+      commentsStatus && (commentsStatus.textContent = '登录 GitHub 后即可留言；新评论会进入站点通知。')
+    })
+    script.addEventListener('error', () => {
+      commentsLoading = false
+      commentsButton.disabled = false
+      commentsButton.textContent = '重新载入'
+      commentsStatus && (commentsStatus.textContent = '评论暂时载入失败，请重试或前往 GitHub Discussions。')
+      script.remove()
+    })
+    commentsRoot.append(script)
+  }
+
+  commentsButton?.addEventListener('click', loadComments)
+  if (window.location.hash === '#comments') loadComments()
 
   document.querySelectorAll<HTMLElement>('.prose pre').forEach((pre) => {
     const wrapper = document.createElement('div')
@@ -226,8 +282,13 @@ const readingMinutes = estimateReadingMinutes(post.body)
   .post-navigation a { padding: 1.5rem 0; font: 1rem/1.35 var(--serif); text-decoration: none; }
   .post-navigation a:last-child { text-align: right; }
   .post-navigation span { display: block; margin-bottom: .35rem; color: var(--muted); font: .65rem/1 var(--mono); }
-  .comments { padding-top: 2rem; }
+  .comments { scroll-margin-top: calc(var(--header-height) + 1rem); padding-top: 2rem; }
+  .comments__heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+  .comments__heading h2 { margin: .35rem 0 0; font: 550 clamp(2rem, 4vw, 3.5rem)/1 var(--serif); letter-spacing: -.035em; }
   .comments p { color: var(--muted); font-size: .78rem; }
+  .comments__fallback { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .comments__fallback a { color: var(--text); text-underline-offset: .2em; }
+  .comments [data-comments-root] { margin-top: 1.5rem; }
   @media (max-width: 1100px) {
     .article-grid, .article-grid.toc-collapsed { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
     .article-content { grid-column: 1; }

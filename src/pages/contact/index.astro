@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
+import { SITE } from '../../lib/site'
 const formId = import.meta.env.PUBLIC_FORMSPREE_FORM_ID
+const formEndpoint = formId ? `https://formspree.io/f/${formId}` : ''
 ---
 
 <BaseLayout title="Contact">
@@ -8,19 +10,27 @@ const formId = import.meta.env.PUBLIC_FORMSPREE_FORM_ID
     <header>
       <p class="eyebrow">CONTACT / WRITE DIRECTLY</p>
       <h1>写信给我</h1>
-      <p>内容将经 Formspree 转发到我的邮箱。不会公开你的地址。</p>
+      <p>{formId ? '内容将经 Formspree 转发到我的邮箱。不会公开你的地址。' : '填写后会调用你的邮件应用，并自动带入收件人和正文。'}</p>
     </header>
 
-    <form action={formId ? `https://formspree.io/f/${formId}` : undefined} method="POST" data-contact-form>
+    <form
+      action={formEndpoint || undefined}
+      method="POST"
+      data-contact-form
+      data-form-endpoint={formEndpoint}
+      data-recipient={SITE.email}
+    >
       <label><span>称呼 <small>可选</small></span><input type="text" name="name" autocomplete="name" /></label>
       <label><span>回复邮箱</span><input type="email" name="email" autocomplete="email" required /></label>
       <label><span>主题 <small>可选</small></span><input type="text" name="subject" /></label>
       <label><span>内容</span><textarea name="message" rows="10" required /></label>
-      <label class="consent"><input type="checkbox" name="privacy-consent" value="accepted" required /><span>我已阅读<a href="/privacy/">隐私说明</a>，同意通过 Formspree 发送这段内容。</span></label>
+      <label class="consent"><input type="checkbox" name="privacy-consent" value="accepted" required /><span>我已阅读<a href="/privacy/">隐私说明</a>，同意{formId ? '通过 Formspree' : '通过本机邮件应用'}发送这段内容。</span></label>
       <label class="honeypot" aria-hidden="true"><span>Leave empty</span><input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
       <input type="hidden" name="_subject" value="New message from aliouswe.com" />
-      <button class="button" type="submit" disabled={!formId}>发送内容</button>
-      <p class="form-status" role="status" data-form-status>{formId ? '发送后请留在本页，直到出现成功回执。' : '联系表单尚未配置 Formspree ID。'}</p>
+      <button class="button" type="submit">{formId ? '发送内容' : '用邮件应用发送'}</button>
+      <p class="form-status" role="status" aria-live="polite" data-form-status>
+        {formId ? '发送后请留在本页，直到出现成功回执。' : `当前使用邮件应用兜底，收件人：${SITE.email}`}
+      </p>
     </form>
   </section>
 </BaseLayout>
@@ -29,23 +39,48 @@ const formId = import.meta.env.PUBLIC_FORMSPREE_FORM_ID
   const form = document.querySelector<HTMLFormElement>('[data-contact-form]')
   const status = document.querySelector<HTMLElement>('[data-form-status]')
   form?.addEventListener('submit', async (event) => {
-    if (!form.action) return
     event.preventDefault()
+    const endpoint = form.dataset.formEndpoint ?? ''
+    const data = new FormData(form)
+    if (!endpoint) {
+      const recipient = form.dataset.recipient
+      const subject = String(data.get('subject') || 'Message from aliouswe.com')
+      const name = String(data.get('name') || '未署名')
+      const replyEmail = String(data.get('email') || '')
+      const message = String(data.get('message') || '')
+      const body = `称呼：${name}\n回复邮箱：${replyEmail}\n\n${message}`
+      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      if (status) status.textContent = '已调用邮件应用；请在邮件应用中确认发送。'
+      return
+    }
     const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')
     if (button) button.disabled = true
+    form.setAttribute('aria-busy', 'true')
     if (status) status.textContent = '正在发送…'
+    const controller = new AbortController()
+    const timeout = window.setTimeout(() => controller.abort(), 15000)
     try {
-      const response = await fetch(form.action, {
+      const response = await fetch(endpoint, {
         method: 'POST',
-        body: new FormData(form),
+        body: data,
         headers: { Accept: 'application/json' },
+        signal: controller.signal,
       })
-      if (!response.ok) throw new Error('提交失败')
+      const result = await response.json().catch(() => null)
+      if (!response.ok) {
+        const detail = result?.errors?.map((item: { message?: string }) => item.message).filter(Boolean).join('；')
+        throw new Error(detail || '提交失败')
+      }
       form.reset()
       if (status) status.textContent = `发送成功 · 回执 ${Date.now().toString(36).toUpperCase()}`
-    } catch {
-      if (status) status.textContent = '暂时无法发送。内容仍保留在页面中，请稍后重试或先复制保存。'
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === 'AbortError'
+      if (status) status.textContent = timedOut
+        ? '发送超时。内容仍保留在页面中，请检查网络后重试。'
+        : '暂时无法发送。内容仍保留在页面中，请稍后重试或先复制保存。'
     } finally {
+      window.clearTimeout(timeout)
+      form.removeAttribute('aria-busy')
       if (button) button.disabled = false
     }
   })

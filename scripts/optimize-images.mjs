@@ -30,14 +30,23 @@ const exists = async (target) => {
   }
 }
 
+if (process.env.SKIP_IMAGE_OPTIMIZATION === 'true' && await exists(manifestPath)) {
+  console.log('Image pipeline: restored from cache.')
+  process.exit(0)
+}
+
 await mkdir(outputRoot, { recursive: true })
 
-const files = await walk(sourceRoot)
+const files = (await walk(sourceRoot)).sort((a, b) => a.localeCompare(b))
 const manifest = {}
 let generated = 0
 let reused = 0
+const requestedConcurrency = Number.parseInt(process.env.IMAGE_PIPELINE_CONCURRENCY ?? '3', 10)
+const pipelineConcurrency = Number.isFinite(requestedConcurrency)
+  ? Math.min(6, Math.max(1, requestedConcurrency))
+  : 3
 
-for (const source of files) {
+const processSource = async (source) => {
   const relative = path.relative(sourceRoot, source)
   const extension = path.extname(relative).toLowerCase()
   const destination = path.join(outputRoot, relative)
@@ -48,16 +57,16 @@ for (const source of files) {
   if (passthroughExtensions.has(extension)) {
     await cp(source, destination)
     await cp(source, legacyDestination)
-    continue
+    return
   }
-  if (!rasterExtensions.has(extension)) continue
+  if (!rasterExtensions.has(extension)) return
 
   let metadata
   try {
     metadata = await sharp(source, { animated: false }).metadata()
   } catch {
     await cp(source, destination)
-    continue
+    return
   }
 
   const baseline = sharp(source, { animated: false }).rotate().resize({ width: 2560, withoutEnlargement: true })
@@ -122,5 +131,17 @@ for (const source of files) {
   }
 }
 
-await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
-console.log(`Image pipeline: ${files.length} sources, ${generated} generated, ${reused} reused.`)
+let nextFile = 0
+await Promise.all(Array.from({ length: Math.min(pipelineConcurrency, files.length) }, async () => {
+  while (nextFile < files.length) {
+    const index = nextFile
+    nextFile += 1
+    await processSource(files[index])
+  }
+}))
+
+const sortedManifest = Object.fromEntries(
+  Object.entries(manifest).sort(([left], [right]) => left.localeCompare(right)),
+)
+await writeFile(manifestPath, `${JSON.stringify(sortedManifest, null, 2)}\n`)
+console.log(`Image pipeline: ${files.length} sources, ${generated} generated, ${reused} reused, concurrency ${pipelineConcurrency}.`)

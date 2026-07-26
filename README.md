@@ -38,13 +38,15 @@ npm run build
 
 复制 `.env.example` 为 `.env` 后填写：
 
-- Giscus：文章评论，映射到 GitHub Discussions。
+- Giscus：文章评论，以文章 ID 稳定映射到 GitHub Discussions。
 - Formspree：联系表单，目标邮箱设为 `alec.timison@gmail.com`。
 - Umami Cloud：隐私友好的访问统计。
 
 未填写时，对应功能会明确显示“尚未配置”，不会连接第三方服务。部署时在 GitHub Actions repository variables 中配置同名变量。
 
-GitHub Discussions 的评论邮件由 GitHub 原生通知发送；需要在仓库 Watch 设置中订阅 Discussions，并确认 GitHub 账号通知邮箱为 `alec.timison@gmail.com`。
+GitHub Discussions 的评论邮件由 GitHub 原生通知发送；仓库需要开启 Discussions、安装 Giscus GitHub App，并在 Watch 设置中订阅 Discussions。GitHub 账号通知邮箱使用 `alec.timison@gmail.com`。
+
+未配置 Formspree 时，联系页会把填写内容带入本机邮件应用，收件人为 `alec.timison@gmail.com`；配置后则在页面内直接提交并显示成功或失败回执。
 
 ## 部署
 
