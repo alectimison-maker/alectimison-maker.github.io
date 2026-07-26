@@ -89,7 +89,9 @@ const processSource = async (source) => {
   const sourceWidth = metadata.width ?? 1600
   const sourceHeight = metadata.height ?? 1200
   const stem = relative.slice(0, -extension.length)
-  const outputWidths = widths
+  const maximumWidth = Math.min(sourceWidth, widths.at(-1))
+  const outputWidths = widths.filter((width) => width < maximumWidth)
+  outputWidths.push(maximumWidth)
 
   const entries = []
   for (const width of outputWidths) {
