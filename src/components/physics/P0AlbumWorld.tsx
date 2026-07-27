@@ -3,19 +3,8 @@ import Matter from 'matter-js'
 import p0 from '../../data/p0.json'
 import { sharedFrameScheduler } from '../../lib/physics-2d/FixedStepScheduler'
 import type { CollectionRecord } from './TensionCollection'
+import { p0CardImageSources, p0DetailImageSource } from './p0-image-sources'
 import './p0-album-world.css'
-
-const optimized = (source: string, width = 480) => {
-  const decoded = decodeURI(source)
-  const extensionIndex = decoded.lastIndexOf('.')
-  return encodeURI(`${decoded.slice(0, extensionIndex)}.w${width}.webp`)
-}
-
-const optimizedAvif = (source: string, width = 960) => {
-  const decoded = decodeURI(source)
-  const extensionIndex = decoded.lastIndexOf('.')
-  return encodeURI(`${decoded.slice(0, extensionIndex)}.w${width}.avif`)
-}
 
 const createRandom = (seed = 1947) => () => {
   seed |= 0
@@ -336,10 +325,13 @@ export default function P0AlbumWorld({ items, compact = false, allowStaticView =
                 setSelected(item)
               }}
             >
-              <picture>
-                <source srcSet={optimizedAvif(item.cover)} type="image/avif" />
-                <img src={optimized(item.cover)} alt={`${item.title} 封面`} loading="lazy" decoding="async" draggable="false" />
-              </picture>
+              <img
+                src={p0CardImageSources(item.cover).webp}
+                alt={`${item.title} 封面`}
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
               <span>{item.title}</span>
             </button>
           </article>
@@ -350,10 +342,7 @@ export default function P0AlbumWorld({ items, compact = false, allowStaticView =
         <dialog open className="p0-album-dialog" onClick={(event) => { if (event.target === event.currentTarget) setSelected(undefined) }}>
           <div>
             <button type="button" className="p0-album-dialog__close" onClick={() => setSelected(undefined)}>×</button>
-            <picture>
-              <source srcSet={optimizedAvif(selected.cover)} type="image/avif" />
-              <img src={optimized(selected.cover, 960)} alt={`${selected.title} 封面`} />
-            </picture>
+            <img src={p0DetailImageSource(selected.cover)} alt={`${selected.title} 封面`} />
             <h2>{selected.title}</h2>
             <p>{selected.shelves.join(' / ')}</p>
           </div>
