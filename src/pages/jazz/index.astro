@@ -1,13 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import SpaceIntro from '../../components/SpaceIntro.astro'
-import P0AlbumWorld from '../../components/physics/P0AlbumWorld'
+import JazzPrototype from '../../components/jazz/JazzPrototype'
 import items from '../../data/jazz.json'
 ---
 <BaseLayout title="Jazz" space="jazz">
-  <SpaceIntro space="jazz" />
-  <section class="section-block container">
-    <div class="section-heading"><div><span class="eyebrow">COLLECTION / ALBUMS</span><h2>Albums</h2></div></div>
-    <P0AlbumWorld client:visible items={items} />
-  </section>
+  <JazzPrototype client:load items={items} />
 </BaseLayout>

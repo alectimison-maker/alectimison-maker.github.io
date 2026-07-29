@@ -25,7 +25,9 @@ try {
     return files
   }
   const mediaFiles = await walk(mediaRoot)
-  if (mediaFiles.length !== manifest.sourceCounts.media) fail(`expected ${manifest.sourceCounts.media} media assets, found ${mediaFiles.length}`)
+  if (mediaFiles.length < manifest.sourceCounts.media) {
+    fail(`expected at least ${manifest.sourceCounts.media} media assets, found ${mediaFiles.length}`)
+  }
 
   const validateMediaPath = async (source, owner) => {
     const relative = decodeURI(source).replace(/^\/media\//, '')
@@ -53,11 +55,28 @@ try {
     }
   }
 
+  const jazzCategorySlugs = new Set([
+    'swing',
+    'bebop',
+    'cool-jazz',
+    'hard-bop',
+    'modal-jazz',
+    'free-jazz',
+    'fusion',
+    'vocal-jazz',
+    'latin-and-bossa',
+    'soul-jazz',
+    'post-bop',
+  ])
+
   for (const name of ['jazz', 'anime', 'coffee']) {
     const entries = JSON.parse(await readFile(path.join(root, 'src', 'data', `${name}.json`), 'utf8'))
-    if (entries.length !== manifest.normalizedCounts[name]) fail(`${name} normalized count changed`)
+    if (entries.length < manifest.normalizedCounts[name]) fail(`${name} lost normalized records`)
     for (const entry of entries) {
       if (!entry.title || !entry.cover || !entry.shelves?.length) fail(`${name}/${entry.id} is incomplete`)
+      if (name === 'jazz' && entry.categories?.some((slug) => !jazzCategorySlugs.has(slug))) {
+        fail(`jazz/${entry.id} references an unknown jazz category`)
+      }
       await validateMediaPath(entry.cover, `${name}/${entry.id}`)
     }
   }

@@ -18,7 +18,17 @@ const links = [
 
   <nav class="desktop-nav" aria-label="主导航">
     {links.map(([href, label]) => (
-      <a href={href} aria-current={currentPath.startsWith(href) ? 'page' : undefined}>{label}</a>
+      <a
+        href={href}
+        aria-label={label}
+        aria-current={currentPath.startsWith(href) ? 'page' : undefined}
+      >
+        <span class="nav-label" aria-hidden="true">
+          {Array.from(label).map((letter) => (
+            <span class="nav-letter" data-letter={letter}>{letter}</span>
+          ))}
+        </span>
+      </a>
     ))}
   </nav>
 
@@ -59,6 +69,7 @@ const links = [
   const header = document.querySelector<HTMLElement>('[data-header]')
   const menuButton = header?.querySelector<HTMLButtonElement>('.menu-button')
   const menu = header?.querySelector<HTMLElement>('.mobile-menu')
+  const desktopLinks = header?.querySelectorAll<HTMLAnchorElement>('.desktop-nav a')
 
   const setMenu = (open: boolean) => {
     if (!menuButton || !menu) return
@@ -69,6 +80,47 @@ const links = [
 
   menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'))
   menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)))
+
+  desktopLinks?.forEach((link) => {
+    const letters = Array.from(link.querySelectorAll<HTMLElement>('.nav-letter'))
+    let pointerFrame = 0
+    let pointerX = 0
+    let pointerY = 0
+
+    const paintWeightField = () => {
+      const radius = 52
+
+      letters.forEach((letter) => {
+        const rect = letter.getBoundingClientRect()
+        const distance = Math.hypot(
+          pointerX - (rect.left + rect.width / 2),
+          pointerY - (rect.top + rect.height / 2),
+        )
+        const proximity = Math.max(0, 1 - distance / radius)
+        const easedProximity = proximity * proximity * (3 - 2 * proximity)
+        letter.style.setProperty('--hover-weight', easedProximity.toFixed(3))
+      })
+
+      pointerFrame = 0
+    }
+
+    const updateWeightField = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return
+      pointerX = event.clientX
+      pointerY = event.clientY
+      link.classList.add('is-proximity-active')
+      if (!pointerFrame) pointerFrame = requestAnimationFrame(paintWeightField)
+    }
+
+    link.addEventListener('pointerenter', updateWeightField)
+    link.addEventListener('pointermove', updateWeightField)
+    link.addEventListener('pointerleave', () => {
+      if (pointerFrame) cancelAnimationFrame(pointerFrame)
+      pointerFrame = 0
+      link.classList.remove('is-proximity-active')
+      letters.forEach((letter) => letter.style.removeProperty('--hover-weight'))
+    })
+  })
 
   header?.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -139,12 +191,45 @@ const links = [
   .desktop-nav { display: flex; gap: clamp(.8rem, 2vw, 1.7rem); }
   .desktop-nav a, .search-link, .menu-button {
     color: var(--muted);
-    font: 650 .7rem/1 var(--mono);
+    font: 600 .7rem/1 var(--mono);
     letter-spacing: .08em;
     text-decoration: none;
     text-transform: uppercase;
   }
-  .desktop-nav a[aria-current="page"], .desktop-nav a:hover, .search-link:hover { color: var(--text); }
+  .desktop-nav a {
+    position: relative;
+    font-weight: 400;
+  }
+  .nav-label {
+    display: inline-flex;
+  }
+  .nav-letter {
+    position: relative;
+    display: inline-block;
+  }
+  .nav-letter::after {
+    position: absolute;
+    inset: 0;
+    content: attr(data-letter);
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease-out;
+  }
+  .desktop-nav a[aria-current="page"] .nav-letter::after,
+  .desktop-nav a:focus-visible .nav-letter::after {
+    opacity: 1;
+  }
+  .desktop-nav a.is-proximity-active .nav-letter::after {
+    opacity: var(--hover-weight, 0);
+    transition-duration: 70ms;
+  }
+  .desktop-nav a[aria-current="page"],
+  .desktop-nav a:hover,
+  .desktop-nav a:focus-visible,
+  .search-link:hover {
+    color: var(--text);
+  }
   .header-actions { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
   .search-link span { color: var(--accent); }
   .menu-button { display: none; padding: .7rem; border: 1px solid var(--line); background: none; }
@@ -174,5 +259,8 @@ const links = [
     .site-header { grid-template-columns: 1fr auto; }
     .desktop-nav, .search-link { display: none; }
     .menu-button { display: inline-flex; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nav-letter::after { transition: none; }
   }
 </style>

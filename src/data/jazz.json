@@ -7,6 +7,11 @@
     "shelves": [
       "Albums"
     ],
+    "categories": [
+      "bebop",
+      "hard-bop",
+      "fusion"
+    ],
     "order": 0
   },
   {
@@ -16,6 +21,10 @@
     "cover": "/media/images/jazz/albums/forever.webp",
     "shelves": [
       "Albums"
+    ],
+    "categories": [
+      "fusion",
+      "soul-jazz"
     ],
     "order": 1
   },
@@ -27,6 +36,10 @@
     "shelves": [
       "Albums"
     ],
+    "categories": [
+      "fusion",
+      "vocal-jazz"
+    ],
     "order": 2
   },
   {
@@ -36,6 +49,10 @@
     "cover": "/media/images/jazz/albums/kind-of-blue.webp",
     "shelves": [
       "Albums"
+    ],
+    "categories": [
+      "modal-jazz",
+      "cool-jazz"
     ],
     "order": 3
   },
@@ -47,6 +64,10 @@
     "shelves": [
       "Albums"
     ],
+    "categories": [
+      "fusion",
+      "soul-jazz"
+    ],
     "order": 4
   },
   {
@@ -56,6 +77,10 @@
     "cover": "/media/images/jazz/albums/love-all-cover-all.webp",
     "shelves": [
       "Albums"
+    ],
+    "categories": [
+      "vocal-jazz",
+      "fusion"
     ],
     "order": 5
   },
@@ -67,6 +92,10 @@
     "shelves": [
       "Albums"
     ],
+    "categories": [
+      "vocal-jazz",
+      "fusion"
+    ],
     "order": 6
   },
   {
@@ -76,6 +105,10 @@
     "cover": "/media/images/jazz/albums/moanin.webp",
     "shelves": [
       "Albums"
+    ],
+    "categories": [
+      "hard-bop",
+      "soul-jazz"
     ],
     "order": 7
   },
@@ -87,6 +120,195 @@
     "shelves": [
       "Albums"
     ],
+    "categories": [
+      "fusion"
+    ],
+    "featured": false,
     "order": 8
+  },
+  {
+    "id": "ryo-fukui-in-new-york",
+    "type": "jazz",
+    "title": "Ryo Fukui in New York",
+    "artist": "Ryo Fukui",
+    "year": 1999,
+    "genre": "Japanese Jazz",
+    "cover": "/media/images/jazz/albums/ryo-fukui-in-new-york.jpg",
+    "shelves": [
+      "Albums",
+      "Japanese Jazz",
+      "Live"
+    ],
+    "categories": [
+      "post-bop",
+      "hard-bop"
+    ],
+    "order": 9
+  },
+  {
+    "id": "jazz-samba",
+    "type": "jazz",
+    "title": "Jazz Samba",
+    "artist": "Stan Getz & Charlie Byrd",
+    "year": 1962,
+    "genre": "Bossa Nova",
+    "cover": "/media/images/jazz/albums/jazz-samba.jpg",
+    "shelves": [
+      "Albums",
+      "Bossa Nova"
+    ],
+    "categories": [
+      "latin-and-bossa",
+      "cool-jazz"
+    ],
+    "order": 10
+  },
+  {
+    "id": "the-way-to-play",
+    "type": "jazz",
+    "title": "The Way to Play",
+    "artist": "Bill Evans",
+    "year": 2012,
+    "genre": "Piano Jazz",
+    "cover": "/media/images/jazz/albums/the-way-to-play.jpg",
+    "shelves": [
+      "Albums",
+      "Box Sets"
+    ],
+    "categories": [
+      "cool-jazz",
+      "modal-jazz"
+    ],
+    "order": 11
+  },
+  {
+    "id": "jabberloop-taiwan-selection",
+    "type": "jazz",
+    "title": "JABBERLOOP 台灣特選輯",
+    "artist": "JABBERLOOP",
+    "year": 2011,
+    "genre": "Club Jazz",
+    "cover": "/media/images/jazz/albums/jabberloop-taiwan-selection.jpg",
+    "shelves": [
+      "Albums",
+      "Japanese Jazz",
+      "Compilations"
+    ],
+    "categories": [
+      "fusion"
+    ],
+    "order": 12
+  },
+  {
+    "id": "who-cares",
+    "type": "jazz",
+    "title": "Who Cares",
+    "artist": "Takashi Mizuhashi Quartet",
+    "year": 1974,
+    "genre": "Post-bop",
+    "cover": "/media/images/jazz/albums/who-cares.jpg",
+    "shelves": [
+      "Albums",
+      "Japanese Jazz",
+      "Three Blind Mice"
+    ],
+    "categories": [
+      "post-bop",
+      "hard-bop"
+    ],
+    "order": 13
+  },
+  {
+    "id": "in-the-groove",
+    "type": "jazz",
+    "title": "In the Groove",
+    "artist": "Jiro Inagaki & His Soul Media",
+    "year": 1973,
+    "genre": "Jazz Fusion",
+    "cover": "/media/images/jazz/albums/in-the-groove.jpg",
+    "shelves": [
+      "Albums",
+      "Japanese Jazz",
+      "Fusion"
+    ],
+    "categories": [
+      "fusion",
+      "soul-jazz"
+    ],
+    "order": 14
+  },
+  {
+    "id": "waltz-for-debby",
+    "type": "jazz",
+    "title": "Waltz for Debby",
+    "artist": "Bill Evans Trio",
+    "year": 1962,
+    "genre": "Piano Jazz",
+    "cover": "/media/images/jazz/albums/waltz-for-debby.jpg",
+    "shelves": [
+      "Albums",
+      "Live"
+    ],
+    "categories": [
+      "cool-jazz",
+      "modal-jazz"
+    ],
+    "order": 15
+  },
+  {
+    "id": "modal-soul",
+    "type": "jazz",
+    "title": "Modal Soul",
+    "artist": "Nujabes",
+    "year": 2005,
+    "genre": "Jazz Rap",
+    "cover": "/media/images/jazz/albums/modal-soul.jpg",
+    "shelves": [
+      "Albums",
+      "Instrumental Hip-hop"
+    ],
+    "categories": [
+      "fusion",
+      "soul-jazz"
+    ],
+    "order": 16
+  },
+  {
+    "id": "blues-caravan",
+    "type": "jazz",
+    "title": "Blues Caravan",
+    "artist": "Buddy Rich and His Sextet",
+    "year": 1962,
+    "genre": "Hard Bop",
+    "cover": "/media/images/jazz/albums/blues-caravan.jpg",
+    "shelves": [
+      "Albums",
+      "Hard Bop"
+    ],
+    "categories": [
+      "swing",
+      "bebop",
+      "hard-bop"
+    ],
+    "order": 17
+  },
+  {
+    "id": "getz-gilberto",
+    "type": "jazz",
+    "title": "Getz / Gilberto",
+    "artist": "Stan Getz & João Gilberto",
+    "year": 1964,
+    "genre": "Bossa Nova",
+    "cover": "/media/images/jazz/albums/getz-gilberto.jpg",
+    "shelves": [
+      "Albums",
+      "Bossa Nova"
+    ],
+    "categories": [
+      "latin-and-bossa",
+      "cool-jazz",
+      "vocal-jazz"
+    ],
+    "order": 18
   }
 ]
