@@ -232,13 +232,21 @@ function FocusStage({
           <span>{itemMeta(item, index)}</span>
         </div>
 
-        <button className="jp-focus__previous" type="button" onClick={onPrevious}>
-          <ArrowLeft size={16} />
-          Previous
+        <button
+          className="jp-focus__previous"
+          type="button"
+          aria-label="Previous album"
+          onClick={onPrevious}
+        >
+          <ArrowLeft size={19} aria-hidden="true" />
         </button>
-        <button className="jp-focus__next" type="button" onClick={onNext}>
-          Next
-          <ArrowRight size={16} />
+        <button
+          className="jp-focus__next"
+          type="button"
+          aria-label="Next album"
+          onClick={onNext}
+        >
+          <ArrowRight size={19} aria-hidden="true" />
         </button>
       </div>
 
@@ -343,6 +351,9 @@ function AlbumLibrary({
       <div className="jp-library__grid">
         {visible.map(({ item, index }) => (
           <button type="button" onClick={() => onSelect(index)} key={item.id}>
+            <span className="jp-library__hover-layer jp-library__hover-layer--amber" aria-hidden="true" />
+            <span className="jp-library__hover-layer jp-library__hover-layer--coral" aria-hidden="true" />
+            <span className="jp-library__hover-layer jp-library__hover-layer--blue" aria-hidden="true" />
             <span className="jp-library__index">{String(index + 1).padStart(2, '0')}</span>
             <img src={coverUrl(item.cover)} alt={`${item.title} 封面`} loading="lazy" decoding="async" />
             <span className="jp-library__copy">
