@@ -10,6 +10,9 @@ import rehypeResponsiveImages from './scripts/rehype-responsive-images.mjs'
 export default defineConfig({
   site: 'https://aliouswe.com',
   output: 'static',
+  devToolbar: {
+    enabled: false,
+  },
   integrations: [
     react(),
     mdx(),

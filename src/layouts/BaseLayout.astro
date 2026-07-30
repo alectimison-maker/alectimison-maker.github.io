@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
 import SpringUI from '../components/SpringUI.astro'
+import SiteLoader from '../components/SiteLoader.astro'
 import P1CursorTrail from '../components/physics/P1CursorTrail'
 import { SITE } from '../lib/site'
 import '../styles/global.css'
@@ -64,6 +65,17 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
         if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved
       })()
     </script>
+    <script is:inline>
+      (() => {
+        let loaderSeen = false
+        try {
+          const forcePreview = new URLSearchParams(window.location.search).has('loader-preview')
+          loaderSeen = !forcePreview && sessionStorage.getItem('aliouswe-loader-seen') === '1'
+          if (!loaderSeen) sessionStorage.setItem('aliouswe-loader-seen', '1')
+        } catch {}
+        document.documentElement.classList.add(loaderSeen ? 'site-loader-skip' : 'site-loader-active')
+      })()
+    </script>
     {umamiId && (
       <script
         is:inline
@@ -74,6 +86,7 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
     )}
   </head>
   <body>
+    <SiteLoader />
     <a class="skip-link" href="#main-content">跳到正文</a>
     <Header />
     <main id="main-content" class="page-shell" data-pagefind-body={searchable ? true : undefined}>

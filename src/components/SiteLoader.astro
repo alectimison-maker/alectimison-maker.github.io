@@ -1,0 +1,401 @@
+---
+const albumCovers = [
+  '/media/images/jazz/albums/cowboy-bebop.w480.webp',
+  '/media/images/jazz/albums/forever.w480.webp',
+  '/media/images/jazz/albums/help-ever-hurt-never.w480.webp',
+  '/media/images/jazz/albums/kind-of-blue.w480.webp',
+  '/media/images/jazz/albums/who-cares.w480.webp',
+]
+---
+
+<div
+  class="site-loader"
+  role="progressbar"
+  aria-label="Loading Aliouswe’s Nonsense"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <div class="site-loader__panel site-loader__panel--top" aria-hidden="true"></div>
+  <div class="site-loader__panel site-loader__panel--bottom" aria-hidden="true"></div>
+
+  <div class="site-loader__stage">
+    <div class="site-loader__copy">
+      <p class="site-loader__tagline">Jazzy Fuzzy but Cozzy</p>
+      <p class="site-loader__brand">Aliouswe’s Nonsense</p>
+      <output class="site-loader__percent"><span>0</span>%</output>
+    </div>
+
+    <div class="site-loader__track" aria-hidden="true">
+      <span class="site-loader__fill"></span>
+      <figure class="site-loader__runner">
+        {albumCovers.map((cover, index) => (
+          <img
+            class="site-loader__cover"
+            data-loader-cover
+            data-src={cover}
+            data-index={index}
+            alt=""
+            decoding="async"
+          />
+        ))}
+      </figure>
+    </div>
+  </div>
+</div>
+
+<noscript>
+  <style is:inline>
+    .site-loader { display: none !important; }
+  </style>
+</noscript>
+
+<script is:inline>
+  (() => {
+    const root = document.querySelector('.site-loader')
+    if (!(root instanceof HTMLElement)) return
+
+    if (document.documentElement.classList.contains('site-loader-skip')) {
+      root.remove()
+      return
+    }
+
+    const percent = root.querySelector('.site-loader__percent span')
+    const covers = [...root.querySelectorAll('[data-loader-cover]')]
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const minimumDuration = reduceMotion ? 0 : 3200
+    const maximumDuration = 10000
+    const startedAt = performance.now()
+    let progress = 0
+    let resourceCap = 4
+    let loadedCovers = 0
+    let fontsReady = false
+    let windowReady = document.readyState === 'complete'
+    let finished = false
+    let activeCover = -1
+
+    const setPageInert = (value) => {
+      document.body.querySelectorAll(':scope > :not(.site-loader)').forEach((element) => {
+        if (element instanceof HTMLElement) element.inert = value
+      })
+      document.body.toggleAttribute('aria-busy', value)
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => setPageInert(true), { once: true })
+    } else {
+      setPageInert(true)
+    }
+
+    const updateTarget = () => {
+      resourceCap = Math.max(resourceCap, 12 + (loadedCovers / covers.length) * 60)
+      if (fontsReady) resourceCap = Math.max(resourceCap, 84)
+      if (windowReady) resourceCap = Math.max(resourceCap, 92)
+    }
+
+    const settleCover = () => {
+      loadedCovers += 1
+      updateTarget()
+    }
+
+    covers.forEach((cover) => {
+      if (!(cover instanceof HTMLImageElement)) return
+      cover.addEventListener('load', settleCover, { once: true })
+      cover.addEventListener('error', settleCover, { once: true })
+      cover.src = cover.dataset.src ?? ''
+    })
+
+    const fontSet = document.fonts
+    if (fontSet) {
+      Promise.all([
+        fontSet.load('1em "Loader Felipa"'),
+        fontSet.load('1em "Loader Fascinate"'),
+      ]).finally(() => {
+        fontsReady = true
+        updateTarget()
+      })
+    } else {
+      fontsReady = true
+    }
+
+    if (!windowReady) {
+      window.addEventListener('load', () => {
+        windowReady = true
+        updateTarget()
+      }, { once: true })
+    }
+
+    const setProgress = (value) => {
+      const rounded = Math.min(100, Math.round(value))
+      root.style.setProperty('--loader-progress', `${value}%`)
+      root.setAttribute('aria-valuenow', String(rounded))
+      if (percent) percent.textContent = String(rounded)
+
+      const nextCover = value < 2
+        ? -1
+        : Math.min(covers.length - 1, Math.floor(value / (100 / covers.length)))
+
+      if (nextCover !== activeCover) {
+        covers.forEach((cover, index) => cover.classList.toggle('is-active', index === nextCover))
+        activeCover = nextCover
+      }
+      root.classList.toggle('has-started', value >= 2)
+    }
+
+    const revealPage = () => {
+      if (finished) return
+      finished = true
+      setProgress(100)
+      root.classList.add('is-complete')
+
+      window.setTimeout(() => {
+        setPageInert(false)
+        document.documentElement.classList.remove('site-loader-active')
+        root.classList.add('is-revealing')
+        window.setTimeout(() => root.remove(), reduceMotion ? 30 : 950)
+      }, reduceMotion ? 20 : 380)
+    }
+
+    const tick = (now) => {
+      const elapsed = now - startedAt
+      const simulated = Math.min(92, (elapsed / Math.max(minimumDuration, 1)) * 92)
+      const resourcesReady = loadedCovers === covers.length && fontsReady && windowReady
+      const canFinish = (resourcesReady && elapsed >= minimumDuration) || elapsed >= maximumDuration
+      const visibleTarget = canFinish ? 100 : Math.min(simulated, resourceCap)
+
+      if (reduceMotion && canFinish) {
+        revealPage()
+        return
+      }
+
+      const distance = visibleTarget - progress
+      progress += visibleTarget === 100
+        ? Math.max(.18, distance * .085)
+        : Math.max(.06, distance * .055)
+      progress = Math.min(progress, visibleTarget, 100)
+      setProgress(progress)
+
+      if (visibleTarget === 100 && progress >= 99.75) {
+        revealPage()
+        return
+      }
+      requestAnimationFrame(tick)
+    }
+
+    setProgress(0)
+    requestAnimationFrame(tick)
+  })()
+</script>
+
+<style is:global>
+  @font-face {
+    font-family: "Loader Felipa";
+    src: url("/fonts/jazz/Felipa/Felipa-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Loader Fascinate";
+    src: url("/fonts/jazz/Fascinate/Fascinate-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+  }
+
+  html.site-loader-active,
+  html.site-loader-active body {
+    overflow: hidden;
+  }
+
+  html.site-loader-skip .site-loader {
+    display: none;
+  }
+
+  .site-loader {
+    --loader-bg: #111411;
+    --loader-ink: #f0ede4;
+    --loader-dim: rgba(240, 237, 228, .24);
+    --loader-pad: clamp(1rem, 3vw, 2.5rem);
+    --loader-progress: 0%;
+    position: fixed;
+    z-index: 10000;
+    inset: 0;
+    overflow: hidden;
+    color: var(--loader-ink);
+  }
+
+  .site-loader__panel {
+    position: absolute;
+    z-index: 0;
+    right: 0;
+    left: 0;
+    height: calc(50% + 1px);
+    background: var(--loader-bg);
+    transition: transform .9s cubic-bezier(.76, 0, .24, 1);
+    will-change: transform;
+  }
+
+  .site-loader__panel--top { top: 0; }
+  .site-loader__panel--bottom { bottom: 0; }
+
+  .site-loader__stage {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: var(--loader-pad);
+    left: var(--loader-pad);
+    transform: translateY(-50%);
+    transition: opacity .3s ease;
+  }
+
+  .site-loader__copy {
+    position: relative;
+    min-height: clamp(5.5rem, 8vw, 8.5rem);
+    padding-bottom: .8rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 1rem;
+  }
+
+  .site-loader__tagline,
+  .site-loader__brand,
+  .site-loader__percent {
+    margin: 0;
+    color: inherit;
+    white-space: nowrap;
+    transition: opacity .3s ease, transform .35s cubic-bezier(.76, 0, .24, 1);
+  }
+
+  .site-loader__tagline {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 400 clamp(1.8rem, 3vw, 3.75rem)/.9 "Loader Felipa", cursive;
+  }
+
+  .site-loader__brand {
+    grid-column: 2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font: 400 clamp(2.15rem, 3.65vw, 4.8rem)/.8 "Loader Fascinate", sans-serif;
+    text-align: center;
+  }
+
+  .site-loader__percent {
+    grid-column: 3;
+    justify-self: end;
+    font: 400 clamp(2rem, 3.15vw, 4rem)/.85 var(--serif);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site-loader__track {
+    position: relative;
+    height: 1px;
+    background: var(--loader-dim);
+  }
+
+  .site-loader__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--loader-progress);
+    background: var(--loader-ink);
+    will-change: width;
+  }
+
+  .site-loader__runner {
+    position: absolute;
+    top: clamp(1rem, 1.8vw, 1.75rem);
+    left: var(--loader-progress);
+    width: clamp(4.75rem, 7.5vw, 8rem);
+    aspect-ratio: 1;
+    margin: 0;
+    opacity: 0;
+    transform: translateX(-100%);
+    transition: opacity .25s ease;
+    will-change: left;
+  }
+
+  .site-loader.has-started .site-loader__runner { opacity: 1; }
+
+  .site-loader__cover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(.92);
+    transition: opacity .28s ease, transform .45s cubic-bezier(.2, .8, .2, 1);
+  }
+
+  .site-loader__cover.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .site-loader.is-complete .site-loader__tagline {
+    opacity: 0;
+    transform: translateX(-1.5rem);
+  }
+
+  .site-loader.is-complete .site-loader__brand {
+    opacity: 0;
+    transform: translateY(-1rem);
+  }
+
+  .site-loader.is-complete .site-loader__percent {
+    opacity: 0;
+    transform: translateX(1.5rem);
+  }
+
+  .site-loader.is-complete .site-loader__runner {
+    opacity: 0;
+    transform: translateX(-100%) translateY(1rem);
+  }
+
+  .site-loader.is-revealing .site-loader__stage { opacity: 0; }
+  .site-loader.is-revealing .site-loader__panel--top { transform: translateY(-100%); }
+  .site-loader.is-revealing .site-loader__panel--bottom { transform: translateY(100%); }
+
+  @media (max-width: 760px) {
+    .site-loader__copy {
+      min-height: 8.25rem;
+      padding-bottom: .65rem;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .site-loader__brand {
+      position: absolute;
+      grid-column: 1 / -1;
+      top: 0;
+      left: 50%;
+      bottom: auto;
+      max-width: 92vw;
+      width: 100%;
+      font-size: clamp(2rem, 10vw, 3.35rem);
+      white-space: normal;
+      text-wrap: balance;
+      transform: translateX(-50%);
+    }
+
+    .site-loader__tagline {
+      grid-column: 1;
+      max-width: calc(100vw - 8.5rem);
+      font-size: clamp(1.35rem, 6.5vw, 2.25rem);
+    }
+
+    .site-loader__percent {
+      grid-column: 2;
+      font-size: clamp(1.65rem, 8vw, 2.4rem);
+    }
+    .site-loader__runner { width: clamp(4rem, 22vw, 5.5rem); }
+
+    .site-loader.is-complete .site-loader__brand {
+      transform: translateX(-50%) translateY(-1rem);
+    }
+  }
+</style>
