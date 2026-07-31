@@ -1,0 +1,112 @@
+<script>
+  const root = document.documentElement
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches
+    || localStorage.getItem('aliouswe-motion') === 'reduced'
+
+  if (finePointer && !reducedMotion && root.dataset.dampedScroll !== 'ready') {
+    root.dataset.dampedScroll = 'ready'
+
+    const inputScale = .55
+    const easing = .14
+    const edgeTolerance = 1
+    let targetY = window.scrollY
+    let frame = 0
+
+    const maxScrollY = () => Math.max(0, root.scrollHeight - window.innerHeight)
+    const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
+
+    const normalizedDelta = (event: WheelEvent) => {
+      if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 16
+      if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * window.innerHeight
+      return event.deltaY
+    }
+
+    const canConsumeScroll = (element: HTMLElement, delta: number) => {
+      const style = getComputedStyle(element)
+      const scrollable = /^(auto|scroll|overlay)$/.test(style.overflowY)
+        && element.scrollHeight > element.clientHeight + edgeTolerance
+      if (!scrollable) return false
+      if (delta < 0) return element.scrollTop > edgeTolerance
+      return element.scrollTop + element.clientHeight < element.scrollHeight - edgeTolerance
+    }
+
+    const nestedScrollerCanConsume = (target: EventTarget | null, delta: number) => {
+      let element = target instanceof HTMLElement ? target : null
+      while (element && element !== document.body && element !== root) {
+        if (canConsumeScroll(element, delta)) return true
+        element = element.parentElement
+      }
+      return false
+    }
+
+    const stopAnimation = () => {
+      if (frame) cancelAnimationFrame(frame)
+      frame = 0
+      targetY = window.scrollY
+      root.classList.remove('is-wheel-damping')
+    }
+
+    const tick = () => {
+      const currentY = window.scrollY
+      const distance = targetY - currentY
+
+      if (Math.abs(distance) < .5) {
+        window.scrollTo({ top: targetY, behavior: 'auto' })
+        frame = 0
+        root.classList.remove('is-wheel-damping')
+        return
+      }
+
+      window.scrollTo({ top: currentY + distance * easing, behavior: 'auto' })
+      frame = requestAnimationFrame(tick)
+    }
+
+    const dampWheel = (event: WheelEvent) => {
+      if (event.defaultPrevented || event.ctrlKey || event.shiftKey) return
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+
+      const delta = normalizedDelta(event)
+      if (!delta) return
+      if (nestedScrollerCanConsume(event.target, delta)) {
+        stopAnimation()
+        return
+      }
+
+      const scrollLimit = maxScrollY()
+      const atStart = window.scrollY <= edgeTolerance && delta < 0
+      const atEnd = window.scrollY >= scrollLimit - edgeTolerance && delta > 0
+      if (atStart || atEnd) return
+
+      event.preventDefault()
+      const maximumLead = Math.max(480, window.innerHeight * 1.2)
+      const nextTarget = clamp(targetY + delta * inputScale, 0, scrollLimit)
+      targetY = clamp(nextTarget, window.scrollY - maximumLead, window.scrollY + maximumLead)
+      root.classList.add('is-wheel-damping')
+      if (!frame) frame = requestAnimationFrame(tick)
+    }
+
+    window.addEventListener('wheel', dampWheel, { passive: false })
+    window.addEventListener('scroll', () => {
+      if (!frame) targetY = window.scrollY
+    }, { passive: true })
+    window.addEventListener('resize', () => {
+      targetY = clamp(targetY, 0, maxScrollY())
+    }, { passive: true })
+    window.addEventListener('hashchange', stopAnimation)
+    window.addEventListener('popstate', stopAnimation)
+    window.addEventListener('blur', stopAnimation)
+    window.addEventListener('keydown', (event) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) {
+        stopAnimation()
+      }
+    })
+    window.addEventListener('pointerdown', stopAnimation, { passive: true })
+  }
+</script>
+
+<style is:global>
+  html.is-wheel-damping {
+    scroll-behavior: auto;
+  }
+</style>
