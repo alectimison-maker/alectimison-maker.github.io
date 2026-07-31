@@ -142,6 +142,10 @@ html.jp-cursor-lens-active * {
   cursor: none !important;
 }
 
+html.jp-cursor-lens-stage .p1-cursor-trail {
+  display: none;
+}
+
 .jp-hero {
   position: relative;
   min-height: 100svh;

@@ -96,17 +96,19 @@ function CurtainArchive({
     const hideLens = () => {
       lens.classList.remove('is-visible')
       document.documentElement.classList.remove('jp-cursor-lens-active')
+      document.documentElement.classList.remove('jp-cursor-lens-stage')
     }
 
     const paintLens = () => {
       const bounds = stage.getBoundingClientRect()
       const headerBottom = header?.getBoundingClientRect().bottom ?? 0
       const lensDiameter = lens.offsetWidth
-      const inside = hasPointer
+      const insideStage = hasPointer
         && pointerX >= bounds.left
         && pointerX <= bounds.right
-        && pointerY >= Math.max(bounds.top, headerBottom)
+        && pointerY >= bounds.top
         && pointerY <= bounds.bottom
+      const insideLens = insideStage && pointerY >= headerBottom
 
       const clipTop = Math.max(
         0,
@@ -115,8 +117,9 @@ function CurtainArchive({
 
       lens.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`
       lens.style.setProperty('--lens-clip-top', `${clipTop}px`)
-      lens.classList.toggle('is-visible', inside)
-      document.documentElement.classList.toggle('jp-cursor-lens-active', inside)
+      lens.classList.toggle('is-visible', insideLens)
+      document.documentElement.classList.toggle('jp-cursor-lens-active', insideLens)
+      document.documentElement.classList.toggle('jp-cursor-lens-stage', insideStage)
       frame = 0
     }
 
@@ -151,6 +154,7 @@ function CurtainArchive({
       window.removeEventListener('blur', leaveWindow)
       document.documentElement.removeEventListener('mouseleave', leaveWindow)
       document.documentElement.classList.remove('jp-cursor-lens-active')
+      document.documentElement.classList.remove('jp-cursor-lens-stage')
       lens.remove()
     }
   }, [])
