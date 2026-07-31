@@ -77,6 +77,7 @@ function CurtainArchive({
 
   useEffect(() => {
     const stage = stageRef.current
+    const header = document.querySelector<HTMLElement>('[data-header]')
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
       || localStorage.getItem('aliouswe-motion') === 'reduced'
@@ -99,13 +100,21 @@ function CurtainArchive({
 
     const paintLens = () => {
       const bounds = stage.getBoundingClientRect()
+      const headerBottom = header?.getBoundingClientRect().bottom ?? 0
+      const lensDiameter = lens.offsetWidth
       const inside = hasPointer
         && pointerX >= bounds.left
         && pointerX <= bounds.right
-        && pointerY >= bounds.top
+        && pointerY >= Math.max(bounds.top, headerBottom)
         && pointerY <= bounds.bottom
 
+      const clipTop = Math.max(
+        0,
+        Math.min(lensDiameter, headerBottom - (pointerY - lensDiameter / 2)),
+      )
+
       lens.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`
+      lens.style.setProperty('--lens-clip-top', `${clipTop}px`)
       lens.classList.toggle('is-visible', inside)
       document.documentElement.classList.toggle('jp-cursor-lens-active', inside)
       frame = 0

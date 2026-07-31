@@ -126,6 +126,7 @@ html[data-space="jazz"] .page-shell {
   pointer-events: none;
   background: #fff;
   mix-blend-mode: difference;
+  clip-path: inset(var(--lens-clip-top, 0) 0 0);
   transition: opacity 100ms ease-out, visibility 0s linear 100ms;
   will-change: transform;
 }
