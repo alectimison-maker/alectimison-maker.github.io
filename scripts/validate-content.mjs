@@ -12,7 +12,10 @@ const fail = (message) => {
 try {
   const manifest = JSON.parse(await readFile(manifestPath, 'utf8'))
   const posts = (await readdir(path.join(root, 'src', 'content', 'posts'))).filter((file) => /\.mdx?$/.test(file))
-  if (posts.length !== manifest.sourceCounts.posts) fail(`expected ${manifest.sourceCounts.posts} posts, found ${posts.length}`)
+  const postSlugs = new Set(posts.map((file) => file.replace(/\.mdx?$/, '')))
+  for (const post of manifest.posts) {
+    if (!postSlugs.has(post.slug)) fail(`missing migrated post: ${post.slug}`)
+  }
 
   const mediaRoot = path.join(root, 'src', 'assets', 'media')
   const walk = async (directory) => {
