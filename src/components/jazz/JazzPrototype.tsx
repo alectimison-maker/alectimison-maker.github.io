@@ -77,6 +77,77 @@ function CurtainArchive({
 
   useEffect(() => {
     const stage = stageRef.current
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || localStorage.getItem('aliouswe-motion') === 'reduced'
+    if (!stage || !finePointer || reducedMotion) return
+
+    const lens = document.createElement('span')
+    lens.className = 'jp-cursor-lens'
+    lens.setAttribute('aria-hidden', 'true')
+    document.body.append(lens)
+
+    let pointerX = -200
+    let pointerY = -200
+    let hasPointer = false
+    let frame = 0
+
+    const hideLens = () => {
+      lens.classList.remove('is-visible')
+      document.documentElement.classList.remove('jp-cursor-lens-active')
+    }
+
+    const paintLens = () => {
+      const bounds = stage.getBoundingClientRect()
+      const inside = hasPointer
+        && pointerX >= bounds.left
+        && pointerX <= bounds.right
+        && pointerY >= bounds.top
+        && pointerY <= bounds.bottom
+
+      lens.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`
+      lens.classList.toggle('is-visible', inside)
+      document.documentElement.classList.toggle('jp-cursor-lens-active', inside)
+      frame = 0
+    }
+
+    const schedulePaint = () => {
+      if (!frame) frame = requestAnimationFrame(paintLens)
+    }
+
+    const moveLens = (event: PointerEvent) => {
+      if (event.pointerType === 'touch') return
+      pointerX = event.clientX
+      pointerY = event.clientY
+      hasPointer = true
+      schedulePaint()
+    }
+
+    const leaveWindow = () => {
+      hasPointer = false
+      hideLens()
+    }
+
+    window.addEventListener('pointermove', moveLens, { passive: true })
+    window.addEventListener('scroll', schedulePaint, { passive: true })
+    window.addEventListener('resize', schedulePaint, { passive: true })
+    window.addEventListener('blur', leaveWindow)
+    document.documentElement.addEventListener('mouseleave', leaveWindow)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('pointermove', moveLens)
+      window.removeEventListener('scroll', schedulePaint)
+      window.removeEventListener('resize', schedulePaint)
+      window.removeEventListener('blur', leaveWindow)
+      document.documentElement.removeEventListener('mouseleave', leaveWindow)
+      document.documentElement.classList.remove('jp-cursor-lens-active')
+      lens.remove()
+    }
+  }, [])
+
+  useEffect(() => {
+    const stage = stageRef.current
     if (!stage) return
     let frame = 0
     const move = (event: PointerEvent) => {

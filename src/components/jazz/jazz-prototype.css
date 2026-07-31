@@ -113,6 +113,34 @@ html[data-space="jazz"] .page-shell {
   color: inherit;
 }
 
+.jp-cursor-lens {
+  position: fixed;
+  z-index: 120;
+  top: 0;
+  left: 0;
+  width: clamp(7.5rem, 10vw, 10rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: #fff;
+  mix-blend-mode: difference;
+  transition: opacity 100ms ease-out, visibility 0s linear 100ms;
+  will-change: transform;
+}
+
+.jp-cursor-lens.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+html.jp-cursor-lens-active,
+html.jp-cursor-lens-active * {
+  cursor: none !important;
+}
+
 .jp-hero {
   position: relative;
   min-height: 100svh;
@@ -1068,6 +1096,7 @@ html[data-space="jazz"] .page-shell {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .jp-cursor-lens { display: none; }
   .jp-curtain__strips,
   .jp-curtain__strip,
   .jp-curtain__strip img,

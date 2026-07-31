@@ -94,6 +94,6 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
     </main>
     <Footer />
     <SpringUI />
-    <P1CursorTrail client:load />
+    {space !== 'jazz' && <P1CursorTrail client:load />}
   </body>
 </html>
