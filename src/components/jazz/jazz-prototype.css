@@ -118,14 +118,15 @@ html[data-space="jazz"] .page-shell {
   z-index: 120;
   top: 0;
   left: 0;
-  width: clamp(6rem, 8vw, 8rem);
+  width: clamp(5rem, 7vw, 7rem);
   aspect-ratio: 1;
   border-radius: 50%;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  background: #fff;
-  mix-blend-mode: difference;
+  background: rgba(118, 87, 232, .3);
+  -webkit-backdrop-filter: invert(1) saturate(1.12);
+  backdrop-filter: invert(1) saturate(1.12);
   clip-path: inset(var(--lens-clip-top, 0) 0 0);
   transition: opacity 100ms ease-out, visibility 0s linear 100ms;
   will-change: transform;
