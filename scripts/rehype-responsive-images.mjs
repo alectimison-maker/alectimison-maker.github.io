@@ -1,4 +1,5 @@
 import { visit } from 'unist-util-visit'
+import imageManifest from '../public/image-manifest.json' with { type: 'json' }
 
 const decodePath = (value) => {
   try {
@@ -7,6 +8,13 @@ const decodePath = (value) => {
     return value
   }
 }
+
+const manifestKey = (source) => source
+  .split('/')
+  .map((segment) => encodeURIComponent(segment))
+  .join('/')
+
+const responsiveVariants = (source) => imageManifest[manifestKey(source)]?.variants ?? []
 
 export default function rehypeResponsiveImages() {
   return (tree) => {
@@ -18,11 +26,15 @@ export default function rehypeResponsiveImages() {
       if (extensionIndex < 0) return
       const extension = source.slice(extensionIndex).toLowerCase()
       if (extension === '.svg' || extension === '.ico') return
-      const stem = source.slice(0, extensionIndex)
+      const variants = responsiveVariants(source)
+      if (!variants.length) return
+      const webpVariants = variants.filter((variant) => variant.webp)
+      const avifVariants = variants.filter((variant) => variant.avif)
+      const fallback = webpVariants.findLast((variant) => variant.width <= 1600) ?? webpVariants.at(-1)
       node.properties = {
         ...node.properties,
-        src: `${stem}.w1600.webp`,
-        srcSet: [480, 960, 1600, 2560].map((width) => `${encodeURI(stem)}.w${width}.webp ${width}w`).join(', '),
+        src: fallback.webp,
+        srcSet: webpVariants.map((variant) => `${variant.webp} ${variant.width}w`).join(', '),
         sizes: '(max-width: 760px) calc(100vw - 2rem), 70ch',
         loading: 'lazy',
         decoding: 'async',
@@ -33,16 +45,16 @@ export default function rehypeResponsiveImages() {
           tagName: 'picture',
           properties: {},
           children: [
-            {
+            ...(avifVariants.length ? [{
               type: 'element',
               tagName: 'source',
               properties: {
                 type: 'image/avif',
-                srcSet: [960, 1600, 2560].map((width) => `${encodeURI(stem)}.w${width}.avif ${width}w`).join(', '),
+                srcSet: avifVariants.map((variant) => `${variant.avif} ${variant.width}w`).join(', '),
                 sizes: '(max-width: 760px) calc(100vw - 2rem), 70ch',
               },
               children: [],
-            },
+            }] : []),
             node,
           ],
         }

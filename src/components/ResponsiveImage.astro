@@ -1,10 +1,22 @@
 ---
+import imageManifest from '../../public/image-manifest.json'
+
 interface Props {
   src: string
   alt: string
   loading?: 'lazy' | 'eager'
   sizes?: string
   class?: string
+}
+
+interface ImageVariant {
+  width: number
+  webp: string
+  avif?: string
+}
+
+interface ImageEntry {
+  variants: ImageVariant[]
 }
 
 const {
@@ -16,22 +28,25 @@ const {
 } = Astro.props
 const decoded = decodeURI(src)
 const extensionIndex = decoded.lastIndexOf('.')
-const stem = decoded.slice(0, extensionIndex)
 const extension = decoded.slice(extensionIndex).toLowerCase()
 const passthrough = extension === '.svg' || extension === '.ico'
-const widths = [480, 960, 1600, 2560]
-const webpSet = widths.map((width) => `${encodeURI(stem)}.w${width}.webp ${width}w`).join(', ')
-const avifSet = widths.filter((width) => width >= 960).map((width) => `${encodeURI(stem)}.w${width}.avif ${width}w`).join(', ')
+const key = decoded.split('/').map((segment) => encodeURIComponent(segment)).join('/')
+const variants = (imageManifest as Record<string, ImageEntry>)[key]?.variants ?? []
+const webpVariants = variants.filter((variant) => variant.webp)
+const avifVariants = variants.filter((variant) => variant.avif)
+const fallback = webpVariants.findLast((variant) => variant.width <= 1600) ?? webpVariants.at(-1)
+const webpSet = webpVariants.map((variant) => `${variant.webp} ${variant.width}w`).join(', ')
+const avifSet = avifVariants.map((variant) => `${variant.avif} ${variant.width}w`).join(', ')
 ---
 
-{passthrough ? (
+{passthrough || !fallback ? (
   <img src={src} alt={alt} loading={loading} decoding="async" class={className} />
 ) : (
   <picture>
-    <source type="image/avif" srcset={avifSet} sizes={sizes} />
+    {avifSet && <source type="image/avif" srcset={avifSet} sizes={sizes} />}
     <source type="image/webp" srcset={webpSet} sizes={sizes} />
     <img
-      src={`${encodeURI(stem)}.w1600.webp`}
+      src={fallback.webp}
       srcset={webpSet}
       sizes={sizes}
       alt={alt}
