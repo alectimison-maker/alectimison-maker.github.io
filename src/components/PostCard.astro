@@ -10,7 +10,6 @@ interface Props {
 
 const { post, featured = false } = Astro.props
 const { title, description, date, space, tags, cover } = post.data
-const useFeaturedCoffeeLockup = featured && post.id === 'hows-the-coffee'
 ---
 
 <article class:list={['post-card', { featured }]} data-space={space}>
@@ -19,17 +18,7 @@ const useFeaturedCoffeeLockup = featured && post.id === 'hows-the-coffee'
       <span>{space}</span>
       <time datetime={date.toISOString()}>{formatDate(date)}</time>
     </div>
-    <h3 class:list={{ 'featured-coffee-lockup': useFeaturedCoffeeLockup }}>
-      <a href={`/posts/${post.id}/`} aria-label={useFeaturedCoffeeLockup ? title : undefined}>
-        {useFeaturedCoffeeLockup ? (
-          <>
-            <span class="featured-title-line featured-title-medium" aria-hidden="true">How‘s</span>
-            <span class="featured-title-line featured-title-small" aria-hidden="true">the</span>
-            <span class="featured-title-line featured-title-large" aria-hidden="true"><span class="featured-title-capital">C</span>offee</span>
-          </>
-        ) : title}
-      </a>
-    </h3>
+    <h3><a href={`/posts/${post.id}/`}>{title}</a></h3>
     {description && <p>{description}</p>}
     <div class="post-card__footer">
       <span>{tags.slice(0, 3).map((tag) => `#${tag}`).join(' · ')}</span>
@@ -40,7 +29,7 @@ const useFeaturedCoffeeLockup = featured && post.id === 'hows-the-coffee'
     <div class="post-card__media">
       <ResponsiveImage
         src={cover}
-        alt={`${title} 配图：鸳鸯dirty`}
+        alt={`${title} 封面图`}
         loading="eager"
         sizes="(max-width: 760px) 100vw, 38vw"
         class="post-card__image"
@@ -96,77 +85,11 @@ const useFeaturedCoffeeLockup = featured && post.id === 'hows-the-coffee'
   }
   h3 a { text-decoration: none; }
   h3 a::after { content: ""; position: absolute; inset: 0; }
-  h3.featured-coffee-lockup {
-    width: calc(100% + var(--post-card-pad) * 2);
-    max-width: none;
-    min-height: 0;
-    margin: .35rem calc(var(--post-card-pad) * -1);
-    flex: 1;
-    letter-spacing: -.04em;
-  }
-  .featured-coffee-lockup a {
-    width: 100%;
-    height: 100%;
-    min-height: 24rem;
-    display: block;
-    position: relative;
-    overflow: hidden;
-    font-family: var(--serif);
-    line-height: .76;
-  }
-  .featured-title-line { position: absolute; display: block; white-space: nowrap; }
-  .featured-title-medium {
-    z-index: 2;
-    top: 50%;
-    left: -.08em;
-    color: #2350dc;
-    font-size: clamp(8rem, 12vw, 12rem);
-    font-weight: 800;
-    line-height: .72;
-    letter-spacing: -.06em;
-    writing-mode: vertical-rl;
-    text-orientation: sideways;
-    transform: translateY(-50%) scaleX(2.85);
-    transform-origin: left center;
-  }
-  .featured-title-small {
-    z-index: 1;
-    top: -.08em;
-    right: -.02em;
-    color: #ef3038;
-    font-size: clamp(7rem, 11vw, 11rem);
-    letter-spacing: -.08em;
-    transform: scaleX(2.65);
-    transform-origin: right top;
-  }
-  .featured-title-large {
-    z-index: 3;
-    right: -.035em;
-    bottom: .08em;
-    color: #006854;
-    font-size: clamp(10rem, 17vw, 17rem);
-    letter-spacing: -.085em;
-    transform: scaleY(1.55);
-    transform-origin: right bottom;
-  }
-  .featured-title-capital {
-    display: inline-block;
-    margin-right: .025em;
-    font-weight: 900;
-    transform: scaleY(1.08);
-    transform-origin: left bottom;
-  }
   p { max-width: 42rem; color: var(--muted); line-height: 1.55; }
   .post-card__footer { padding-top: 1rem; border-top: 1px solid var(--line); }
   .post-card__footer a { position: relative; z-index: 1; font-size: 1.2rem; text-decoration: none; }
   @media (max-width: 760px) {
     .post-card.featured { grid-template-columns: minmax(0, 1fr); }
-    .featured-coffee-lockup a {
-      min-height: 18rem;
-    }
-    .featured-title-medium { font-size: clamp(6rem, 30vw, 7.5rem); transform: translateY(-50%) scaleX(1.55); }
-    .featured-title-small { font-size: clamp(4rem, 20vw, 5rem); transform: scaleX(1.8); }
-    .featured-title-large { font-size: clamp(5rem, 26vw, 7rem); transform: scaleY(2.5); }
     .post-card__media { min-height: 28rem; border-top: 1px solid var(--line); border-left: 0; }
   }
 </style>

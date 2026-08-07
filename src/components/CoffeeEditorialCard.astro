@@ -1,0 +1,135 @@
+---
+import type { CollectionEntry } from 'astro:content'
+import { formatDate } from '../lib/site'
+import { getCoffeeEditorialConfig } from '../data/coffee-editorial'
+import CoffeeTitleArtwork from './CoffeeTitleArtwork.astro'
+import ResponsiveImage from './ResponsiveImage.astro'
+
+interface Props {
+  post: CollectionEntry<'posts'>
+  eager?: boolean
+}
+
+const { post, eager = false } = Astro.props
+const { title, description, date, space, tags, cover } = post.data
+const config = getCoffeeEditorialConfig(post.id)
+
+if (!cover) {
+  throw new Error(`Coffee post "${post.id}" needs a cover image before it can use the editorial card.`)
+}
+---
+
+<article class:list={['coffee-editorial-card', `image-${config.imageSide}`, `artwork-${config.artwork}`]} data-space={space}>
+  <div class="coffee-editorial-card__body">
+    <div class="coffee-editorial-card__meta">
+      <span>{space}</span>
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+    </div>
+    <h3>
+      <a href={`/posts/${post.id}/`} aria-label={title}>
+        <CoffeeTitleArtwork artwork={config.artwork} />
+      </a>
+    </h3>
+    {description && <p>{description}</p>}
+    <div class="coffee-editorial-card__footer">
+      <span>{tags.slice(0, 3).map((tag) => `#${tag}`).join(' · ')}</span>
+      <a href={`/posts/${post.id}/`} aria-label={`阅读 ${title}`}>↗</a>
+    </div>
+  </div>
+  <div class="coffee-editorial-card__media">
+    <ResponsiveImage
+      src={cover}
+      alt={config.coverAlt}
+      loading={eager ? 'eager' : 'lazy'}
+      sizes="(max-width: 760px) 100vw, 38vw"
+      class="coffee-editorial-card__image"
+    />
+  </div>
+</article>
+
+<style>
+  .coffee-editorial-card {
+    position: relative;
+    min-height: clamp(25rem, 48vw, 39rem);
+    display: grid;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .coffee-editorial-card.image-right {
+    grid-template-columns: minmax(0, 1.62fr) minmax(18rem, 1fr);
+    grid-template-areas: "body media";
+  }
+  .coffee-editorial-card.image-left {
+    grid-template-columns: minmax(18rem, 1fr) minmax(0, 1.62fr);
+    grid-template-areas: "media body";
+  }
+  .coffee-editorial-card__body {
+    --card-pad: clamp(1rem, 2vw, 1.6rem);
+    grid-area: body;
+    min-width: 0;
+    min-height: 0;
+    padding: var(--card-pad);
+    display: flex;
+    flex-direction: column;
+  }
+  .coffee-editorial-card__media {
+    grid-area: media;
+    min-width: 0;
+    padding: clamp(1rem, 2vw, 1.6rem);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .image-right .coffee-editorial-card__media { border-left: 1px solid var(--line); }
+  .image-left .coffee-editorial-card__media { border-right: 1px solid var(--line); }
+  .coffee-editorial-card__media :global(picture) { width: 100%; height: 100%; display: block; }
+  .coffee-editorial-card__media :global(.coffee-editorial-card__image) {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+  }
+  .coffee-editorial-card__meta,
+  .coffee-editorial-card__footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+    font: 650 .65rem/1.3 var(--mono);
+    text-transform: uppercase;
+  }
+  .coffee-editorial-card__meta span { color: var(--accent); }
+  h3 {
+    width: calc(100% + var(--card-pad) * 2);
+    min-height: 0;
+    margin: .35rem calc(var(--card-pad) * -1);
+    flex: 1;
+  }
+  h3 a { width: 100%; height: 100%; display: block; text-decoration: none; }
+  h3 a::after { content: ""; position: absolute; z-index: 1; inset: 0; }
+  p { max-width: 42rem; color: var(--muted); line-height: 1.55; }
+  .coffee-editorial-card__footer { padding-top: 1rem; border-top: 1px solid var(--line); }
+  .coffee-editorial-card__footer a { position: relative; z-index: 2; font-size: 1.2rem; text-decoration: none; }
+
+  @media (min-width: 761px) {
+    .coffee-editorial-card.artwork-hows-the-coffee.image-right {
+      grid-template-columns: minmax(0, 1.35fr) minmax(18rem, .65fr);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .coffee-editorial-card.image-left,
+    .coffee-editorial-card.image-right {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-areas: "body" "media";
+    }
+    .coffee-editorial-card__media {
+      min-height: 28rem;
+      border-top: 1px solid var(--line);
+      border-right: 0 !important;
+      border-left: 0 !important;
+    }
+  }
+</style>

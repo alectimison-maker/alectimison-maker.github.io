@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import SpaceIntro from '../../components/SpaceIntro.astro'
 import TensionCollection from '../../components/physics/TensionCollection'
-import PostCard from '../../components/PostCard.astro'
+import CoffeeEditorialCard from '../../components/CoffeeEditorialCard.astro'
 import items from '../../data/coffee.json'
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft && data.space === 'coffee'))
@@ -16,9 +16,16 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft && data.sp
     <TensionCollection client:visible items={items} space="coffee" />
   </section>
   {posts.length > 0 && (
-    <section class="section-block container">
+    <section class="section-block container" id="coffee-notes">
       <div class="section-heading"><h2>Coffee Notes</h2></div>
-      {posts.map((post) => <PostCard post={post} featured={post.id === 'hows-the-coffee'} />)}
+      <div class="coffee-notes-list">
+        {posts.map((post, index) => <CoffeeEditorialCard post={post} eager={index === 0} />)}
+      </div>
     </section>
   )}
 </BaseLayout>
+
+<style>
+  .coffee-notes-list { display: grid; }
+  .coffee-notes-list > :global(article + article) { margin-top: -1px; }
+</style>

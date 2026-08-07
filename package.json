@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "npm run optimize:images",
     "dev": "astro dev",
-    "prebuild": "npm run sync:avatar && npm run validate:content && npm run optimize:images",
+    "prebuild": "npm run validate:content && npm run optimize:images",
     "build": "astro check && astro build --force && node scripts/validate-built-images.mjs && pagefind --site dist",
     "preview": "astro preview",
     "check": "astro check",

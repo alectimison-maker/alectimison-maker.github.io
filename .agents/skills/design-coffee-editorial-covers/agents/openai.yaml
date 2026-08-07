@@ -1,0 +1,4 @@
+interface:
+  display_name: "Coffee Editorial Covers"
+  short_description: "Art-direct and review editorial Coffee blog covers"
+  default_prompt: "Propose one Coffee cover composition, obtain approval, then implement and verify it."

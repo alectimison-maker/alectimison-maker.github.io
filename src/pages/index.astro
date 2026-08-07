@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import FlowTicker from '../components/FlowTicker.astro'
 import PostCard from '../components/PostCard.astro'
+import CoffeeEditorialCard from '../components/CoffeeEditorialCard.astro'
 import ParticleTitle from '../components/physics/ParticleTitle'
 import KineticPostGrid from '../components/physics/KineticPostGrid'
 import MagneticSpaceGrid from '../components/physics/MagneticSpaceGrid'
@@ -10,8 +11,9 @@ import { SPACE_META } from '../lib/site'
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-const featured = posts.find((post) => post.data.featured) ?? posts[0]
-const recent = posts.filter((post) => post.id !== featured?.id).slice(0, 6)
+const featuredPosts = posts.slice(0, 3)
+const featuredIds = new Set(featuredPosts.map((post) => post.id))
+const recent = posts.filter((post) => !featuredIds.has(post.id)).slice(0, 6)
 const recentKinetic = recent.map((post) => ({
   id: post.id,
   title: post.data.title,
@@ -53,10 +55,16 @@ const spaces = Object.entries(SPACE_META).map(([space, meta], index) => ({
 
   <FlowTicker text="Jazzy Fuzzy But Cozzy" tone="acid" duration="20s" />
 
-  {featured && (
+  {featuredPosts.length > 0 && (
     <section class="home-content-section section-block container" id="latest">
       <div class="section-heading"><div class="section-title-stack"><span class="eyebrow">FEATURED / 01</span><h2 class="script-section-title">So?</h2></div></div>
-      <PostCard post={featured} featured />
+      <div class="featured-post-list">
+        {featuredPosts.map((post, index) => (
+          post.data.space === 'coffee'
+            ? <CoffeeEditorialCard post={post} eager={index === 0} />
+            : <PostCard post={post} featured />
+        ))}
+      </div>
     </section>
   )}
 
@@ -124,5 +132,6 @@ const spaces = Object.entries(SPACE_META).map(([space, meta], index) => ({
   .section-title-stack { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(2rem, 3vw, 3.25rem); }
   .section-heading h2.script-section-title { margin: 0; font: 400 clamp(5rem, 9vw, 9.5rem)/.72 var(--display-script); letter-spacing: 0; }
   .home-content-section { padding-block: clamp(2.5rem, 4vw, 4rem); }
+  .featured-post-list { display: grid; gap: clamp(1.5rem, 3vw, 3rem); }
   .spaces { background: var(--surface); }
 </style>

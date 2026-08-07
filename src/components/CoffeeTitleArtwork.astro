@@ -1,0 +1,214 @@
+---
+import type { CoffeeArtwork } from '../data/coffee-editorial'
+
+interface Props {
+  artwork: CoffeeArtwork
+}
+
+const { artwork } = Astro.props
+
+const roundGlyphs = [
+  { char: 'R', area: 'r', size: 'xl', turn: '-10deg', shift: '-2%, 3%', stretch: '1.18, 1.06' },
+  { char: 'o', area: 'round-o', size: 'm', turn: '13deg', shift: '2%, -2%', stretch: '1.05, 1.14' },
+  { char: 'u', area: 'u', size: 'xs', turn: '-12deg', shift: '-4%, 1%', stretch: '1.12, 1.12' },
+  { char: 'n', area: 'n', size: 'l', turn: '8deg', shift: '3%, -1%', stretch: '1.1, 1.08' },
+  { char: 'd', area: 'd', size: 's', turn: '-11deg', shift: '-3%, 4%', stretch: '1.08, 1.12' },
+  { char: 'T', area: 't', size: 'xxl', turn: '7deg', shift: '-2%, 3%', stretch: '1.14, 1.08' },
+  { char: 'o', area: 'to-o', size: 's', turn: '-9deg', shift: '3%, -2%', stretch: '1.08, 1.14' },
+  { char: 'C', area: 'c', size: 'xl', turn: '9deg', shift: '2%, 1%', stretch: '1.16, 1.06' },
+  { char: 'o', area: 'coffee-o', size: 's', turn: '-12deg', shift: '-2%, 3%', stretch: '1.08, 1.12' },
+  { char: 'f', area: 'f-one', size: 'xl', turn: '11deg', shift: '3%, -1%', stretch: '1.1, 1.12' },
+  { char: 'f', area: 'f-two', size: 'l', turn: '90deg', shift: '115%, -15%', stretch: '1.12, 1.08' },
+  { char: 'e', area: 'e-one', size: 's', turn: '-11deg', shift: '1%, -10%', stretch: '1.16, 1.06' },
+  { char: 'e', area: 'e-two', size: 'ml', turn: '20deg', shift: '-3%, 3%', stretch: '1.08, 1.14' },
+  { char: '?', area: 'question', size: 'xl', turn: '-13deg', shift: '3%, 2%', stretch: '1.12, 1.08' },
+] as const
+---
+
+{artwork === 'hows-the-coffee' && (
+  <span class="title-art title-art--hows" aria-hidden="true">
+    <span class="hows-word hows-word--how">How‘s</span>
+    <span class="hows-word hows-word--the">the</span>
+    <span class="hows-word hows-word--coffee"><b>C</b>offee</span>
+  </span>
+)}
+
+{artwork === 'round-to-coffee' && (
+  <span class="title-art title-art--round" aria-hidden="true">
+    {roundGlyphs.map((glyph) => (
+      <span class="round-cell" style={`grid-area:${glyph.area}`}>
+        <b
+          class:list={['round-glyph', `round-glyph--${glyph.size}`, { 'round-glyph--lower': /[a-z]/.test(glyph.char) }]}
+          style={`--turn:${glyph.turn};--shift:${glyph.shift};--stretch:${glyph.stretch}`}
+        >
+          {glyph.char}
+        </b>
+      </span>
+    ))}
+  </span>
+)}
+
+{artwork === 'four-seasons' && (
+  <span class="title-art title-art--four" aria-hidden="true">
+    <span class="four-glyph four-glyph--four">四</span>
+    <span class="four-glyph four-glyph--order">序</span>
+  </span>
+)}
+
+<style>
+  @font-face {
+    font-family: "Coffee Free Jazz";
+    src: url("/fonts/jazz/Kranky/Kranky-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Coffee Zhi Mang Xing";
+    src: url("/fonts/coffee/ZhiMangXing/ZhiMangXing-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  .title-art {
+    width: 100%;
+    height: 100%;
+    min-height: clamp(18rem, 32vw, 30rem);
+    display: block;
+    position: relative;
+    overflow: hidden;
+    container-type: size;
+    font-family: var(--serif);
+  }
+
+  .hows-word { position: absolute; display: block; white-space: nowrap; }
+  .hows-word--how {
+    z-index: 2;
+    top: 50%;
+    left: -.08em;
+    color: #2350dc;
+    font-size: clamp(8rem, 12vw, 12rem);
+    font-weight: 800;
+    line-height: .72;
+    letter-spacing: -.06em;
+    writing-mode: vertical-rl;
+    text-orientation: sideways;
+    transform: translateY(-50%) scaleX(2.85);
+    transform-origin: left center;
+  }
+  .hows-word--the {
+    z-index: 1;
+    top: -.08em;
+    right: -.02em;
+    color: #ef3038;
+    font-size: clamp(7rem, 11vw, 11rem);
+    line-height: .76;
+    letter-spacing: -.08em;
+    transform: scaleX(2.65);
+    transform-origin: right top;
+  }
+  .hows-word--coffee {
+    z-index: 3;
+    right: -.035em;
+    bottom: .08em;
+    color: #006854;
+    font-size: clamp(10rem, 17vw, 17rem);
+    line-height: .76;
+    letter-spacing: -.085em;
+    transform: scaleY(1.55);
+    transform-origin: right bottom;
+  }
+  .hows-word--coffee b {
+    display: inline-block;
+    margin-right: .025em;
+    font-weight: 900;
+    transform: scaleY(1.08);
+    transform-origin: left bottom;
+  }
+
+  .title-art--round {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    grid-template-areas:
+      "r r r round-o c c c coffee-o"
+      "r r r round-o c c c coffee-o"
+      "n n t t to-o f-one f-one d"
+      "n n t t to-o f-one f-one d"
+      "u u t t to-o e-two question question"
+      "f-two f-two e-one e-one e-one e-two question question";
+    gap: clamp(.02rem, .12cqw, .08rem);
+    padding: clamp(.08rem, .28cqw, .22rem);
+  }
+  .round-cell {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+  }
+  .round-glyph {
+    display: block;
+    color: #050505;
+    font-family: "Coffee Free Jazz", var(--serif);
+    font-size: var(--glyph-size);
+    font-weight: 400;
+    line-height: .68;
+    letter-spacing: -.04em;
+    transform: translate(var(--shift)) rotate(var(--turn)) scale(var(--stretch));
+  }
+  .round-glyph--xxl { --glyph-size: min(36cqw, 40cqh); }
+  .round-glyph--xl { --glyph-size: min(30cqw, 34cqh); }
+  .round-glyph--l { --glyph-size: min(25cqw, 30cqh); }
+  .round-glyph--ml { --glyph-size: min(22cqw, 26cqh); }
+  .round-glyph--m { --glyph-size: min(20cqw, 24cqh); }
+  .round-glyph--s { --glyph-size: min(16cqw, 18cqh); }
+  .round-glyph--xs { --glyph-size: min(13cqw, 14cqh); }
+  .round-glyph--lower { font-size: calc(var(--glyph-size) * 1.25); }
+
+  .title-art--four {
+    display: grid;
+    grid-template: 1fr 1fr / repeat(3, minmax(0, 1fr));
+    grid-template-areas: "four four ." ". order order";
+    gap: clamp(.08rem, .4cqw, .3rem);
+    padding: clamp(.25rem, .8cqw, .6rem);
+  }
+  .four-glyph {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    color: #111310;
+    font-family: "Coffee Zhi Mang Xing", var(--serif);
+    font-weight: 400;
+    line-height: .72;
+  }
+  .four-glyph--four {
+    grid-area: four;
+    font-size: min(39cqw, 47cqh);
+    transform: scale(1.28, 1.08) translate(-3%, -1%);
+  }
+  .four-glyph--order {
+    grid-area: order;
+    font-size: min(37cqw, 45cqh);
+    transform: scale(1.1, 1.16) translate(3%, 1%);
+  }
+
+  @media (max-width: 760px) {
+    .title-art { min-height: clamp(17rem, 72vw, 23rem); }
+    .hows-word--how {
+      left: -.08em;
+      font-size: clamp(6rem, 30vw, 7.5rem);
+      transform: translateY(-50%) scaleX(1.55);
+    }
+    .hows-word--the {
+      right: -.02em;
+      font-size: clamp(4rem, 20vw, 5rem);
+      transform: scaleX(1.8);
+    }
+    .hows-word--coffee {
+      right: -.035em;
+      font-size: clamp(5rem, 26vw, 7rem);
+      transform: scaleY(2.5);
+    }
+  }
+</style>
