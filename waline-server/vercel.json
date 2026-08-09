@@ -1,5 +1,6 @@
 {
-  "name": "aliouswe-comments",
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["sin1"],
   "github": {
     "silent": true
   },
