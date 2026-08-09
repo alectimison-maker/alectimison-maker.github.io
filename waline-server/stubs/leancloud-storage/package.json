@@ -1,0 +1,6 @@
+{
+  "name": "leancloud-storage",
+  "version": "4.15.2",
+  "private": true,
+  "main": "index.cjs"
+}

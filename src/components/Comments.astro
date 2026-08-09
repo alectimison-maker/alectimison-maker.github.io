@@ -1,0 +1,210 @@
+---
+import '@waline/client/waline.css'
+import { COMMENT_MAX_LENGTH, COMMENT_PAGE_SIZE, commentKey, normalizeCommentServerUrl } from '../lib/comments'
+import { SITE } from '../lib/site'
+
+interface Props {
+  postId: string
+}
+
+const { postId } = Astro.props
+const serverUrl = normalizeCommentServerUrl(import.meta.env.PUBLIC_WALINE_SERVER_URL)
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim() ?? ''
+const commentsConfigured = Boolean(serverUrl && turnstileSiteKey)
+---
+
+<section
+  class="comments"
+  id="comments"
+  aria-labelledby="comments-title"
+  data-comments
+  data-comment-path={commentKey(postId)}
+  data-comments-configured={String(commentsConfigured)}
+  data-server-url={serverUrl}
+  data-turnstile-site-key={turnstileSiteKey}
+  data-page-size={String(COMMENT_PAGE_SIZE)}
+  data-max-length={String(COMMENT_MAX_LENGTH)}
+>
+  <div class="comments__heading">
+    <div>
+      <p class="eyebrow">COMMENTS</p>
+      <h2 id="comments-title">评论</h2>
+    </div>
+    <p class="comments__privacy"><a href="/privacy/">隐私说明</a></p>
+  </div>
+  <p class="comments__status" data-comments-status aria-live="polite">
+    {commentsConfigured
+      ? '滚动至此会自动载入评论；昵称和邮箱必填，邮箱不会公开。'
+      : '评论服务尚未完成配置，暂时无法留言。'}
+  </p>
+  <div class="comments__root" data-comments-root>
+    {commentsConfigured && <p class="comments__placeholder">正在准备评论区…</p>}
+  </div>
+  <p class="comments__fallback">
+    评论服务不可用时，可<a href={`mailto:${SITE.email}`}>通过邮件联系</a>。
+  </p>
+  <noscript><p>浏览器未启用 JavaScript，无法载入评论；你仍可通过邮件联系。</p></noscript>
+</section>
+
+<script>
+  const sections = document.querySelectorAll<HTMLElement>('[data-comments]')
+
+  const isDarkMode = () => {
+    const explicitTheme = document.documentElement.dataset.theme
+    if (explicitTheme) return explicitTheme === 'dark'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  }
+
+  const showRetry = (section: HTMLElement, message: string, load: () => void) => {
+    const root = section.querySelector<HTMLElement>('[data-comments-root]')
+    const status = section.querySelector<HTMLElement>('[data-comments-status]')
+    if (status) status.textContent = message
+    if (!root) return
+    root.replaceChildren()
+    const retry = document.createElement('button')
+    retry.type = 'button'
+    retry.className = 'comments__retry'
+    retry.textContent = '重新载入'
+    retry.addEventListener('click', load, { once: true })
+    root.append(retry)
+  }
+
+  const loadComments = async (section: HTMLElement) => {
+    if (section.dataset.commentsState === 'loading' || section.dataset.commentsState === 'loaded') return
+    const root = section.querySelector<HTMLElement>('[data-comments-root]')
+    const status = section.querySelector<HTMLElement>('[data-comments-status]')
+    const serverURL = section.dataset.serverUrl
+    const turnstileKey = section.dataset.turnstileSiteKey
+    const path = section.dataset.commentPath
+
+    if (section.dataset.commentsConfigured !== 'true' || !root || !serverURL || !turnstileKey || !path) {
+      if (status) status.textContent = '评论服务尚未完成配置，暂时无法留言。'
+      return
+    }
+
+    section.dataset.commentsState = 'loading'
+    if (status) status.textContent = '正在载入现有评论与留言表单…'
+
+    try {
+      const { init } = await import('@waline/client')
+      root.replaceChildren()
+      const instance = init({
+        el: root,
+        serverURL,
+        path,
+        lang: 'zh-CN',
+        dark: isDarkMode(),
+        login: 'disable',
+        meta: ['nick', 'mail', 'link'],
+        requiredMeta: ['nick', 'mail'],
+        wordLimit: [1, Number(section.dataset.maxLength) || 2_000],
+        pageSize: Number(section.dataset.pageSize) || 10,
+        commentSorting: 'latest',
+        imageUploader: false,
+        search: false,
+        emoji: false,
+        highlighter: false,
+        texRenderer: false,
+        reaction: false,
+        noRss: true,
+        noCopyright: true,
+        turnstileKey,
+      })
+
+      const syncTheme = () => instance?.update({ dark: isDarkMode() })
+      const themeObserver = new MutationObserver(syncTheme)
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme)
+
+      section.dataset.commentsState = 'loaded'
+      if (status) status.textContent = '邮箱不会公开；评论收到直接回复时，系统会发送邮件通知。'
+    } catch {
+      section.dataset.commentsState = 'error'
+      showRetry(section, '评论暂时载入失败，请稍后重试或通过邮件联系。', () => loadComments(section))
+    }
+  }
+
+  sections.forEach((section) => {
+    if (section.dataset.commentsConfigured !== 'true') return
+    if (window.location.hash === '#comments') {
+      void loadComments(section)
+      return
+    }
+    if (!('IntersectionObserver' in window)) {
+      void loadComments(section)
+      return
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return
+      observer.disconnect()
+      void loadComments(section)
+    }, { rootMargin: '600px 0px' })
+    observer.observe(section)
+  })
+</script>
+
+<style>
+  .comments {
+    --waline-font-size: 1rem;
+    --waline-white: var(--paper);
+    --waline-light-grey: var(--muted);
+    --waline-dark-grey: var(--muted);
+    --waline-theme-color: var(--accent);
+    --waline-active-color: var(--accent);
+    --waline-color: var(--text);
+    --waline-bg-color: transparent;
+    --waline-bg-color-light: var(--surface);
+    --waline-bg-color-hover: var(--surface);
+    --waline-border-color: var(--line);
+    --waline-disable-bg-color: var(--surface);
+    --waline-disable-color: var(--muted);
+    --waline-info-bg-color: transparent;
+    --waline-info-color: var(--muted);
+    --waline-border: 1px solid var(--line);
+    scroll-margin-top: calc(var(--header-height) + 1rem);
+    padding-top: 2rem;
+  }
+  .comments__heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; }
+  .comments__heading h2 { margin: .35rem 0 0; font: 550 clamp(2rem, 4vw, 3.5rem)/1 var(--serif); letter-spacing: -.035em; }
+  .comments__heading p, .comments__status, .comments__fallback, .comments noscript p { color: var(--muted); font-size: .78rem; }
+  .comments__privacy { margin: 0; }
+  .comments__privacy a, .comments__fallback a { color: var(--text); text-underline-offset: .2em; }
+  .comments__status { margin: 1rem 0 0; }
+  .comments__root { min-height: 4rem; margin-top: 1.5rem; }
+  .comments__placeholder { padding: 1.5rem 0; border-block: 1px solid var(--line); color: var(--muted); font: .72rem/1.5 var(--mono); }
+  .comments__fallback { margin-top: 1rem; }
+  :global(.comments__retry) { padding: .7rem 1rem; border: 1px solid var(--line); color: var(--text); background: transparent; cursor: pointer; }
+  .comments :global([data-waline] *) { box-sizing: border-box; }
+  .comments :global(.wl-comment) { display: block; margin: 0; }
+  .comments :global(.wl-login-info), .comments :global(.wl-like), .comments :global(.wl-sort) { display: none !important; }
+  .comments :global(.wl-panel) { width: 100%; margin: 0 0 2rem; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+  .comments :global(.wl-header) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; padding: 0; border: 0; overflow: visible; }
+  .comments :global(.wl-header-item) { width: auto !important; min-width: 0; border: 1px solid var(--line); background: transparent; }
+  .comments :global(.wl-header label) { flex: 0 0 auto; min-width: 0; padding: .85rem 0 .85rem .9rem; color: var(--muted); font: .65rem/1 var(--mono); }
+  .comments :global(.wl-header input) { min-width: 0; width: 100%; padding: .8rem .75rem; color: var(--text); font: 1rem/1.3 var(--serif); }
+  .comments :global(.wl-editor) { width: 100%; min-height: 11rem; margin: .75rem 0 0; padding: 1rem; border: 1px solid var(--line); border-radius: 0; color: var(--text); background: transparent; font: 1rem/1.7 var(--serif); }
+  .comments :global(.wl-editor:focus), .comments :global(.wl-input:focus) { background: var(--surface); }
+  .comments :global(.wl-footer) { margin: .75rem 0 0; }
+  .comments :global(.wl-action) { color: var(--muted); }
+  .comments :global(.wl-btn) { border-radius: 0; font-family: var(--mono); }
+  .comments :global(.wl-btn.primary) { border-color: var(--text); color: var(--paper); background: var(--text); }
+  .comments :global(.wl-meta-head) { padding: .5rem 0 1rem; border-bottom: 1px solid var(--line); }
+  .comments :global(.wl-count) { font: 500 1.2rem/1.2 var(--serif); }
+  .comments :global(.wl-card-item) { padding: 1.25rem 0; }
+  .comments :global(.wl-card-item .wl-card-item) { margin-top: .75rem; padding: .75rem 0 .75rem 1rem; border-left: 2px solid var(--accent); }
+  .comments :global(.wl-card) { border-bottom: 1px solid var(--line); }
+  .comments :global(.wl-card:first-child) { margin-inline-start: 1rem; }
+  .comments :global(.wl-card .wl-head .wl-nick) { color: var(--text); font: 600 1rem/1 var(--serif); }
+  .comments :global(.wl-card .wl-time) { color: var(--muted); font-family: var(--mono); }
+  .comments :global(.wl-card .wl-content) { color: var(--text); font: 1rem/1.8 var(--serif); }
+  .comments :global(.wl-card .wl-reply) { color: var(--muted); font-family: var(--mono); }
+  .comments :global(.wl-user-avatar), .comments :global(.wl-avatar) { border: 1px solid var(--line); }
+  .comments :global(.wl-empty) { padding: 2rem 0; color: var(--muted); font-family: var(--serif); text-align: left; }
+  .comments :global(.wl-operation button) { margin-top: 1rem; }
+  .comments :global(.wl-power) { display: none; }
+  @media (max-width: 700px) {
+    .comments :global(.wl-header) { grid-template-columns: 1fr; }
+    .comments :global(.wl-header-item:not(:last-child)) { border-bottom: 1px solid var(--line); }
+    .comments :global(.wl-card-item .wl-card-item) { padding-left: .75rem; }
+  }
+</style>

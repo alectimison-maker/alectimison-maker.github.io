@@ -38,13 +38,13 @@ npm run build
 
 复制 `.env.example` 为 `.env` 后填写：
 
-- Giscus：文章评论，以文章 ID 稳定映射到 GitHub Discussions。
+- Waline：文章底部的站内评论，以文章 ID 稳定映射评论线程；客户端滚动接近评论区时才加载。
 - Formspree：联系表单，目标邮箱设为 `alec.timison@gmail.com`。
 - Umami Cloud：隐私友好的访问统计。
 
 未填写时，对应功能会明确显示“尚未配置”，不会连接第三方服务。部署时在 GitHub Actions repository variables 中配置同名变量。
 
-GitHub Discussions 的评论邮件由 GitHub 原生通知发送；仓库需要开启 Discussions、安装 Giscus GitHub App，并在 Watch 设置中订阅 Discussions。GitHub 账号通知邮箱使用 `alec.timison@gmail.com`。
+Waline 的评论 API 单独部署到 Vercel，使用 Neon PostgreSQL、Resend 邮件和 Cloudflare Turnstile。完整配置见 [`docs/comments.md`](docs/comments.md)。访客无需登录，昵称和邮箱必填，邮箱不公开；新评论和直接回复通过邮件通知。
 
 未配置 Formspree 时，联系页会把填写内容带入本机邮件应用，收件人为 `alec.timison@gmail.com`；配置后则在页面内直接提交并显示成功或失败回执。
 

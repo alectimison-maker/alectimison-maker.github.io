@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 const analyticsEnabled = Boolean(import.meta.env.PUBLIC_UMAMI_WEBSITE_ID)
 const formspreeEnabled = Boolean(import.meta.env.PUBLIC_FORMSPREE_FORM_ID)
+const commentsEnabled = Boolean(import.meta.env.PUBLIC_WALINE_SERVER_URL && import.meta.env.PUBLIC_TURNSTILE_SITE_KEY)
 ---
 <BaseLayout title="Privacy">
   <article class="privacy container">
@@ -13,7 +14,10 @@ const formspreeEnabled = Boolean(import.meta.env.PUBLIC_FORMSPREE_FORM_ID)
       ? '本站使用 Umami 记录匿名页面访问与基础性能信息，不使用 Cookie，不建立个人画像。'
       : '本站目前没有启用第三方访问统计。'}</p>
     <h2>评论</h2>
-    <p>评论由 Giscus 和 GitHub Discussions 提供。只有你主动展开评论区时才会连接 GitHub，登录与评论数据受 GitHub 条款约束。</p>
+    <p>{commentsEnabled
+      ? '评论区在你滚动接近文章底部时连接 Waline 服务。发表评论需要昵称与邮箱；昵称、生成头像、时间、正文和可选网站会公开展示，邮箱不会公开，仅用于识别评论者和发送直接回复通知。评论数据由 Vercel 上的 Waline 服务处理并保存在 Neon，通知邮件通过 Resend 发送，人机验证由 Cloudflare Turnstile 提供。本站不展示评论者的地区、浏览器或操作系统信息。'
+      : '评论服务目前没有启用，本站不会收集评论昵称、邮箱或正文。'}</p>
+    <p>评论与关联邮箱会保留至评论被删除，不用于营销或邮件订阅。你可以使用发表评论时的邮箱通过联系页申请修改或删除评论。</p>
     <h2>联系表单</h2>
     <p>{formspreeEnabled
       ? '联系内容、回复邮箱和可选称呼会通过 Formspree 转发到站长邮箱，用于阅读与回复，不公开展示。'

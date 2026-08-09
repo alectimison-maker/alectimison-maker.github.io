@@ -1,0 +1,20 @@
+{
+  "name": "aliouswe-waline-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test policy.node-test.cjs"
+  },
+  "dependencies": {
+    "@cloudbase/node-sdk": "file:stubs/cloudbase-node-sdk",
+    "@waline/vercel": "1.41.4",
+    "akismet": "file:stubs/akismet",
+    "leancloud-storage": "file:stubs/leancloud-storage"
+  },
+  "overrides": {
+    "dompurify": "3.4.13"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

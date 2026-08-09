@@ -1,0 +1,6 @@
+{
+  "name": "@cloudbase/node-sdk",
+  "version": "3.18.3",
+  "private": true,
+  "main": "index.cjs"
+}
