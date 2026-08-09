@@ -3,11 +3,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import AnimeInfiniteCanvas from '../../components/anime/AnimeInfiniteCanvas'
 import items from '../../data/anime.json'
 import details from '../../data/anime-details.json'
+import imageManifest from '../../../public/image-manifest.json'
 
-const animeItems = items.map((item) => ({
-  ...item,
-  ...details[item.id as keyof typeof details],
-}))
+const animeItems = items.map((item) => {
+  const image = imageManifest[encodeURI(item.cover) as keyof typeof imageManifest]
+  return {
+    ...item,
+    ...details[item.id as keyof typeof details],
+    imageWidth: image?.width ?? 3,
+    imageHeight: image?.height ?? 4,
+  }
+})
 ---
 <BaseLayout title="Anime" space="anime">
   <AnimeInfiniteCanvas client:load items={animeItems} />

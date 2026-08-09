@@ -8,12 +8,14 @@ import {
   type PointerEvent as ReactPointerEvent,
 } from 'react'
 import {
-  ANIME_CANVAS_SLOTS,
-  ANIME_WORLD_HEIGHT,
-  ANIME_WORLD_WIDTH,
   arrangeAnimeItems,
+  createAnimeCanvasLayout,
   wrapCanvasOffset,
 } from './anime-canvas-layout'
+import {
+  parallaxTargetForVelocity,
+  stepAnimeParallaxAxis,
+} from './anime-canvas-parallax'
 import './anime-infinite-canvas.css'
 
 export interface AnimeCanvasItem {
@@ -24,6 +26,8 @@ export interface AnimeCanvasItem {
   order: number
   character: string
   quote: string
+  imageWidth: number
+  imageHeight: number
 }
 
 interface DragState {
@@ -38,8 +42,25 @@ interface DragState {
   moved: boolean
 }
 
+interface ParallaxState {
+  positionX: number
+  positionY: number
+  velocityX: number
+  velocityY: number
+  targetX: number
+  targetY: number
+  inputUntil: number
+  lastTime: number
+}
+
 const initialCamera = { x: -72, y: -84 }
 const tileOffsets = [[0, 0], [1, 0], [0, 1], [1, 1]] as const
+const parallaxDepths = ['soft', 'medium', 'strong'] as const
+const parallaxDepthScale = {
+  soft: .86,
+  medium: 1,
+  strong: 1.14,
+} as const
 
 const cardImageSource = (source: string) => {
   const decoded = decodeURI(source)
@@ -51,10 +72,16 @@ const detailImageSource = (source: string) => encodeURI(decodeURI(source).replac
 
 export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[] }) {
   const arrangedItems = useMemo(() => arrangeAnimeItems(items), [items])
+  const layouts = useMemo(() => ({
+    desktop: createAnimeCanvasLayout(arrangedItems, 'desktop'),
+    compact: createAnimeCanvasLayout(arrangedItems, 'compact'),
+  }), [arrangedItems])
+  const [compact, setCompact] = useState(false)
+  const layout = compact ? layouts.compact : layouts.desktop
   const cards = useMemo(() => arrangedItems.map((item, index) => ({
     item,
-    slot: ANIME_CANVAS_SLOTS[index],
-  })), [arrangedItems])
+    slot: layout.slots[index],
+  })), [arrangedItems, layout])
   const [selected, setSelected] = useState<AnimeCanvasItem>()
   const [dragging, setDragging] = useState(false)
   const viewportRef = useRef<HTMLElement>(null)
@@ -64,28 +91,140 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
   const cameraRef = useRef(initialCamera)
   const dragRef = useRef<DragState | null>(null)
   const inertiaFrameRef = useRef<number | null>(null)
+  const parallaxFrameRef = useRef<number | null>(null)
+  const parallaxRef = useRef<ParallaxState>({
+    positionX: 0,
+    positionY: 0,
+    velocityX: 0,
+    velocityY: 0,
+    targetX: 0,
+    targetY: 0,
+    inputUntil: 0,
+    lastTime: 0,
+  })
   const suppressClickUntilRef = useRef(0)
   const reducedMotionRef = useRef(false)
 
   const applyCamera = useCallback((x: number, y: number) => {
     const wrapped = {
-      x: wrapCanvasOffset(x, ANIME_WORLD_WIDTH),
-      y: wrapCanvasOffset(y, ANIME_WORLD_HEIGHT),
+      x: wrapCanvasOffset(x, layout.width),
+      y: wrapCanvasOffset(y, layout.height),
     }
     cameraRef.current = wrapped
     if (planeRef.current) {
       planeRef.current.style.transform = `translate3d(${wrapped.x}px, ${wrapped.y}px, 0)`
     }
-  }, [])
+  }, [layout.height, layout.width])
 
   const stopInertia = useCallback(() => {
     if (inertiaFrameRef.current !== null) cancelAnimationFrame(inertiaFrameRef.current)
     inertiaFrameRef.current = null
   }, [])
 
+  const paintParallax = useCallback((x: number, y: number) => {
+    const plane = planeRef.current
+    if (!plane) return
+    for (const depth of parallaxDepths) {
+      const scale = parallaxDepthScale[depth]
+      plane.style.setProperty(`--anime-parallax-${depth}-x`, `${(x * scale * 100).toFixed(3)}%`)
+      plane.style.setProperty(`--anime-parallax-${depth}-y`, `${(y * scale * 100).toFixed(3)}%`)
+    }
+  }, [])
+
+  const startParallax = useCallback(() => {
+    if (reducedMotionRef.current || parallaxFrameRef.current !== null) return
+    const state = parallaxRef.current
+    state.lastTime = performance.now()
+
+    const tick = (time: number) => {
+      const elapsed = Math.min(32, time - state.lastTime) / 1000
+      state.lastTime = time
+      if (time >= state.inputUntil) {
+        state.targetX = 0
+        state.targetY = 0
+      }
+
+      const horizontal = stepAnimeParallaxAxis(
+        { position: state.positionX, velocity: state.velocityX },
+        state.targetX,
+        elapsed,
+      )
+      const vertical = stepAnimeParallaxAxis(
+        { position: state.positionY, velocity: state.velocityY },
+        state.targetY,
+        elapsed,
+      )
+      state.positionX = horizontal.position
+      state.positionY = vertical.position
+      state.velocityX = horizontal.velocity
+      state.velocityY = vertical.velocity
+      paintParallax(state.positionX, state.positionY)
+
+      const settled = state.targetX === 0
+        && state.targetY === 0
+        && Math.hypot(state.positionX, state.positionY) < .00002
+        && Math.hypot(state.velocityX, state.velocityY) < .0002
+      if (settled) {
+        state.positionX = 0
+        state.positionY = 0
+        state.velocityX = 0
+        state.velocityY = 0
+        paintParallax(0, 0)
+        parallaxFrameRef.current = null
+        return
+      }
+      parallaxFrameRef.current = requestAnimationFrame(tick)
+    }
+
+    parallaxFrameRef.current = requestAnimationFrame(tick)
+  }, [paintParallax])
+
+  const driveParallax = useCallback((velocityX: number, velocityY: number) => {
+    if (reducedMotionRef.current) return
+    const state = parallaxRef.current
+    const target = parallaxTargetForVelocity(velocityX, velocityY)
+    state.targetX = target.x
+    state.targetY = target.y
+    state.inputUntil = performance.now() + 50
+    startParallax()
+  }, [startParallax])
+
+  const settleParallax = useCallback(() => {
+    const state = parallaxRef.current
+    state.targetX = 0
+    state.targetY = 0
+    state.inputUntil = 0
+    if (reducedMotionRef.current) {
+      state.positionX = 0
+      state.positionY = 0
+      state.velocityX = 0
+      state.velocityY = 0
+      paintParallax(0, 0)
+      return
+    }
+    startParallax()
+  }, [paintParallax, startParallax])
+
+  const stopParallax = useCallback(() => {
+    if (parallaxFrameRef.current !== null) cancelAnimationFrame(parallaxFrameRef.current)
+    parallaxFrameRef.current = null
+    const state = parallaxRef.current
+    state.positionX = 0
+    state.positionY = 0
+    state.velocityX = 0
+    state.velocityY = 0
+    state.targetX = 0
+    state.targetY = 0
+    state.inputUntil = 0
+    paintParallax(0, 0)
+  }, [paintParallax])
+
   const startInertia = useCallback((velocityX: number, velocityY: number) => {
     stopInertia()
-    if (reducedMotionRef.current || Math.hypot(velocityX, velocityY) < .08) return
+    if (reducedMotionRef.current || Math.hypot(velocityX, velocityY) < .08) {
+      settleParallax()
+      return
+    }
     let lastTime = performance.now()
     const tick = (time: number) => {
       const elapsed = Math.min(32, time - lastTime)
@@ -97,21 +236,31 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
         cameraRef.current.x + velocityX * elapsed,
         cameraRef.current.y + velocityY * elapsed,
       )
+      driveParallax(velocityX, velocityY)
       if (Math.hypot(velocityX, velocityY) < .018) {
         inertiaFrameRef.current = null
+        settleParallax()
         return
       }
       inertiaFrameRef.current = requestAnimationFrame(tick)
     }
     inertiaFrameRef.current = requestAnimationFrame(tick)
-  }, [applyCamera, stopInertia])
+  }, [applyCamera, driveParallax, settleParallax, stopInertia])
 
   useEffect(() => {
+    const compactQuery = matchMedia('(max-width: 760px)')
+    const updateLayoutMode = () => setCompact(compactQuery.matches)
+    updateLayoutMode()
+    compactQuery.addEventListener('change', updateLayoutMode)
     reducedMotionRef.current = matchMedia('(prefers-reduced-motion: reduce)').matches
       || localStorage.getItem('aliouswe-motion') === 'reduced'
     applyCamera(cameraRef.current.x, cameraRef.current.y)
-    return stopInertia
-  }, [applyCamera, stopInertia])
+    return () => {
+      compactQuery.removeEventListener('change', updateLayoutMode)
+      stopInertia()
+      stopParallax()
+    }
+  }, [applyCamera, stopInertia, stopParallax])
 
   useEffect(() => {
     if (!selected) return
@@ -160,6 +309,7 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
       applyCamera(cameraRef.current.x + deltaX, cameraRef.current.y + deltaY)
       drag.velocityX = drag.velocityX * .58 + deltaX / elapsed * .42
       drag.velocityY = drag.velocityY * .58 + deltaY / elapsed * .42
+      driveParallax(drag.velocityX, drag.velocityY)
     }
     drag.lastX = event.clientX
     drag.lastY = event.clientY
@@ -216,6 +366,7 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
     const horizontal = event.key === 'ArrowLeft' ? distance : event.key === 'ArrowRight' ? -distance : 0
     const vertical = event.key === 'ArrowUp' ? distance : event.key === 'ArrowDown' ? -distance : 0
     applyCamera(cameraRef.current.x + horizontal, cameraRef.current.y + vertical)
+    driveParallax(horizontal / 300, vertical / 300)
   }
 
   return (
@@ -239,8 +390,8 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
         className="anime-canvas-plane"
         ref={planeRef}
         style={{
-          width: ANIME_WORLD_WIDTH,
-          height: ANIME_WORLD_HEIGHT,
+          width: layout.width,
+          height: layout.height,
           transform: `translate3d(${initialCamera.x}px, ${initialCamera.y}px, 0)`,
         }}
       >
@@ -250,10 +401,10 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
             key={`${tileX}-${tileY}`}
             aria-hidden={tileIndex === 0 ? undefined : true}
             style={{
-              left: tileX * ANIME_WORLD_WIDTH,
-              top: tileY * ANIME_WORLD_HEIGHT,
-              width: ANIME_WORLD_WIDTH,
-              height: ANIME_WORLD_HEIGHT,
+              left: tileX * layout.width,
+              top: tileY * layout.height,
+              width: layout.width,
+              height: layout.height,
             }}
           >
             {cards.map(({ item, slot }, index) => (
@@ -264,8 +415,10 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
                   left: slot.x,
                   top: slot.y,
                   width: slot.width,
+                  height: slot.height,
                   '--anime-card-index': `'${String(index + 1).padStart(2, '0')}'`,
                 } as CSSProperties}
+                data-parallax-depth={parallaxDepths[index % parallaxDepths.length]}
               >
                 <button
                   type="button"
@@ -277,6 +430,8 @@ export default function AnimeInfiniteCanvas({ items }: { items: AnimeCanvasItem[
                   <img
                     src={cardImageSource(item.cover)}
                     alt={`${item.title} 封面`}
+                    width={item.imageWidth}
+                    height={item.imageHeight}
                     loading={tileIndex === 0 && index < 4 ? 'eager' : 'lazy'}
                     decoding="async"
                     draggable="false"

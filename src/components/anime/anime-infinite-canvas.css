@@ -22,6 +22,12 @@
 }
 
 .anime-canvas-plane {
+  --anime-parallax-soft-x: 0%;
+  --anime-parallax-soft-y: 0%;
+  --anime-parallax-medium-x: 0%;
+  --anime-parallax-medium-y: 0%;
+  --anime-parallax-strong-x: 0%;
+  --anime-parallax-strong-y: 0%;
   position: absolute;
   z-index: 1;
   top: 0;
@@ -47,6 +53,7 @@
 .anime-canvas-card button {
   position: relative;
   width: 100%;
+  height: 100%;
   padding: 0;
   display: block;
   border: 0;
@@ -55,6 +62,7 @@
   background: #e5e0d7;
   box-shadow: 0 .8rem 2.2rem rgba(20, 39, 99, .08);
   cursor: pointer;
+  overflow: hidden;
   transition: box-shadow .24s ease, transform .24s cubic-bezier(.2, .75, .25, 1);
 }
 
@@ -74,11 +82,33 @@
 .anime-canvas-card img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
   opacity: .72;
   filter: saturate(.7) contrast(.94);
   pointer-events: none;
+  transform: translate3d(
+    var(--anime-card-parallax-x, 0%),
+    var(--anime-card-parallax-y, 0%),
+    0
+  ) scale(1.08);
+  transform-origin: center;
   transition: opacity .24s ease, filter .24s ease;
+}
+
+.anime-canvas-card[data-parallax-depth='soft'] {
+  --anime-card-parallax-x: var(--anime-parallax-soft-x);
+  --anime-card-parallax-y: var(--anime-parallax-soft-y);
+}
+
+.anime-canvas-card[data-parallax-depth='medium'] {
+  --anime-card-parallax-x: var(--anime-parallax-medium-x);
+  --anime-card-parallax-y: var(--anime-parallax-medium-y);
+}
+
+.anime-canvas-card[data-parallax-depth='strong'] {
+  --anime-card-parallax-x: var(--anime-parallax-strong-x);
+  --anime-card-parallax-y: var(--anime-parallax-strong-y);
 }
 
 .anime-canvas-card span {

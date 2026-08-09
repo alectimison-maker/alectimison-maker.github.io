@@ -1,81 +1,49 @@
-export const ANIME_WORLD_WIDTH = 4400
-export const ANIME_WORLD_HEIGHT = 3600
+export type AnimeCanvasMode = 'desktop' | 'compact'
 
-const HORIZONTAL_DENSITY = .78
-const VERTICAL_DENSITY = .72
+export interface AnimeLayoutItem {
+  id: string
+  order: number
+  imageWidth: number
+  imageHeight: number
+}
 
 export interface AnimeCanvasSlot {
   x: number
   y: number
   width: number
+  height: number
+  gap: number
 }
 
-const curatedRows: Array<{ y: number; cards: Array<[x: number, yOffset: number, width: number]> }> = [
-  {
-    y: 100,
-    cards: [
-      [80, 0, 380], [560, 180, 170], [930, 40, 250], [1380, 240, 150],
-      [1700, 10, 320], [2200, 150, 210], [2620, -10, 400], [3190, 210, 180],
-      [3550, 60, 270], [4020, 260, 160], [4360, 20, 360], [4930, 170, 220],
-    ],
-  },
-  {
-    y: 700,
-    cards: [
-      [120, 160, 190], [480, -40, 330], [1010, 220, 160], [1320, 30, 420],
-      [1940, 180, 210], [2330, -70, 280], [2780, 210, 170], [3090, 0, 350],
-      [3650, 170, 230], [4070, -50, 300], [4540, 220, 150], [4850, 30, 410],
-    ],
-  },
-  {
-    y: 1300,
-    cards: [
-      [40, 20, 300], [520, 240, 160], [840, -80, 390], [1430, 150, 200],
-      [1800, -20, 270], [2250, 230, 180], [2580, 50, 430], [3220, 200, 160],
-      [3540, -40, 320], [4040, 170, 220], [4450, 0, 380], [5010, 240, 170],
-    ],
-  },
-  {
-    y: 1900,
-    cards: [
-      [180, 190, 170], [510, -60, 420], [1130, 220, 210], [1500, 20, 290],
-      [1980, 180, 150], [2310, -30, 370], [2860, 230, 190], [3200, 40, 260],
-      [3640, 180, 410], [4260, -50, 180], [4580, 210, 270], [5050, 20, 320],
-    ],
-  },
-  {
-    y: 2500,
-    cards: [
-      [30, -20, 400], [610, 210, 180], [950, 40, 260], [1400, 230, 160],
-      [1720, -50, 350], [2240, 180, 210], [2620, 10, 300], [3100, 250, 170],
-      [3440, 40, 390], [4030, 200, 190], [4380, -60, 280], [4840, 140, 420],
-    ],
-  },
-  {
-    y: 3100,
-    cards: [
-      [140, 180, 220], [530, -40, 310], [1010, 230, 150], [1310, 10, 380],
-      [1870, 170, 190], [2220, -70, 420], [2820, 210, 160], [3150, 20, 290],
-      [3610, 180, 230], [4020, -40, 360], [4570, 230, 170], [4900, 10, 300],
-    ],
-  },
-  {
-    y: 3700,
-    cards: [
-      [40, 20, 340], [560, 190, 160], [870, -60, 430], [1490, 170, 190],
-      [1850, 10, 300], [2330, 230, 150], [2640, -40, 380], [3210, 180, 220],
-      [3600, 0, 280], [4070, 230, 170], [4410, -50, 410], [5010, 160, 190],
-    ],
-  },
-]
+export interface AnimeCanvasLayout {
+  width: number
+  height: number
+  minGap: number
+  maxGap: number
+  slots: AnimeCanvasSlot[]
+}
 
-export const ANIME_CANVAS_SLOTS: AnimeCanvasSlot[] = curatedRows.flatMap((row) => (
-  row.cards.map(([x, yOffset, width]) => ({
-    x: Math.round(x * HORIZONTAL_DENSITY),
-    y: Math.round((row.y + yOffset) * VERTICAL_DENSITY),
-    width,
-  }))
-))
+interface PackingBox {
+  itemIndex: number
+  id: string
+  width: number
+  height: number
+  gap: number
+  x: number
+  y: number
+}
+
+interface PackingSpace {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+interface Point {
+  x: number
+  y: number
+}
 
 const spotlightIds = [
   '星际牛仔',
@@ -90,7 +58,234 @@ const spotlightIds = [
   '异国日记',
   '春物-第二季',
   'jojo的奇妙冒险-黄金之风',
-]
+] as const
+
+const spotlightSet = new Set<string>(spotlightIds)
+const leadSpotlightSet = new Set<string>(spotlightIds.slice(0, 4))
+
+const layoutConfig = {
+  desktop: {
+    gaps: [36, 40, 44, 48, 52],
+    packingWidth: 4000,
+    spotlightWidths: [360, 388, 416],
+    leadSpotlightWidths: [440, 360, 416, 388],
+    leadSpotlightYOffsets: [96, 0, 144, 48],
+    regularWidths: [240, 266, 292, 318],
+    fillerWidths: [150, 170, 190, 210],
+    packingHeight: 12000,
+  },
+  compact: {
+    gaps: [36, 40, 44, 48, 52],
+    packingWidth: 2900,
+    spotlightWidths: [270, 288, 306],
+    leadSpotlightWidths: [320, 270, 306, 288],
+    leadSpotlightYOffsets: [64, 0, 96, 32],
+    regularWidths: [178, 196, 214, 232],
+    fillerWidths: [132, 144, 156, 168],
+    packingHeight: 9000,
+  },
+} as const
+
+const stableHash = (value: string) => {
+  let hash = 2166136261
+  for (let index = 0; index < value.length; index += 1) {
+    hash ^= value.charCodeAt(index)
+    hash = Math.imul(hash, 16777619)
+  }
+  return hash >>> 0
+}
+
+const cardWidth = (id: string, mode: AnimeCanvasMode) => {
+  const config = layoutConfig[mode]
+  const leadIndex = spotlightIds.findIndex((candidate) => candidate === id)
+  if (leadIndex >= 0 && leadIndex < 4) return config.leadSpotlightWidths[leadIndex]
+
+  const hash = stableHash(id)
+  if (spotlightSet.has(id)) {
+    return config.spotlightWidths[hash % config.spotlightWidths.length]
+  }
+
+  const widths = hash % 5 < 2 ? config.fillerWidths : config.regularWidths
+  return widths[hash % widths.length]
+}
+
+const cardGap = (id: string, mode: AnimeCanvasMode) => {
+  const gaps = layoutConfig[mode].gaps
+  return gaps[stableHash(`${mode}:${id}:gap`) % gaps.length]
+}
+
+const intersects = (left: PackingSpace, right: PackingSpace) => (
+  left.x < right.x + right.width
+  && left.x + left.width > right.x
+  && left.y < right.y + right.height
+  && left.y + left.height > right.y
+)
+
+const contains = (outer: PackingSpace, inner: PackingSpace) => (
+  inner.x >= outer.x
+  && inner.y >= outer.y
+  && inner.x + inner.width <= outer.x + outer.width
+  && inner.y + inner.height <= outer.y + outer.height
+)
+
+const occupySpace = (spaces: PackingSpace[], used: PackingSpace) => {
+  const additions: PackingSpace[] = []
+  for (let index = spaces.length - 1; index >= 0; index -= 1) {
+    const space = spaces[index]
+    if (!intersects(space, used)) continue
+    spaces.splice(index, 1)
+
+    if (used.x > space.x) {
+      additions.push({ ...space, width: used.x - space.x })
+    }
+    if (used.x + used.width < space.x + space.width) {
+      additions.push({
+        ...space,
+        x: used.x + used.width,
+        width: space.x + space.width - used.x - used.width,
+      })
+    }
+    if (used.y > space.y) {
+      additions.push({ ...space, height: used.y - space.y })
+    }
+    if (used.y + used.height < space.y + space.height) {
+      additions.push({
+        ...space,
+        y: used.y + used.height,
+        height: space.y + space.height - used.y - used.height,
+      })
+    }
+  }
+  spaces.push(...additions.filter((space) => space.width > 0 && space.height > 0))
+
+  for (let left = spaces.length - 1; left >= 0; left -= 1) {
+    for (let right = spaces.length - 1; right >= 0; right -= 1) {
+      if (left === right || !contains(spaces[right], spaces[left])) continue
+      spaces.splice(left, 1)
+      break
+    }
+  }
+}
+
+const anchorPoint = (
+  anchorIndex: number,
+  boxes: PackingBox[],
+  mode: AnimeCanvasMode,
+): Point => {
+  const leadWidth = boxes.slice(0, anchorIndex).reduce((total, candidate) => total + candidate.width, 0)
+  return { x: leadWidth, y: layoutConfig[mode].leadSpotlightYOffsets[anchorIndex] }
+}
+
+const packBoxes = (sourceBoxes: PackingBox[], width: number, height: number, mode: AnimeCanvasMode) => {
+  const boxes = sourceBoxes.map((box) => ({ ...box, x: 0, y: 0 }))
+  const spaces: PackingSpace[] = [{ x: 0, y: 0, width, height }]
+  const anchored = boxes.filter((box) => leadSpotlightSet.has(box.id))
+
+  for (let index = 0; index < anchored.length; index += 1) {
+    const box = anchored[index]
+    const point = anchorPoint(index, anchored, mode)
+    const used = { x: point.x, y: point.y, width: box.width, height: box.height }
+    if (
+      used.x < 0
+      || used.y < 0
+      || used.x + used.width > width
+      || used.y + used.height > height
+      || anchored.slice(0, index).some((candidate) => intersects(candidate, used))
+    ) return undefined
+    box.x = used.x
+    box.y = used.y
+    occupySpace(spaces, used)
+  }
+
+  const remainder = boxes
+    .filter((box) => !leadSpotlightSet.has(box.id))
+    .sort((left, right) => left.itemIndex - right.itemIndex)
+
+  for (const box of remainder) {
+    let best: { x: number; y: number; shortSide: number; longSide: number } | undefined
+    for (const space of spaces) {
+      if (box.width > space.width || box.height > space.height) continue
+      const remainingX = space.width - box.width
+      const remainingY = space.height - box.height
+      const candidate = {
+        x: space.x,
+        y: space.y,
+        shortSide: Math.min(remainingX, remainingY),
+        longSide: Math.max(remainingX, remainingY),
+      }
+      if (
+        !best
+        || candidate.y < best.y
+        || (candidate.y === best.y && candidate.shortSide < best.shortSide)
+        || (candidate.y === best.y && candidate.shortSide === best.shortSide && candidate.longSide < best.longSide)
+        || (
+          candidate.y === best.y
+          && candidate.shortSide === best.shortSide
+          && candidate.longSide === best.longSide
+          && candidate.x < best.x
+        )
+      ) best = candidate
+    }
+    if (!best) return undefined
+    box.x = best.x
+    box.y = best.y
+    occupySpace(spaces, box)
+  }
+
+  return boxes
+}
+
+export const createAnimeCanvasLayout = (
+  items: AnimeLayoutItem[],
+  mode: AnimeCanvasMode,
+): AnimeCanvasLayout => {
+  const config = layoutConfig[mode]
+  const boxes = items.map((item, itemIndex) => {
+    const width = cardWidth(item.id, mode)
+    const gap = cardGap(item.id, mode)
+    const aspectRatio = item.imageWidth > 0 && item.imageHeight > 0
+      ? item.imageWidth / item.imageHeight
+      : 3 / 4
+    const height = width / aspectRatio
+    return {
+      itemIndex,
+      id: item.id,
+      width: width + gap,
+      height: height + gap,
+      gap,
+      x: 0,
+      y: 0,
+    }
+  })
+
+  const minGap = Math.min(...config.gaps)
+  const maxGap = Math.max(...config.gaps)
+  if (boxes.length === 0) return { width: 1, height: 1, minGap, maxGap, slots: [] }
+
+  let packingHeight = config.packingHeight
+  let packed = packBoxes(boxes, config.packingWidth, packingHeight, mode)
+  while (!packed) {
+    packingHeight *= 2
+    packed = packBoxes(boxes, config.packingWidth, packingHeight, mode)
+  }
+
+  const width = Math.ceil(Math.max(...packed.map((box) => box.x + box.width)))
+  const height = Math.ceil(Math.max(...packed.map((box) => box.y + box.height)))
+  const slots = Array.from<AnimeCanvasSlot>({ length: items.length })
+
+  for (const box of packed) {
+    const inset = box.gap / 2
+    slots[box.itemIndex] = {
+      x: box.x + inset,
+      y: box.y + inset,
+      width: box.width - box.gap,
+      height: box.height - box.gap,
+      gap: box.gap,
+    }
+  }
+
+  return { width, height, minGap, maxGap, slots }
+}
 
 export const arrangeAnimeItems = <T extends { id: string; order: number }>(items: T[]) => {
   const byId = new Map(items.map((item) => [item.id, item]))
@@ -98,10 +293,10 @@ export const arrangeAnimeItems = <T extends { id: string; order: number }>(items
     const item = byId.get(id)
     return item ? [item] : []
   })
-  const spotlightSet = new Set(spotlights.map((item) => item.id))
+  const arrangedSpotlights = new Set(spotlights.map((item) => item.id))
   const remainder = items
-    .filter((item) => !spotlightSet.has(item.id))
-    .sort((left, right) => (left.order * 31 % 997) - (right.order * 31 % 997))
+    .filter((item) => !arrangedSpotlights.has(item.id))
+    .sort((left, right) => left.order - right.order)
   return [...spotlights, ...remainder]
 }
 
