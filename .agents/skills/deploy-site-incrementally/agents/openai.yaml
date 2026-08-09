@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incremental Site Deploys"
+  short_description: "Deploy only changed site media and verify GitHub Pages"
+  default_prompt: "Use $deploy-site-incrementally to publish the current site with incremental media generation and verify the live deployment."
