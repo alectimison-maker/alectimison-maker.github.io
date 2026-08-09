@@ -1,13 +1,29 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import SpaceIntro from '../../components/SpaceIntro.astro'
-import P0AlbumWorld from '../../components/physics/P0AlbumWorld'
+import AnimeInfiniteCanvas from '../../components/anime/AnimeInfiniteCanvas'
 import items from '../../data/anime.json'
+import details from '../../data/anime-details.json'
+
+const animeItems = items.map((item) => ({
+  ...item,
+  ...details[item.id as keyof typeof details],
+}))
 ---
 <BaseLayout title="Anime" space="anime">
-  <SpaceIntro space="anime" />
-  <section class="section-block container">
-    <div class="section-heading"><div><span class="eyebrow">COLLECTION / WATCHED</span><h2>动画收藏</h2></div></div>
-    <P0AlbumWorld client:visible items={items} compact allowStaticView />
-  </section>
+  <AnimeInfiniteCanvas client:load items={animeItems} />
 </BaseLayout>
+
+<style is:global>
+  html[data-space="anime"],
+  html[data-space="anime"] body {
+    overflow: hidden;
+  }
+
+  html[data-space="anime"] .page-shell {
+    min-height: 0;
+  }
+
+  html[data-space="anime"] .site-footer {
+    display: none;
+  }
+</style>

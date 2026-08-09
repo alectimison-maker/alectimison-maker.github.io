@@ -1,4 +1,9 @@
-export type CoffeeArtwork = 'hows-the-coffee' | 'round-to-coffee' | 'four-seasons'
+export type CoffeeArtwork =
+  | 'hows-the-coffee'
+  | 'round-to-coffee'
+  | 'four-seasons'
+  | 'the-room'
+  | 'datum'
 export type CoffeeImageSide = 'left' | 'right'
 
 export interface CoffeeEditorialConfig {
@@ -26,6 +31,18 @@ export const COFFEE_EDITORIAL_CONFIG = {
     imageSide: 'right',
     artwork: 'four-seasons',
     coverAlt: '四序：木桌上的绿色特调、甜品与咖啡',
+  },
+  'the-room': {
+    sequence: 4,
+    imageSide: 'left',
+    artwork: 'the-room',
+    coverAlt: 'The Room：木杯中的 Off The Sunset 特调与黑胡椒饼干',
+  },
+  datum: {
+    sequence: 5,
+    imageSide: 'right',
+    artwork: 'datum',
+    coverAlt: 'Datum：窗边的重逢特调、小雏菊与咖啡介绍卡',
   },
 } as const satisfies Record<string, CoffeeEditorialConfig>
 

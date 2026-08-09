@@ -55,6 +55,79 @@ const roundGlyphs = [
   </span>
 )}
 
+{artwork === 'the-room' && (
+  <span class="title-art title-art--room" aria-hidden="true">
+    <span class="room-the">THE</span>
+    <span class="room-word">ROOM</span>
+  </span>
+)}
+
+{artwork === 'datum' && (
+  <span class="title-art title-art--datum" aria-hidden="true">
+    <span class="datum-face-wall">
+      <span class="datum-face datum-face--one">(^‿^)</span>
+      <span class="datum-face datum-face--two">( ´･ω･)</span>
+      <span class="datum-face datum-face--three">(｡•́︿•̀｡)</span>
+      <span class="datum-face datum-face--four">( ◡‿◡ )</span>
+      <span class="datum-face datum-face--five">(っ˘ω˘ς )</span>
+      <span class="datum-face datum-face--six">(._.)</span>
+      <span class="datum-face datum-face--seven">(￣∇￣)</span>
+      <span class="datum-face datum-face--eight">╮(╯▽╰)╭</span>
+      <span class="datum-face datum-face--nine">(－_－) zzZ</span>
+      <span class="datum-face datum-face--ten">(￣▽￣)旦</span>
+      <span class="datum-face datum-face--micro datum-face--eleven">(o_o)</span>
+      <span class="datum-face datum-face--micro datum-face--twelve">(¬_¬)</span>
+      <span class="datum-face datum-face--micro datum-face--thirteen">(&gt;_&lt;)</span>
+      <span class="datum-face datum-face--micro datum-face--fourteen">(^.^)</span>
+      <span class="datum-face datum-face--micro datum-face--fifteen">(u_u)</span>
+      <span class="datum-face datum-face--micro datum-face--sixteen">(;_;)</span>
+      <span class="datum-face datum-face--micro datum-face--seventeen">(°_°)</span>
+      <span class="datum-face datum-face--micro datum-face--eighteen">(-.-)</span>
+      <span class="datum-face datum-face--micro datum-face--nineteen">(~_~)</span>
+      <span class="datum-face datum-face--micro datum-face--twenty">(x_x)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-one">(@_@)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-two">(+_+)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-three">($_$)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-four">(?_?)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-five">(!.!)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-six">(*_*)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-seven">(^o^)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-eight">(T_T)</span>
+      <span class="datum-face datum-face--nano datum-face--twenty-nine">(9_9)</span>
+      <span class="datum-face datum-face--nano datum-face--thirty">(=_=)</span>
+      <span class="datum-face datum-face--micro datum-face--thirty-one">(._.?)</span>
+      <span class="datum-face datum-face--nano datum-face--thirty-two">(^_-)</span>
+      <span class="datum-face datum-face--micro datum-face--thirty-three">(-_^)</span>
+      <span class="datum-face datum-face--nano datum-face--thirty-four">(o.O)</span>
+      <span class="datum-face datum-face--micro datum-face--thirty-five">(O.o)</span>
+      <span class="datum-face datum-face--nano datum-face--thirty-six">(&gt;_o)</span>
+      <span class="datum-face datum-face--micro datum-face--thirty-seven">(._-)</span>
+      <span class="datum-face datum-face--nano datum-face--thirty-eight">('~')</span>
+      <span class="datum-face datum-face--micro datum-face--thirty-nine">(^-^)</span>
+      <span class="datum-face datum-face--nano datum-face--forty">(._&lt;)</span>
+      <span class="datum-face datum-face--micro datum-face--forty-one">(&gt;_.)</span>
+      <span class="datum-face datum-face--nano datum-face--forty-two">(-o-)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-one">(o.O)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-two">(O.o)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-three">(^_^;)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-four">(0_0;)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-five">(-_-;)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-six">(._.?)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-seven">(._&lt;)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-eight">(&gt;.&lt;)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-nine">(^-^)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-ten">(v_v)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-eleven">(z_z)</span>
+      <span class="datum-face datum-face--extra datum-face--extra-twelve">(._.)?</span>
+    </span>
+    <span class="datum-cell datum-cell--d">D</span>
+    <span class="datum-cell datum-cell--a">a</span>
+    <span class="datum-cell datum-cell--t">t</span>
+    <span class="datum-cell datum-cell--u">u</span>
+    <span class="datum-cell datum-cell--m">m</span>
+  </span>
+)}
+
 <style>
   @font-face {
     font-family: "Coffee Free Jazz";
@@ -65,6 +138,18 @@ const roundGlyphs = [
   @font-face {
     font-family: "Coffee Zhi Mang Xing";
     src: url("/fonts/coffee/ZhiMangXing/ZhiMangXing-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Coffee Modal Jazz";
+    src: url("/fonts/jazz/Fascinate/Fascinate-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Coffee Swing";
+    src: url("/fonts/jazz/Limelight/Limelight-Regular.ttf") format("truetype");
     font-display: swap;
   }
 
@@ -193,6 +278,180 @@ const roundGlyphs = [
     transform: scale(1.1, 1.16) translate(3%, 1%);
   }
 
+  .title-art--room {
+    display: grid;
+    grid-template: repeat(10, minmax(0, 1fr)) / repeat(12, minmax(0, 1fr));
+    gap: clamp(.04rem, .18cqw, .14rem);
+    padding: clamp(.3rem, .8cqw, .7rem);
+    font-family: "Coffee Modal Jazz", var(--serif);
+  }
+  .room-the {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    overflow: hidden;
+  }
+  .room-the {
+    grid-area: 1 / 1 / 4 / 5;
+    place-items: center;
+    color: #191812;
+    font-size: min(15.6cqw, 21.6cqh);
+    line-height: .72;
+    letter-spacing: -.06em;
+    transform: rotate(3deg) translate(2%, -2%);
+  }
+  .room-word {
+    position: absolute;
+    right: 7%;
+    bottom: 8%;
+    display: block;
+    white-space: nowrap;
+    color: transparent;
+    background: linear-gradient(145deg, #c66a72 4%, #a8495d 50%, #701f3a 96%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    font-size: min(46.2cqw, 55cqh);
+    font-weight: 400;
+    line-height: .72;
+    letter-spacing: -.08em;
+    transform: rotate(3deg);
+    transform-origin: right bottom;
+  }
+
+  .title-art--datum {
+    display: grid;
+    grid-template: repeat(8, minmax(0, 1fr)) / repeat(12, minmax(0, 1fr));
+    gap: clamp(.03rem, .16cqw, .12rem);
+    padding: clamp(.35rem, 1cqw, .8rem);
+    font-family: "Coffee Swing", var(--serif);
+  }
+  .datum-face-wall {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+    font-family: var(--mono);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .datum-face {
+    position: absolute;
+    display: block;
+    color: #000;
+    white-space: nowrap;
+    font-size: clamp(.65rem, 1.8cqw, 1rem);
+    transform-origin: center;
+  }
+  .datum-face--one {
+    top: 4%;
+    left: 30%;
+    opacity: .72;
+    font-size: clamp(1rem, 2.6cqw, 1.45rem);
+    transform: rotate(-9deg);
+  }
+  .datum-face--two { top: 32%; left: 16%; opacity: .55; transform: rotate(13deg); }
+  .datum-face--three { top: 10%; left: 48%; opacity: .85; transform: rotate(-18deg); }
+  .datum-face--four { top: 39%; left: 50%; opacity: .45; transform: rotate(7deg); }
+  .datum-face--five { top: 40%; left: 78%; opacity: .68; transform: rotate(-12deg); }
+  .datum-face--six { top: 55%; left: 29%; opacity: .9; transform: rotate(19deg); }
+  .datum-face--seven { top: 79%; left: 29%; opacity: .58; transform: rotate(-24deg); }
+  .datum-face--eight { top: 43%; left: 31%; opacity: .76; transform: rotate(14deg); }
+  .datum-face--nine { top: 50%; left: 77%; opacity: .49; transform: rotate(-7deg); }
+  .datum-face--ten {
+    top: 31%;
+    left: 66%;
+    opacity: 1;
+    font-size: clamp(1rem, 2.6cqw, 1.45rem);
+    transform: rotate(11deg);
+  }
+  .datum-face--micro { font-size: clamp(.5rem, 1.2cqw, .72rem); }
+  .datum-face--eleven { top: 34%; left: 3%; opacity: .64; transform: rotate(-16deg); }
+  .datum-face--twelve { top: 1%; left: 53%; opacity: .88; transform: rotate(6deg); }
+  .datum-face--thirteen { top: 25%; left: 29%; opacity: .47; transform: rotate(17deg); }
+  .datum-face--fourteen { top: 28%; left: 52%; opacity: .7; transform: rotate(-21deg); }
+  .datum-face--fifteen { top: 45%; left: 94%; opacity: .52; transform: rotate(9deg); }
+  .datum-face--sixteen { top: 68%; left: 64%; opacity: .81; transform: rotate(-13deg); }
+  .datum-face--seventeen { top: 82%; left: 3%; opacity: .44; transform: rotate(15deg); }
+  .datum-face--eighteen { top: 20%; left: 84%; opacity: .74; transform: rotate(-5deg); }
+  .datum-face--nineteen { top: 90%; left: 34%; opacity: .59; transform: rotate(22deg); }
+  .datum-face--twenty { top: 75%; left: 94%; opacity: .93; transform: rotate(-19deg); }
+  .datum-face--nano { font-size: clamp(.42rem, .95cqw, .58rem); }
+  .datum-face--twenty-one { top: 11%; left: 3%; opacity: .57; transform: rotate(18deg); }
+  .datum-face--twenty-two { top: 2%; left: 43%; opacity: .78; transform: rotate(-14deg); }
+  .datum-face--twenty-three { top: 18%; left: 30%; opacity: .42; transform: rotate(8deg); }
+  .datum-face--twenty-four { top: 31%; left: 47%; opacity: .91; transform: rotate(-23deg); }
+  .datum-face--twenty-five { top: 44%; left: 57%; opacity: .53; transform: rotate(12deg); }
+  .datum-face--twenty-six { top: 62%; left: 31%; opacity: .69; transform: rotate(-6deg); }
+  .datum-face--twenty-seven { top: 58%; left: 94%; opacity: .84; transform: rotate(21deg); }
+  .datum-face--twenty-eight { top: 86%; left: 64%; opacity: .46; transform: rotate(-17deg); }
+  .datum-face--twenty-nine { top: 70%; left: 49%; opacity: .75; transform: rotate(5deg); }
+  .datum-face--thirty { top: 8%; left: 91%; opacity: .62; transform: rotate(-10deg); }
+  .datum-face--thirty-one { top: 1%; left: 61%; opacity: .66; transform: rotate(13deg); }
+  .datum-face--thirty-two { top: 1%; left: 69%; opacity: .48; transform: rotate(-9deg); }
+  .datum-face--thirty-three { top: 3%; left: 77%; opacity: .76; transform: rotate(18deg); }
+  .datum-face--thirty-four { top: 12%; left: 85%; opacity: .57; transform: rotate(-16deg); }
+  .datum-face--thirty-five { top: 84%; left: 39%; opacity: .82; transform: rotate(9deg); }
+  .datum-face--thirty-six { top: 91%; left: 46%; opacity: .51; transform: rotate(-20deg); }
+  .datum-face--thirty-seven { top: 87%; left: 56%; opacity: .7; transform: rotate(15deg); }
+  .datum-face--thirty-eight { top: 92%; left: 67%; opacity: .43; transform: rotate(-7deg); }
+  .datum-face--thirty-nine { top: 36%; left: 60%; opacity: .88; transform: rotate(-12deg); }
+  .datum-face--forty { top: 43%; left: 65%; opacity: .54; transform: rotate(21deg); }
+  .datum-face--forty-one { top: 50%; left: 71%; opacity: .73; transform: rotate(-18deg); }
+  .datum-face--forty-two { top: 57%; left: 59%; opacity: .46; transform: rotate(8deg); }
+  .datum-face--extra { font-size: clamp(.46rem, 1.08cqw, .66rem); }
+  .datum-face--extra-one { top: 6%; left: 44%; opacity: .48; transform: rotate(12deg); }
+  .datum-face--extra-two { top: 14%; left: 57%; opacity: .7; transform: rotate(-8deg); }
+  .datum-face--extra-three { top: 13%; left: 78%; opacity: .56; transform: rotate(19deg); }
+  .datum-face--extra-four { top: 16%; left: 83%; opacity: .43; transform: rotate(-17deg); }
+  .datum-face--extra-five { top: 35%; left: 55%; opacity: .73; transform: rotate(9deg); }
+  .datum-face--extra-six { top: 42%; left: 69%; opacity: .51; transform: rotate(-20deg); }
+  .datum-face--extra-seven { top: 45%; left: 74%; opacity: .82; transform: rotate(14deg); }
+  .datum-face--extra-eight { top: 58%; left: 55%; opacity: .6; transform: rotate(-11deg); }
+  .datum-face--extra-nine { top: 66%; left: 60%; opacity: .46; transform: rotate(21deg); }
+  .datum-face--extra-ten { top: 91%; left: 39%; opacity: .76; transform: rotate(-15deg); }
+  .datum-face--extra-eleven { top: 93%; left: 57%; opacity: .54; transform: rotate(8deg); }
+  .datum-face--extra-twelve { top: 89%; left: 68%; opacity: .67; transform: rotate(-5deg); }
+  .datum-cell {
+    z-index: 2;
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    color: #351b18;
+    font-weight: 400;
+    line-height: .72;
+  }
+  .datum-cell--d {
+    grid-area: 2 / 1 / 9 / 5;
+    place-items: start center;
+    font-size: min(43cqw, 54cqh);
+    transform: scale(1.08, 2.52) translate(-2%, 0);
+    transform-origin: center top;
+  }
+  .datum-cell--a { grid-area: 2 / 5 / 5 / 7; font-size: min(21cqw, 28cqh); transform: scale(1.08, 1.06) translate(-2%, 2%); }
+  .datum-cell--t {
+    grid-area: 1 / 6 / 4 / 9;
+    position: relative;
+    top: -5.25cqh;
+    font-size: min(24cqw, 27cqh);
+    transform: rotate(-60deg) scale(1.33, 2.2) translate(-1%, 2%);
+    transform-origin: center top;
+  }
+  .datum-cell--u {
+    grid-area: 4 / 5 / 9 / 9;
+    font-size: min(35cqw, 44cqh);
+    transform: scale(1.59) translate(1%, 0);
+  }
+  .datum-cell--m {
+    grid-area: 4 / 9 / 9 / 13;
+    position: relative;
+    top: -27cqh;
+    font-size: min(35cqw, 43cqh);
+    transform: scale(1.04, 2.5) translate(-3%, 0);
+    transform-origin: center top;
+  }
+
   @media (max-width: 760px) {
     .title-art { min-height: clamp(17rem, 72vw, 23rem); }
     .hows-word--how {
@@ -209,6 +468,76 @@ const roundGlyphs = [
       right: -.035em;
       font-size: clamp(5rem, 26vw, 7rem);
       transform: scaleY(2.5);
+    }
+    .title-art--room,
+    .title-art--datum { padding: clamp(.2rem, 1vw, .4rem); }
+    .datum-face { font-size: clamp(.55rem, 2.6cqw, .78rem); }
+    .datum-face--one,
+    .datum-face--ten { font-size: clamp(.8rem, 3.8cqw, 1rem); }
+    .datum-face--micro { font-size: clamp(.48rem, 2.2cqw, .62rem); }
+    .datum-face--nano,
+    .datum-face--extra { display: none; }
+    .datum-face--one { top: 3%; left: 34%; }
+    .datum-face--two { top: 30%; left: 14%; }
+    .datum-face--three { top: 15%; left: 50%; }
+    .datum-face--four { top: 39%; left: 48%; }
+    .datum-face--five { top: 43%; left: 78%; }
+    .datum-face--six { top: 54%; left: 16%; }
+    .datum-face--seven { top: 76%; left: 15%; }
+    .datum-face--eight { top: 46%; left: 38%; }
+    .datum-face--nine { top: 52%; left: 76%; }
+    .datum-face--ten { top: 32%; left: 64%; }
+    .datum-face--eleven { top: 42%; left: 16%; }
+    .datum-face--twelve { top: 1%; left: 55%; }
+    .datum-face--thirteen { top: 48%; left: 22%; }
+    .datum-face--fourteen { top: 31%; left: 52%; }
+    .datum-face--fifteen { top: 43%; left: 92%; }
+    .datum-face--sixteen { top: 66%; left: 17%; }
+    .datum-face--seventeen { top: 88%; left: 17%; }
+    .datum-face--eighteen { top: 33%; left: 90%; }
+    .datum-face--nineteen { top: 88%; left: 17%; transform: rotate(-8deg) translateX(125%); }
+    .datum-face--twenty { top: 72%; left: 48%; }
+    .datum-face--twenty-one { top: 20%; left: 17%; }
+    .datum-face--twenty-two { top: 2%; left: 49%; }
+    .datum-face--twenty-three { top: 24%; left: 23%; }
+    .datum-face--twenty-four { top: 33%; left: 47%; }
+    .datum-face--twenty-five { top: 33%; left: 57%; }
+    .datum-face--twenty-six { top: 58%; left: 17%; }
+    .datum-face--twenty-seven { top: 35%; left: 92%; }
+    .datum-face--twenty-eight { top: 78%; left: 49%; }
+    .datum-face--twenty-nine { top: 74%; left: 77%; }
+    .datum-face--thirty { top: 88%; left: 23%; }
+    .datum-face--thirty-one { top: 2%; left: 63%; }
+    .datum-face--thirty-two { top: 1%; left: 68%; }
+    .datum-face--thirty-three { top: 3%; left: 76%; }
+    .datum-face--thirty-four { top: 12%; left: 86%; }
+    .datum-face--thirty-five { top: 83%; left: 39%; }
+    .datum-face--thirty-six { top: 90%; left: 46%; }
+    .datum-face--thirty-seven { top: 86%; left: 56%; }
+    .datum-face--thirty-eight { top: 91%; left: 66%; }
+    .datum-face--thirty-nine { top: 41%; left: 60%; }
+    .datum-face--forty { top: 44%; left: 64%; }
+    .datum-face--forty-one { top: 51%; left: 68%; }
+    .datum-face--forty-two { top: 58%; left: 58%; }
+    .datum-face--extra-one { top: 8%; left: 43%; }
+    .datum-face--extra-two { top: 16%; left: 55%; }
+    .datum-face--extra-three { top: 14%; left: 79%; }
+    .datum-face--extra-four { top: 20%; left: 82%; }
+    .datum-face--extra-five { top: 37%; left: 57%; }
+    .datum-face--extra-six { top: 43%; left: 63%; }
+    .datum-face--extra-seven { top: 50%; left: 71%; }
+    .datum-face--extra-eight { top: 59%; left: 56%; }
+    .datum-face--extra-nine { top: 66%; left: 61%; }
+    .datum-face--extra-ten { top: 92%; left: 38%; }
+    .datum-face--extra-eleven { top: 93%; left: 56%; }
+    .datum-face--extra-twelve { top: 90%; left: 65%; }
+    .room-word {
+      right: auto;
+      bottom: 8%;
+      left: 1%;
+      font-size: min(38.5cqw, 50.6cqh);
+      letter-spacing: -.11em;
+      transform-origin: left bottom;
     }
   }
 </style>

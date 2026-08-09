@@ -1,0 +1,372 @@
+.anime-infinite-canvas {
+  --anime-canvas-paper: #f3efe6;
+  --anime-canvas-ink: #142763;
+  --anime-canvas-blue: #21409a;
+  --anime-canvas-coral: #e05b4f;
+  position: relative;
+  height: calc(100svh - var(--header-height));
+  min-height: 34rem;
+  overflow: hidden;
+  color: var(--anime-canvas-ink);
+  background-color: var(--anime-canvas-paper);
+  background-image: radial-gradient(circle, rgba(33, 64, 154, .22) .8px, transparent .9px);
+  background-size: 16px 16px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  isolation: isolate;
+}
+
+.anime-infinite-canvas.is-dragging {
+  cursor: grabbing;
+}
+
+.anime-canvas-plane {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  will-change: transform;
+}
+
+.anime-canvas-tile {
+  position: absolute;
+}
+
+.anime-canvas-card {
+  position: absolute;
+  margin: 0;
+  z-index: 1;
+}
+
+.anime-canvas-card:hover,
+.anime-canvas-card:focus-within {
+  z-index: 4;
+}
+
+.anime-canvas-card button {
+  position: relative;
+  width: 100%;
+  padding: 0;
+  display: block;
+  border: 0;
+  color: var(--anime-canvas-paper);
+  text-align: left;
+  background: #e5e0d7;
+  box-shadow: 0 .8rem 2.2rem rgba(20, 39, 99, .08);
+  cursor: pointer;
+  transition: box-shadow .24s ease, transform .24s cubic-bezier(.2, .75, .25, 1);
+}
+
+.anime-canvas-card button::before {
+  content: var(--anime-card-index);
+  position: absolute;
+  z-index: 2;
+  top: .45rem;
+  left: .5rem;
+  padding: .22rem .32rem;
+  color: var(--anime-canvas-paper);
+  background: var(--anime-canvas-blue);
+  font: 700 .58rem/1 var(--mono);
+  letter-spacing: .08em;
+}
+
+.anime-canvas-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  opacity: .72;
+  filter: saturate(.7) contrast(.94);
+  pointer-events: none;
+  transition: opacity .24s ease, filter .24s ease;
+}
+
+.anime-canvas-card span {
+  position: absolute;
+  z-index: 2;
+  right: .55rem;
+  bottom: .55rem;
+  left: .55rem;
+  padding: .42rem .5rem;
+  overflow: hidden;
+  color: var(--anime-canvas-paper);
+  background: var(--anime-canvas-blue);
+  opacity: 0;
+  transform: translateY(.35rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font: 700 .62rem/1.2 var(--mono);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.anime-canvas-card button:hover,
+.anime-canvas-card button:focus-visible {
+  box-shadow: 0 1.1rem 3rem rgba(20, 39, 99, .2);
+  transform: scale(1.03);
+}
+
+.anime-canvas-card button:hover img,
+.anime-canvas-card button:focus-visible img {
+  opacity: 1;
+  filter: saturate(1) contrast(1);
+}
+
+.anime-canvas-card button:hover span,
+.anime-canvas-card button:focus-visible span {
+  opacity: 1;
+  transform: none;
+}
+
+.anime-canvas-card button:focus-visible {
+  outline: 3px solid var(--anime-canvas-coral);
+  outline-offset: 5px;
+}
+
+.anime-canvas-chrome {
+  position: absolute;
+  z-index: 12;
+  inset: 0;
+  color: var(--anime-canvas-blue);
+  pointer-events: none;
+  font-family: var(--mono);
+  font-weight: 700;
+  line-height: .8;
+}
+
+.anime-canvas-chrome strong {
+  position: absolute;
+  top: clamp(1rem, 2.2vw, 2rem);
+  left: clamp(1rem, 2.2vw, 2rem);
+  font-size: clamp(3.1rem, 7vw, 7.5rem);
+  letter-spacing: -.08em;
+}
+
+.anime-canvas-chrome__count {
+  position: absolute;
+  right: clamp(1rem, 2.2vw, 2rem);
+  bottom: clamp(1rem, 2.2vw, 2rem);
+  font-size: clamp(2.6rem, 6vw, 6.5rem);
+  letter-spacing: -.08em;
+}
+
+.anime-canvas-chrome__drag {
+  position: absolute;
+  bottom: clamp(1rem, 2.2vw, 2rem);
+  left: clamp(1rem, 2.2vw, 2rem);
+  font-size: clamp(.72rem, 1.2vw, 1.1rem);
+  line-height: 1;
+  letter-spacing: .08em;
+}
+
+.anime-canvas-chrome i {
+  position: absolute;
+  top: clamp(1.2rem, 2.4vw, 2.2rem);
+  right: clamp(1.2rem, 2.4vw, 2.2rem);
+  width: clamp(1.8rem, 3vw, 3.1rem);
+  aspect-ratio: 1;
+  background: var(--anime-canvas-coral);
+}
+
+.anime-detail-layer {
+  position: fixed;
+  z-index: 220;
+  inset: var(--header-height) 0 0;
+}
+
+.anime-detail-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 20, 51, .4);
+  backdrop-filter: blur(2px);
+  animation: anime-scrim-in .22s ease both;
+}
+
+.anime-detail-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: min(46rem, 88vw);
+  height: 100%;
+  padding: clamp(4.5rem, 8vw, 7rem) clamp(1.25rem, 3vw, 2.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  display: grid;
+  grid-template-columns: minmax(11rem, .78fr) minmax(15rem, 1.22fr);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: center;
+  overflow: auto;
+  color: var(--anime-canvas-ink);
+  border-left: 3px solid var(--anime-canvas-blue);
+  background: var(--anime-canvas-paper);
+  box-shadow: -1.5rem 0 4rem rgba(10, 20, 51, .18);
+  animation: anime-drawer-in .32s cubic-bezier(.2, .78, .2, 1) both;
+}
+
+.anime-detail-drawer > img {
+  display: block;
+  width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  box-shadow: 0 1rem 2.5rem rgba(20, 39, 99, .14);
+}
+
+.anime-detail-close {
+  position: absolute;
+  z-index: 2;
+  top: 1rem;
+  right: 1rem;
+  min-width: 5.5rem;
+  min-height: 2.75rem;
+  padding: .6rem .8rem;
+  border: 1px solid var(--anime-canvas-blue);
+  color: var(--anime-canvas-blue);
+  background: transparent;
+  cursor: pointer;
+  font: 700 .72rem/1 var(--mono);
+}
+
+.anime-detail-close:hover,
+.anime-detail-close:focus-visible {
+  color: var(--anime-canvas-paper);
+  background: var(--anime-canvas-blue);
+}
+
+.anime-detail-index {
+  position: absolute;
+  top: 1.3rem;
+  left: clamp(1.25rem, 3vw, 2.5rem);
+  color: var(--anime-canvas-coral);
+  font: 700 .7rem/1 var(--mono);
+  letter-spacing: .12em;
+}
+
+.anime-detail-copy > p {
+  margin: 0 0 .75rem;
+  color: var(--anime-canvas-blue);
+  font: 700 .66rem/1.4 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.anime-detail-copy h2 {
+  margin: 0;
+  font: 600 clamp(2.3rem, 5vw, 5rem)/.92 var(--serif);
+  letter-spacing: -.055em;
+}
+
+.anime-detail-copy blockquote {
+  margin: clamp(2rem, 5vw, 4rem) 0 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(33, 64, 154, .28);
+}
+
+.anime-detail-copy blockquote p {
+  margin: 0;
+  font: 500 clamp(1.25rem, 2.4vw, 2rem)/1.42 var(--serif);
+}
+
+.anime-detail-copy cite {
+  display: block;
+  margin-top: 1.2rem;
+  color: var(--anime-canvas-blue);
+  font: 700 .75rem/1.4 var(--mono);
+  font-style: normal;
+}
+
+.anime-detail-copy small {
+  color: #6e7690;
+  font: .62rem/1.4 var(--mono);
+  letter-spacing: .06em;
+}
+
+@keyframes anime-scrim-in {
+  from { opacity: 0; }
+}
+
+@keyframes anime-drawer-in {
+  from { transform: translateX(100%); }
+}
+
+@media (max-width: 760px) {
+  .anime-infinite-canvas {
+    min-height: 30rem;
+    background-size: 13px 13px;
+  }
+
+  .anime-canvas-chrome strong {
+    font-size: clamp(2.8rem, 16vw, 4.6rem);
+  }
+
+  .anime-canvas-chrome__count {
+    font-size: clamp(2.5rem, 15vw, 4rem);
+  }
+
+  .anime-detail-drawer {
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    height: min(80svh, 45rem);
+    padding: 4.4rem 1rem 1.25rem;
+    grid-template-columns: minmax(7.5rem, 34vw) minmax(0, 1fr);
+    gap: 1rem;
+    border-top: 3px solid var(--anime-canvas-blue);
+    border-left: 0;
+    box-shadow: 0 -1.5rem 4rem rgba(10, 20, 51, .18);
+    animation-name: anime-drawer-up;
+  }
+
+  .anime-detail-drawer > img {
+    max-height: 58svh;
+  }
+
+  .anime-detail-copy h2 {
+    font-size: clamp(1.7rem, 8vw, 3rem);
+  }
+
+  .anime-detail-copy blockquote {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+
+  .anime-detail-copy blockquote p {
+    font-size: clamp(1rem, 4.5vw, 1.35rem);
+  }
+
+  .anime-detail-index {
+    left: 1rem;
+  }
+
+  @keyframes anime-drawer-up {
+    from { transform: translateY(100%); }
+  }
+}
+
+@media (max-width: 460px) {
+  .anime-detail-drawer {
+    height: min(84svh, 48rem);
+    grid-template-columns: minmax(6.5rem, 30vw) minmax(0, 1fr);
+    align-items: start;
+    align-content: start;
+  }
+
+  .anime-detail-drawer > img {
+    margin-top: 1rem;
+  }
+
+  .anime-detail-close span {
+    display: none;
+  }
+
+  .anime-detail-close {
+    min-width: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anime-canvas-card button,
+  .anime-canvas-card img,
+  .anime-canvas-card span,
+  .anime-detail-scrim,
+  .anime-detail-drawer {
+    transition: none;
+    animation: none;
+  }
+}
