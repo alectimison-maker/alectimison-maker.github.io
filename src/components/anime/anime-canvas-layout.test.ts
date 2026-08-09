@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import imageManifest from '../../../public/image-manifest.json'
+import path from 'node:path'
+import sharp from 'sharp'
 import items from '../../data/anime.json'
 import {
   arrangeAnimeItems,
@@ -8,14 +9,19 @@ import {
   wrapCanvasOffset,
 } from './anime-canvas-layout'
 
-const arrangedItems = arrangeAnimeItems(items.map((item) => {
-  const image = imageManifest[encodeURI(item.cover) as keyof typeof imageManifest]
+const arrangedItems = arrangeAnimeItems(await Promise.all(items.map(async (item) => {
+  const source = path.join(
+    process.cwd(),
+    'src/assets/media',
+    decodeURI(item.cover).replace(/^\/media\//, ''),
+  )
+  const image = await sharp(source).metadata()
   return {
     ...item,
-    imageWidth: image.width,
-    imageHeight: image.height,
+    imageWidth: image.width ?? 3,
+    imageHeight: image.height ?? 4,
   }
-}))
+})))
 
 const layouts = [
   createAnimeCanvasLayout(arrangedItems, 'desktop'),
