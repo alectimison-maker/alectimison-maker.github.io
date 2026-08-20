@@ -1,0 +1,964 @@
+---
+import '@fontsource-variable/noto-sans-sc'
+import '@fontsource/ibm-plex-mono/400.css'
+import '@fontsource/ibm-plex-mono/600.css'
+import '@fontsource/ibm-plex-mono/700.css'
+import { coffee404Prototype } from '../data/coffee-404-prototype'
+
+const result = coffee404Prototype[0]
+const coffeePoolJson = JSON.stringify(coffee404Prototype).replace(/</g, '\\u003c')
+const digitPatterns: Record<string, string[]> = {
+  '4': ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
+  '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+}
+const digits = [...'404']
+const reelSequences = Array.from({ length: 3 }, (_, reelIndex) => {
+  const rollingItems = Array.from(
+    { length: 12 + reelIndex * 3 },
+    (_, itemIndex) => coffee404Prototype[(itemIndex + reelIndex) % coffee404Prototype.length],
+  )
+
+  return [...rollingItems, result]
+})
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#09090d" />
+    <link rel="icon" href="/avatar.webp" type="image/webp" />
+    <title>404 · aliouswe</title>
+  </head>
+  <body>
+    <script is:inline type="application/json" data-coffee-pool set:html={coffeePoolJson}></script>
+
+    <a class="home-link" href="/" aria-label="返回博客首页">
+      <span aria-hidden="true">←</span>
+      <span>返回首页</span>
+    </a>
+
+    <main class="stage" data-tv-app data-state="error">
+      <section class="television" aria-label="404 咖啡频道像素电视">
+        <div class="tv-body">
+          <div class="screen-bezel">
+            <div class="screen" aria-live="polite">
+              <div class="screen-texture" aria-hidden="true"></div>
+
+              <section class="screen-state screen-error" data-screen="error">
+                <div class="signal-line"><span>NO SIGNAL</span><span>CH. 404</span></div>
+                <svg class="pixel-404" viewBox="0 0 190 70" role="img" aria-label="404">
+                  {digits.map((digit, digitIndex) =>
+                    digitPatterns[digit].map((row, rowIndex) =>
+                      [...row].map((pixel, columnIndex) => pixel === '1' && (
+                        <rect
+                          x={digitIndex * 65 + columnIndex * 10}
+                          y={rowIndex * 10}
+                          width="10"
+                          height="10"
+                        />
+                      ))
+                    )
+                  )}
+                </svg>
+                <p class="error-copy">欢迎来到Aliouswe的频道。</p>
+                <p class="tiny-status">STANDBY FOR A HIDDEN BREW</p>
+              </section>
+
+              <section class="screen-state screen-game" data-screen="game" hidden>
+                <div class="signal-line"><span>COFFEE SLOT</span><span data-slot-status>READY</span></div>
+                <div class="reels" data-winning-display aria-label="三列咖啡老虎机待机画面" style={`--winning-image: url(${result.image})`}>
+                  {reelSequences.map((items, reelIndex) => (
+                    <div class="reel" data-reel data-stop-index={items.length - 1}>
+                      <div class="reel-track" data-reel-track>
+                        {items.map((coffee, itemIndex) => (
+                          <div
+                            class="reel-card"
+                            data-winning-card={itemIndex === items.length - 1 ? '' : undefined}
+                            role="img"
+                            aria-label={`咖啡标志，第 ${reelIndex + 1} 列`}
+                            style={`--reel-image: url(${coffee.image.replace('.w960.webp', '.w480.webp')}); --slice-position: ${reelIndex * 50}%`}
+                          >
+                            <svg class="coffee-mark" viewBox="0 0 32 32" aria-hidden="true" shape-rendering="crispEdges">
+                              <path class="coffee-steam" d="M9 3h4v3H9zM13 6h3v3h-3zM19 2h4v3h-4zM17 5h3v4h-3z" />
+                              <path class="coffee-cup" d="M5 11h19v12H21v3H8v-3H5z" />
+                              <path class="coffee-fill" d="M8 11h13v3H8z" />
+                              <path class="coffee-handle" d="M24 14h5v7h-5v-3h2v-2h-2z" />
+                              <path class="coffee-saucer" d="M5 26h20v3H5z" />
+                            </svg>
+                            <span>{String((itemIndex % coffee404Prototype.length) + 1).padStart(2, '0')}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p class="game-prompt" data-game-prompt>按下 BREW，抽取一杯咖啡</p>
+                <p class="tiny-status">{coffee404Prototype.length} CUPS LOADED / 1 DRAW</p>
+              </section>
+
+              <section class="screen-state screen-result" data-screen="result" hidden>
+                <div class="signal-line"><span>YOU GOT</span><span data-result-score>{result.score ?? '--/10'}</span></div>
+                <div class="result-layout">
+                  <div class="winning-reels" data-result-image aria-label={`中奖咖啡：${result.names.join('与')}`}>
+                    {[0, 1, 2].map((slice) => (
+                      <div
+                        class="winning-slice"
+                        data-winning-slice
+                        style={`--winning-image: url(${result.image}); --slice-position: ${slice * 50}%`}
+                      ></div>
+                    ))}
+                  </div>
+                  <div class="result-copy">
+                    <p class="result-kicker">TODAY'S HIDDEN BREW</p>
+                    <h1 data-result-name>{result.names.join(' × ')}</h1>
+                    <p data-result-lead>{result.lead}</p>
+                    <div class="record-copy">
+                      <div data-result-pages>{result.pages.map((page) => <p>{page}</p>)}</div>
+                      <a class="source-link" data-result-link href={result.sourceHref}>阅读原文 {result.sourceLabel}</a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <aside class="controls" aria-label="电视机控制面板">
+            <div class="speaker" aria-hidden="true">
+              {Array.from({ length: 15 }, (_, index) => <i style={`--hole: ${index}`}></i>)}
+            </div>
+
+            <div class="channel-dial" aria-hidden="true"><span>404</span></div>
+
+            <button class="play-button" type="button" data-action>
+              <span class="play-led" aria-hidden="true"></span>
+              <strong data-action-en>PLAY</strong>
+              <small data-action-zh>进入游戏</small>
+            </button>
+
+            <p class="model-mark">AL-404<br />PORTABLE</p>
+          </aside>
+        </div>
+
+        <div class="feet" aria-hidden="true"><i></i><i></i></div>
+      </section>
+    </main>
+
+    <script>
+      const app = document.querySelector('[data-tv-app]')
+      const action = document.querySelector('[data-action]')
+      const actionEn = document.querySelector('[data-action-en]')
+      const actionZh = document.querySelector('[data-action-zh]')
+      const screens = [...document.querySelectorAll('[data-screen]')]
+      const slotStatus = document.querySelector('[data-slot-status]')
+      const gamePrompt = document.querySelector('[data-game-prompt]')
+      const reels = [...document.querySelectorAll('[data-reel]')]
+      const coffeePoolNode = document.querySelector('[data-coffee-pool]')
+      const winningDisplay = document.querySelector('[data-winning-display]')
+      const winningCards = [...document.querySelectorAll('[data-winning-card]')]
+      const resultImage = document.querySelector('[data-result-image]')
+      const winningSlices = [...document.querySelectorAll('[data-winning-slice]')]
+      const resultScore = document.querySelector('[data-result-score]')
+      const resultName = document.querySelector('[data-result-name]')
+      const resultLead = document.querySelector('[data-result-lead]')
+      const resultPages = document.querySelector('[data-result-pages]')
+      const resultLink = document.querySelector('[data-result-link]')
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      let spinning = false
+
+      type CoffeeResult = {
+        id: string
+        names: string[]
+        image: string
+        imageAlt: string
+        sourceLabel: string
+        sourceHref: string
+        lead: string
+        pages: string[]
+        score?: string
+      }
+
+      const coffeePool: CoffeeResult[] = coffeePoolNode?.textContent
+        ? JSON.parse(coffeePoolNode.textContent)
+        : []
+      let selectedCoffee = coffeePool[0]
+
+      const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration))
+
+      const setImageProperty = (element: Element | null, property: string, image: string) => {
+        if (element instanceof HTMLElement) element.style.setProperty(property, `url("${image}")`)
+      }
+
+      const selectCoffee = () => {
+        if (coffeePool.length < 2) return coffeePool[0]
+        const choices = coffeePool.filter((coffee) => coffee.id !== selectedCoffee?.id)
+        return choices[Math.floor(Math.random() * choices.length)]
+      }
+
+      const prepareResult = (coffee: CoffeeResult) => {
+        selectedCoffee = coffee
+        setImageProperty(winningDisplay, '--winning-image', coffee.image)
+        setImageProperty(resultImage, '--winning-image', coffee.image)
+
+        winningCards.forEach((card, reelIndex) => {
+          setImageProperty(card, '--reel-image', coffee.image.replace('.w960.webp', '.w480.webp'))
+          if (card instanceof HTMLElement) {
+            card.style.setProperty('--slice-position', `${reelIndex * 50}%`)
+            card.setAttribute('aria-label', `${coffee.imageAlt}，中奖图像第 ${reelIndex + 1} 列`)
+          }
+        })
+        winningSlices.forEach((slice, reelIndex) => {
+          setImageProperty(slice, '--winning-image', coffee.image)
+          if (slice instanceof HTMLElement) slice.style.setProperty('--slice-position', `${reelIndex * 50}%`)
+        })
+
+        resultImage?.setAttribute('aria-label', `中奖咖啡：${coffee.names.join('与')}`)
+        if (resultScore) resultScore.textContent = coffee.score ?? '--/10'
+        if (resultName) resultName.textContent = coffee.names.join(' × ')
+        if (resultLead) resultLead.textContent = coffee.lead
+        if (resultPages) {
+          resultPages.replaceChildren(...coffee.pages.map((page) => {
+            const paragraph = document.createElement('p')
+            paragraph.textContent = page
+            return paragraph
+          }))
+        }
+        if (resultLink instanceof HTMLAnchorElement) {
+          resultLink.href = coffee.sourceHref
+          resultLink.textContent = `阅读原文 ${coffee.sourceLabel}`
+        }
+      }
+
+      const resetReels = () => {
+        reels.forEach((reel) => {
+          const track = reel.querySelector('[data-reel-track]')
+          track?.getAnimations().forEach((animation) => animation.cancel())
+          if (track instanceof HTMLElement) {
+            track.style.transform = 'translateY(0)'
+            track.style.filter = 'none'
+          }
+        })
+        if (slotStatus) slotStatus.textContent = 'READY'
+        if (gamePrompt) gamePrompt.textContent = '按下 BREW，抽取一杯咖啡'
+        winningDisplay?.setAttribute('aria-label', '三列咖啡老虎机待机画面')
+      }
+
+      const setState = (state: 'error' | 'game' | 'result') => {
+        if (!(app instanceof HTMLElement)) return
+        app.dataset.state = state
+        screens.forEach((screen) => {
+          if (screen instanceof HTMLElement) screen.hidden = screen.dataset.screen !== state
+        })
+
+        if (actionEn) actionEn.textContent = state === 'error' ? 'PLAY' : state === 'game' ? 'BREW' : 'AGAIN'
+        if (actionZh) actionZh.textContent = state === 'error' ? '进入游戏' : state === 'game' ? '抽一杯' : '再来一杯'
+      }
+
+      action?.addEventListener('click', () => {
+        const current = app instanceof HTMLElement ? app.dataset.state : 'error'
+        if (current === 'error') {
+          resetReels()
+          setState('game')
+          return
+        }
+
+        if (current === 'result') {
+          resetReels()
+          setState('game')
+          return
+        }
+
+        if (spinning) return
+        const nextCoffee = selectCoffee()
+        if (!nextCoffee) return
+        prepareResult(nextCoffee)
+        spinning = true
+        if (action instanceof HTMLButtonElement) action.disabled = true
+        if (actionEn) actionEn.textContent = 'ROLL'
+        if (actionZh) actionZh.textContent = '滚动中'
+        if (slotStatus) slotStatus.textContent = 'SPINNING'
+        if (gamePrompt) gamePrompt.textContent = '三列信号正在独立滚动…'
+        if (app instanceof HTMLElement) app.dataset.spinning = 'true'
+
+        const animations = reels.map((reel, reelIndex) => {
+          const track = reel.querySelector('[data-reel-track]')
+          if (!(track instanceof HTMLElement) || !(reel instanceof HTMLElement)) return Promise.resolve()
+
+          const stopIndex = Number(reel.dataset.stopIndex ?? 0)
+          const distance = reel.clientHeight * stopIndex
+          const duration = reduceMotion ? 1 : 1450 + reelIndex * 430
+          const animation = track.animate([
+            { transform: 'translateY(0)', filter: 'blur(0)', offset: 0 },
+            { filter: 'blur(2.4px)', offset: .18 },
+            { filter: 'blur(1.4px)', offset: .72 },
+            { transform: `translateY(-${distance}px)`, filter: 'blur(0)', offset: 1 },
+          ], {
+            duration,
+            easing: 'cubic-bezier(.12, .76, .18, 1)',
+            fill: 'forwards',
+          })
+
+          return animation.finished.catch(() => undefined)
+        })
+
+        Promise.all(animations).then(async () => {
+          if (slotStatus) slotStatus.textContent = 'MATCHED'
+          if (actionEn) actionEn.textContent = 'MATCH'
+          if (actionZh) actionZh.textContent = '已中奖'
+          if (gamePrompt) gamePrompt.textContent = `信号锁定：${selectedCoffee.names.join(' × ')}`
+          winningDisplay?.setAttribute('aria-label', `中奖咖啡：${selectedCoffee.names.join('与')}`)
+          if (app instanceof HTMLElement) app.dataset.spinning = 'settled'
+          await wait(reduceMotion ? 1 : 720)
+          setState('result')
+          spinning = false
+          if (action instanceof HTMLButtonElement) action.disabled = false
+          if (app instanceof HTMLElement) delete app.dataset.spinning
+        })
+      })
+
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    color-scheme: dark;
+    --void: #09090d;
+    --void-soft: #111019;
+    --shell: #5c2f84;
+    --shell-dark: #2f1848;
+    --shell-light: #8d4eb9;
+    --screen: #07110d;
+    --acid: #b7ff45;
+    --mint: #62f7d2;
+    --rose: #ff4f91;
+    --coral: #ff654d;
+    --blue: #2350dc;
+    --signal: #ef3038;
+    --cream: #f7e8cc;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Noto Sans SC Variable', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { width: 100%; height: 100%; min-width: 320px; overflow: hidden; background: var(--void); }
+
+  body {
+    width: 100%;
+    height: 100%;
+    min-width: 320px;
+    margin: 0;
+    overflow: hidden;
+    color: var(--cream);
+    background:
+      radial-gradient(circle at 50% 42%, rgb(100 48 139 / 24%), transparent 38rem),
+      repeating-linear-gradient(90deg, transparent 0 3px, rgb(255 255 255 / 1.4%) 3px 4px),
+      linear-gradient(180deg, #111019 0%, var(--void) 72%);
+    font-family: var(--sans);
+  }
+
+  body::before {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    content: '';
+    opacity: .16;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+    mix-blend-mode: soft-light;
+  }
+
+  button, a { font: inherit; }
+
+  :focus-visible {
+    outline: 3px solid var(--acid);
+    outline-offset: 4px;
+  }
+
+  [hidden] { display: none !important; }
+
+  .home-link {
+    position: fixed;
+    z-index: 20;
+    top: clamp(1rem, 3vw, 2rem);
+    left: clamp(1rem, 3vw, 2rem);
+    display: inline-flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .65rem .8rem;
+    border: 2px solid rgb(183 255 69 / 28%);
+    color: var(--acid);
+    background: rgb(7 17 13 / 72%);
+    font: 600 .72rem/1 var(--mono);
+    letter-spacing: .08em;
+    text-decoration: none;
+    box-shadow: 4px 4px 0 rgb(255 79 145 / 25%);
+  }
+
+  .home-link:hover { color: var(--void); background: var(--acid); }
+
+  .home-link > span:first-child { font-size: 1rem; }
+
+  .stage {
+    position: relative;
+    display: grid;
+    width: 100%;
+    height: 100svh;
+    overflow: hidden;
+    place-content: center;
+    justify-items: center;
+    padding: clamp(.55rem, 1.5vh, 1rem) clamp(.4rem, 1.2vw, 1rem);
+  }
+
+  .stage::after {
+    content: none;
+  }
+
+  .television {
+    --shadow-x-near: clamp(.5rem, .75vw, .75rem);
+    --shadow-x-mid: clamp(1.05rem, 1.5vw, 1.45rem);
+    --shadow-x-far: clamp(1.8rem, 2.6vw, 2.5rem);
+    --shadow-y-near: clamp(.2rem, .3vw, .3rem);
+    --shadow-y-mid: clamp(.42rem, .58vw, .58rem);
+    --shadow-y-far: clamp(.72rem, 1vw, 1rem);
+    position: relative;
+    isolation: isolate;
+    width: min(98vw, 80rem, calc(165svh - 11rem));
+  }
+
+  .television::before {
+    position: absolute;
+    top: var(--shadow-y-mid);
+    left: var(--shadow-x-far);
+    z-index: -1;
+    width: 100%;
+    height: calc(100% + var(--shadow-y-far));
+    content: '';
+    opacity: .78;
+    background:
+      repeating-conic-gradient(
+        from 90deg,
+        #4a4b53 0 25%,
+        #3b3c44 0 50%,
+        #2e3036 0 75%,
+        #25262c 0
+      ) 0 0 / clamp(1.2rem, 2.4vw, 2.4rem) clamp(1.2rem, 2.4vw, 2.4rem);
+    clip-path: polygon(
+      92% 8%, 97.2% 8%, 97.2% 24%, 98% 24%,
+      98% 42%, 98.7% 42%, 98.7% 61%, 99.3% 61%,
+      99.3% 79%, 100% 79%, 100% 100%, 90% 100%,
+      90% 99.4%, 80% 99.4%, 80% 98.8%, 68% 98.8%,
+      68% 98.1%, 58% 98.1%, 58% 97%, 70% 97%,
+      70% 94%, 82% 94%,
+      82% 90%, 88% 90%, 88% 45%, 90% 45%,
+      90% 20%, 92% 20%
+    );
+    box-shadow:
+      var(--shadow-x-near) var(--shadow-y-near) 0 #414249,
+      var(--shadow-x-mid) var(--shadow-y-mid) 0 #2d2f35,
+      var(--shadow-x-far) var(--shadow-y-far) 0 #191a1f;
+  }
+
+  .tv-body {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(8rem, 21%, 11rem);
+    gap: clamp(.65rem, 2vw, 1.3rem);
+    padding: clamp(1rem, 3vw, 1.8rem);
+    border: clamp(.45rem, 1vw, .75rem) solid #160b20;
+    border-radius: 0;
+    background:
+      linear-gradient(90deg,
+        var(--shell-light) 0 7%, var(--blue) 7% 10%, var(--shell) 10% 31%,
+        #743fa0 31% 59%, var(--shell) 59% 78%, var(--rose) 78% 82%, var(--shell-dark) 82% 100%),
+      var(--shell);
+    clip-path: polygon(
+      2% 0, 96% 0, 96% 1.5%, 99% 1.5%, 99% 4%, 100% 4%,
+      100% 94%, 99% 94%, 99% 98%, 96% 98%, 96% 100%, 4% 100%,
+      4% 98.5%, 1% 98.5%, 1% 96%, 0 96%, 0 5%, 1% 5%, 1% 2%, 2% 2%
+    );
+    box-shadow:
+      inset .7rem .7rem 0 rgb(255 255 255 / 10%),
+      inset -.85rem -.85rem 0 rgb(16 5 25 / 38%),
+      .8rem 0 0 #24102e,
+      0 .8rem 0 #160b20,
+      -.35rem 0 0 var(--mint),
+      0 -.35rem 0 var(--rose);
+  }
+
+  .tv-body::before {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    content: '';
+    background:
+      linear-gradient(var(--acid) 0 0) 3% 4% / 2.4rem 2.4rem no-repeat,
+      linear-gradient(var(--mint) 0 0) 18% 1% / 3.5rem 2rem no-repeat,
+      linear-gradient(var(--rose) 0 0) 63% 3% / 4.5rem 2.5rem no-repeat,
+      linear-gradient(var(--coral) 0 0) 92% 15% / 2.5rem 3.5rem no-repeat,
+      linear-gradient(var(--blue) 0 0) 1% 43% / 2rem 4rem no-repeat,
+      linear-gradient(var(--acid) 0 0) 98% 52% / 1.75rem 4rem no-repeat,
+      linear-gradient(var(--mint) 0 0) 8% 98% / 4.5rem 2.25rem no-repeat,
+      linear-gradient(var(--signal) 0 0) 52% 100% / 5rem 2.25rem no-repeat,
+      linear-gradient(var(--blue) 0 0) 86% 98% / 3.5rem 2.25rem no-repeat,
+      repeating-conic-gradient(from 90deg, rgb(255 255 255 / 4%) 0 25%, transparent 0 50%) 0 0 / 4rem 4rem;
+    opacity: .9;
+  }
+
+  .tv-body::after {
+    content: none;
+  }
+
+  .screen-bezel {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    padding: clamp(.65rem, 1.7vw, 1.05rem);
+    border: .35rem solid #22152a;
+    border-radius: 0;
+    background: #0d0911;
+    clip-path: polygon(2% 0, 98% 0, 98% 2%, 100% 2%, 100% 96%, 98% 96%, 98% 100%, 2% 100%, 2% 98%, 0 98%, 0 4%, 2% 4%);
+    box-shadow: inset .5rem .5rem 0 #09070c, .35rem .35rem 0 var(--rose);
+  }
+
+  .screen {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border: 3px solid #050806;
+    border-radius: 12% / 9%;
+    color: var(--acid);
+    background:
+      radial-gradient(circle at 50% 45%, rgb(20 55 38 / 55%), transparent 65%),
+      var(--screen);
+    box-shadow:
+      inset 0 0 2.6rem #000,
+      inset 0 0 1rem rgb(98 247 210 / 16%),
+      0 0 1.25rem rgb(183 255 69 / 12%);
+  }
+
+  .screen-texture,
+  .screen-texture::before,
+  .screen-texture::after {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    content: '';
+  }
+
+  .screen-texture {
+    background: repeating-linear-gradient(0deg, rgb(0 0 0 / 24%) 0 1px, transparent 1px 4px);
+    mix-blend-mode: multiply;
+  }
+
+  .screen-texture::before {
+    opacity: .13;
+    background-image:
+      radial-gradient(circle at 18% 22%, var(--acid) 0 1px, transparent 1px),
+      radial-gradient(circle at 73% 64%, var(--rose) 0 1px, transparent 1px);
+    background-size: 13px 17px, 19px 23px;
+  }
+
+  .screen-texture::after {
+    border-radius: inherit;
+    box-shadow: inset .2rem 0 rgb(255 79 145 / 10%), inset -.2rem 0 rgb(98 247 210 / 8%);
+  }
+
+  .screen-state {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    padding: clamp(.85rem, 2.2vw, 1.45rem);
+  }
+
+  .signal-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font: 700 clamp(.52rem, 1.25vw, .8rem)/1 var(--mono);
+    letter-spacing: .12em;
+  }
+
+  .screen-error {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    align-items: center;
+    text-align: center;
+  }
+
+  .pixel-404 {
+    width: min(86%, 30rem);
+    margin: auto;
+    overflow: visible;
+    fill: var(--acid);
+    shape-rendering: crispEdges;
+    filter: drop-shadow(6px 0 0 rgb(255 79 145 / 42%)) drop-shadow(0 0 8px rgb(183 255 69 / 42%));
+  }
+
+  .error-copy {
+    margin: 0;
+    color: var(--cream);
+    font: 600 clamp(.76rem, 1.9vw, 1.16rem)/1.5 var(--mono);
+    letter-spacing: .06em;
+  }
+
+  .tiny-status {
+    margin: .55rem 0 0;
+    color: rgb(98 247 210 / 58%);
+    font: 600 clamp(.44rem, 1vw, .64rem)/1 var(--mono);
+    letter-spacing: .12em;
+  }
+
+  .screen-game {
+    display: grid;
+    grid-template-rows: auto 1fr auto auto;
+    align-items: center;
+  }
+
+  .reels {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(.3rem, 1vw, .65rem);
+    width: min(72%, 32rem, calc(100svh - 18rem));
+    aspect-ratio: 1;
+    min-width: 0;
+    justify-self: center;
+    margin: clamp(.7rem, 2vw, 1rem) 0;
+    padding: clamp(.45rem, 1.4vw, .7rem);
+    border: 3px solid rgb(183 255 69 / 46%);
+    background: #050806;
+    box-shadow: 5px 5px 0 rgb(255 79 145 / 25%);
+  }
+
+  .reels::after {
+    position: absolute;
+    z-index: 4;
+    inset: clamp(.45rem, 1.4vw, .7rem);
+    display: none;
+    content: '';
+    background: var(--winning-image) center / 100% 100% no-repeat;
+    image-rendering: pixelated;
+  }
+
+  .reel {
+    position: relative;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+    border: 2px solid #33233b;
+    background: #120d15;
+  }
+
+  .reel-track {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    will-change: transform, filter;
+  }
+
+  .reel-card {
+    position: relative;
+    display: grid;
+    flex: 0 0 100%;
+    height: 100%;
+    place-items: center;
+    background:
+      linear-gradient(90deg, transparent 50%, rgb(255 79 145 / 7%) 50%),
+      linear-gradient(0deg, transparent 50%, rgb(183 255 69 / 6%) 50%),
+      #110c18;
+    background-size: clamp(1.1rem, 2vw, 1.8rem) clamp(1.1rem, 2vw, 1.8rem);
+    image-rendering: pixelated;
+  }
+
+  .coffee-mark {
+    position: relative;
+    z-index: 1;
+    width: 58%;
+    max-width: 8.5rem;
+    overflow: visible;
+    filter: drop-shadow(.3rem .3rem 0 rgb(255 79 145 / 42%));
+  }
+
+  .coffee-steam { fill: var(--mint); }
+  .coffee-cup,
+  .coffee-saucer { fill: var(--acid); }
+  .coffee-fill { fill: #321747; }
+  .coffee-handle { fill: var(--rose); }
+
+  [data-spinning='true'] .reel-card,
+  [data-spinning='settled'] .reel-card {
+    background-image:
+      linear-gradient(rgb(77 18 107 / 16%), rgb(7 17 13 / 18%)),
+      var(--reel-image);
+    background-position: var(--slice-position) center;
+    background-size: 300% 100%;
+    filter: contrast(1.28) saturate(.72) sepia(.08);
+  }
+
+  [data-spinning='true'] .coffee-mark,
+  [data-spinning='settled'] .coffee-mark { display: none; }
+
+  .reel-card::after,
+  .winning-slice::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background:
+      linear-gradient(90deg, transparent 75%, rgb(183 255 69 / 9%) 75%),
+      linear-gradient(0deg, transparent 75%, rgb(255 79 145 / 8%) 75%);
+    background-size: 8px 8px;
+  }
+
+  .reel-card span {
+    position: absolute;
+    right: .25rem;
+    bottom: .18rem;
+    padding: .14rem .22rem;
+    color: var(--acid);
+    background: #07110d;
+    font: 700 .48rem/1 var(--mono);
+  }
+
+  .game-prompt {
+    margin: 0;
+    color: var(--cream);
+    font: 600 clamp(.7rem, 1.7vw, 1.05rem)/1.4 var(--mono);
+    text-align: center;
+  }
+
+  .screen-result {
+    overflow: auto;
+    scrollbar-color: var(--rose) #07110d;
+    scrollbar-width: thin;
+  }
+
+  .result-layout {
+    display: grid;
+    grid-template-columns: minmax(12rem, .95fr) minmax(0, 1.05fr);
+    gap: clamp(.8rem, 2.2vw, 1.5rem);
+    min-height: calc(100% - 1.5rem);
+    align-items: center;
+  }
+
+  .winning-reels {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+    aspect-ratio: 1;
+    gap: 0;
+    padding: clamp(.35rem, 1vw, .55rem);
+    border: 3px solid rgb(183 255 69 / 46%);
+    background: #050806;
+    box-shadow: 5px 5px 0 rgb(255 79 145 / 25%);
+  }
+
+  .winning-slice {
+    position: relative;
+    overflow: hidden;
+    border: 0;
+    background-image: var(--winning-image);
+    background-position: var(--slice-position) center;
+    background-size: 300% 100%;
+    filter: contrast(1.25) saturate(.75);
+    image-rendering: pixelated;
+  }
+
+  .result-copy { color: var(--cream); }
+
+  .result-kicker {
+    margin: 0;
+    color: var(--rose);
+    font: 700 clamp(.5rem, .9vw, .64rem)/1 var(--mono);
+    letter-spacing: .12em;
+  }
+
+  .result-copy h1 {
+    margin: .3rem 0 .45rem;
+    color: var(--acid);
+    font: 700 clamp(1.12rem, 3.2vw, 2rem)/1.08 var(--mono);
+    text-shadow: 3px 0 rgb(255 79 145 / 32%);
+  }
+
+  .result-copy > p:not(.result-kicker) {
+    margin: 0;
+    font: 400 clamp(.66rem, 1.45vw, .9rem)/1.62 var(--sans);
+  }
+
+  .record-copy {
+    margin-top: .7rem;
+    padding-top: .65rem;
+    border-top: 1px dashed rgb(183 255 69 / 35%);
+  }
+
+  .record-copy p {
+    margin: 0 0 .65rem;
+    color: rgb(247 232 204 / 82%);
+    font: 400 clamp(.62rem, 1.3vw, .84rem)/1.65 var(--sans);
+  }
+
+  .source-link {
+    border: 0;
+    color: var(--acid);
+    background: transparent;
+    cursor: pointer;
+    font: 600 clamp(.54rem, .9vw, .66rem)/1.2 var(--mono);
+  }
+
+  .source-link {
+    display: inline-block;
+    margin-top: .5rem;
+    color: var(--rose);
+  }
+
+  .controls {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    align-content: space-between;
+    justify-items: center;
+    gap: clamp(.55rem, 1.8vw, 1rem);
+    min-width: 0;
+    padding: .4rem 0 .15rem;
+  }
+
+  .speaker {
+    display: grid;
+    grid-template-columns: repeat(3, .42rem);
+    gap: .48rem;
+    padding: .65rem;
+    border: 2px solid rgb(24 8 34 / 45%);
+    background: rgb(42 18 58 / 26%);
+    box-shadow: inset 3px 3px 0 rgb(18 7 25 / 26%);
+  }
+
+  .speaker i {
+    width: .42rem;
+    height: .42rem;
+    background: #1e1028;
+    box-shadow: inset 1px 1px 0 #07040a, 1px 1px 0 rgb(245 196 255 / 12%);
+  }
+
+  .channel-dial {
+    display: grid;
+    width: clamp(2.7rem, 6vw, 3.5rem);
+    aspect-ratio: 1;
+    place-content: center;
+    border: .35rem solid #24132f;
+    border-radius: 0;
+    color: var(--acid);
+    background: #482263;
+    font: 700 clamp(.5rem, 1.2vw, .68rem)/1 var(--mono);
+    box-shadow: .22rem .22rem 0 #160a1f, inset .2rem .2rem 0 rgb(255 255 255 / 10%);
+    clip-path: polygon(25% 0, 75% 0, 75% 8%, 92% 8%, 92% 25%, 100% 25%, 100% 75%, 92% 75%, 92% 92%, 75% 92%, 75% 100%, 25% 100%, 25% 92%, 8% 92%, 8% 75%, 0 75%, 0 25%, 8% 25%, 8% 8%, 25% 8%);
+  }
+
+  .play-button {
+    position: relative;
+    width: 100%;
+    min-height: clamp(3.9rem, 9vw, 5rem);
+    padding: .55rem .25rem;
+    border: .3rem solid #32152a;
+    color: #250d18;
+    background: var(--rose);
+    cursor: pointer;
+    box-shadow: .35rem .35rem 0 #22102d, inset .25rem .25rem 0 rgb(255 255 255 / 24%);
+  }
+
+  .play-button:hover { transform: translate(2px, 2px); box-shadow: .2rem .2rem 0 #22102d; }
+  .play-button:active { transform: translate(4px, 4px); box-shadow: none; }
+  .play-button:disabled { cursor: wait; filter: saturate(.55); }
+
+  [data-spinning='true'] .screen {
+    box-shadow: inset 0 0 2.6rem #000, inset 0 0 1.4rem rgb(255 79 145 / 22%), 0 0 1.5rem rgb(183 255 69 / 18%);
+  }
+
+  [data-spinning='settled'] .reels {
+    gap: 0;
+    border-color: var(--rose);
+    box-shadow: 5px 5px 0 rgb(183 255 69 / 32%);
+  }
+
+  [data-spinning='settled'] .reels::after { display: block; }
+  [data-spinning='settled'] .reel-card span { display: none; }
+
+  .play-button strong,
+  .play-button small { display: block; }
+
+  .play-button strong { font: 700 clamp(.78rem, 1.7vw, 1.05rem)/1 var(--mono); letter-spacing: .08em; }
+  .play-button small { margin-top: .3rem; font: 600 clamp(.48rem, 1.15vw, .62rem)/1 var(--sans); }
+
+  .play-led {
+    position: absolute;
+    top: .4rem;
+    right: .4rem;
+    width: .38rem;
+    height: .38rem;
+    background: var(--acid);
+    box-shadow: 0 0 .55rem var(--acid);
+  }
+
+  .model-mark {
+    justify-self: stretch;
+    margin: 0;
+    padding-top: .5rem;
+    border-top: 2px solid rgb(34 12 45 / 36%);
+    color: rgb(247 232 204 / 52%);
+    font: 600 clamp(.44rem, 1vw, .56rem)/1.5 var(--mono);
+    letter-spacing: .08em;
+    text-align: center;
+  }
+
+  .feet {
+    display: flex;
+    justify-content: space-between;
+    width: 72%;
+    margin: 0 auto;
+  }
+
+  .feet i {
+    width: 16%;
+    height: clamp(.75rem, 2vw, 1.2rem);
+    background: #1d1026;
+    clip-path: polygon(12% 0, 88% 0, 100% 100%, 0 100%);
+  }
+
+  @media (max-width: 620px) {
+    .stage { padding: .4rem; }
+    .television { width: min(98vw, 33rem); }
+    .tv-body { grid-template-columns: minmax(0, 1fr) 5.6rem; gap: .55rem; padding: .75rem; border-width: .35rem; }
+    .screen-bezel { padding: .48rem; border-width: .25rem; }
+    .screen-state { padding: .7rem; }
+    .controls { gap: .4rem; }
+    .speaker { grid-template-columns: repeat(3, .25rem); gap: .28rem; padding: .4rem; }
+    .speaker i { width: .25rem; height: .25rem; }
+    .channel-dial { width: 2.25rem; border-width: .25rem; }
+    .play-button { min-height: 3.2rem; border-width: .22rem; }
+    .model-mark { font-size: .38rem; }
+    .result-layout { grid-template-columns: 40% minmax(0, 1fr); min-height: 0; align-items: start; gap: .55rem; }
+    .record-copy { margin-top: .4rem; padding-top: .4rem; }
+    .record-copy p { margin-bottom: .4rem; line-height: 1.45; }
+    .result-copy h1 { margin-block: .2rem .3rem; }
+    .result-copy > p:not(.result-kicker) { line-height: 1.45; }
+  }
+
+  @media (max-width: 390px) {
+    .home-link span:last-child { display: none; }
+    .home-link { width: 2.7rem; height: 2.7rem; justify-content: center; }
+    .stage { padding-inline: .5rem; }
+    .tv-body { grid-template-columns: minmax(0, 1fr) 4.85rem; }
+    .screen-state { padding: .58rem; }
+    .signal-line { letter-spacing: .04em; }
+    .error-copy { font-size: .62rem; }
+    .tiny-status { font-size: .36rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+  }
+</style>
