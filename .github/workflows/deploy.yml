@@ -56,10 +56,14 @@ jobs:
             git diff --name-only --diff-filter=ACMRTD -z "$BASE_SHA" "$HEAD_SHA" -- src/assets/media > "$changed_paths"
             echo "IMAGE_CHANGED_PATHS_FILE=$changed_paths" >> "$GITHUB_ENV"
           fi
-      - run: npm run build
+      - name: Validate content and optimize responsive images
+        run: npm run prepare:deploy
         env:
           IMAGE_PIPELINE_CONCURRENCY: 3
           SKIP_IMAGE_OPTIMIZATION: ${{ steps.image-cache.outputs.cache-hit }}
+      - name: Build site
+        run: npm run build:site
+        env:
           PUBLIC_WALINE_SERVER_URL: ${{ vars.PUBLIC_WALINE_SERVER_URL }}
           PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.PUBLIC_TURNSTILE_SITE_KEY }}
           PUBLIC_UMAMI_WEBSITE_ID: ${{ vars.PUBLIC_UMAMI_WEBSITE_ID }}
