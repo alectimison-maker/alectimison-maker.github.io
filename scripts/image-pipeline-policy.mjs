@@ -9,6 +9,13 @@ export const canReuseImageSource = ({
   || (canBootstrapFingerprints && !previousHash && !isMarkedChanged)
 )
 
+export const canReuseImageSourceFromPushDiff = ({
+  hasPreviousHash,
+  hasPushDiff,
+  isMarkedChanged,
+  outputsExist,
+}) => hasPushDiff && hasPreviousHash && !isMarkedChanged && outputsExist
+
 export const shouldRegenerateImageVariants = ({
   hasPreviousEntry,
   hashMatches,

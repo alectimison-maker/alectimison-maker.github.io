@@ -4,6 +4,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 import {
   canReuseImageSource,
+  canReuseImageSourceFromPushDiff,
   shouldRegenerateImageVariants,
 } from './image-pipeline-policy.mjs'
 
@@ -113,15 +114,28 @@ const processSource = async (source) => {
   if (!rasterExtensions.has(extension)) return
 
   const manifestKey = `/media/${relative.split(path.sep).map(encodeURIComponent).join('/')}`
-  const sourceHash = await fingerprint(source)
   const previousEntry = previousManifest[manifestKey]
-  const hashMatches = previousEntry?.sourceHash === sourceHash
   const isMarkedChanged = changedPaths?.has(normalizedRelative) ?? false
+  const outputsReady = await entryOutputsExist(previousEntry)
+
+  if (canReuseImageSourceFromPushDiff({
+    hasPreviousHash: Boolean(previousEntry?.sourceHash),
+    hasPushDiff: changedPaths !== undefined,
+    isMarkedChanged,
+    outputsExist: outputsReady,
+  })) {
+    manifest[manifestKey] = previousEntry
+    reused += previousEntry.variants.reduce((count, variant) => count + 1 + Number(Boolean(variant.avif)), 0)
+    reusedSources += 1
+    return
+  }
+
+  const sourceHash = await fingerprint(source)
+  const hashMatches = previousEntry?.sourceHash === sourceHash
   const bootstrapMatches = canBootstrapFingerprints
     && previousEntry
     && !previousEntry.sourceHash
     && !isMarkedChanged
-  const outputsReady = await entryOutputsExist(previousEntry)
 
   if (canReuseImageSource({
     previousHash: previousEntry?.sourceHash,

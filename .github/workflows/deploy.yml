@@ -38,7 +38,7 @@ jobs:
           restore-keys: |
             responsive-media-${{ runner.os }}-
       - name: Detect changed source images
-        if: steps.image-cache.outputs.cache-hit != 'true' && hashFiles('public/image-manifest.json') != ''
+        if: steps.image-cache.outputs.cache-hit != 'true'
         shell: bash
         env:
           BASE_SHA: ${{ github.event.before }}

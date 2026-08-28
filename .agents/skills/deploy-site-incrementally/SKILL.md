@@ -12,8 +12,8 @@ Publish the current site through `main` without rebuilding unchanged responsive 
 - Keep generated files in `public/media` and `public/image-manifest.json` out of Git. Runtime pages must use `/media` responsive variants; do not recreate `public/images`, `public/anime`, or `public/coffee` compatibility copies.
 - Restore the newest `responsive-media-${runner.os}-` cache when the exact source hash key misses.
 - Set `SKIP_IMAGE_OPTIMIZATION=true` only for an exact cache hit. A prefix restore must run `scripts/optimize-images.mjs` so it can merge changes into the restored output.
-- Preserve `sourceHash` values in `public/image-manifest.json`. Reuse an entry only when its source fingerprint matches and every expected output exists.
-- On a push with a restored legacy manifest, pass the NUL-delimited `git diff` of `src/assets/media` through `IMAGE_CHANGED_PATHS_FILE`. Use it only to bootstrap missing fingerprints; source hashes remain authoritative afterward.
+- Preserve `sourceHash` values in `public/image-manifest.json`. Reuse an entry only when every expected output exists and either its source fingerprint matches or a valid push diff proves the source was unchanged.
+- On every cache-prefix restore for a push, pass the NUL-delimited `git diff` of `src/assets/media` through `IMAGE_CHANGED_PATHS_FILE`; do not gate it with `hashFiles` because cached, ignored manifests are unavailable during expression evaluation. Entries absent from that diff may retain their prior `sourceHash` and variants without being re-read; changed, missing, or incomplete entries must be fingerprinted and regenerated.
 - Rebuild only new, changed, or incomplete media entries. Remove variants and legacy copies for deleted sources.
 - Allow a full media build only when no usable prior cache or manifest exists. Report that fallback explicitly.
 

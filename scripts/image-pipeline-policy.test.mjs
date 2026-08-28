@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   canReuseImageSource,
+  canReuseImageSourceFromPushDiff,
   shouldRegenerateImageVariants,
 } from './image-pipeline-policy.mjs'
 
@@ -42,6 +43,19 @@ describe('incremental image pipeline policy', () => {
 
     expect(canReuseImageSource({ ...base, isMarkedChanged: false })).toBe(true)
     expect(canReuseImageSource({ ...base, isMarkedChanged: true })).toBe(false)
+  })
+
+  it('reuses a complete fingerprinted entry when the push diff excludes it', () => {
+    const base = {
+      hasPreviousHash: true,
+      hasPushDiff: true,
+      outputsExist: true,
+    }
+
+    expect(canReuseImageSourceFromPushDiff({ ...base, isMarkedChanged: false })).toBe(true)
+    expect(canReuseImageSourceFromPushDiff({ ...base, isMarkedChanged: true })).toBe(false)
+    expect(canReuseImageSourceFromPushDiff({ ...base, hasPreviousHash: false, isMarkedChanged: false })).toBe(false)
+    expect(canReuseImageSourceFromPushDiff({ ...base, outputsExist: false, isMarkedChanged: false })).toBe(false)
   })
 
   it('regenerates variants when an existing source is known to have changed', () => {
