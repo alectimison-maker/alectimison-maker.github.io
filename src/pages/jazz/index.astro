@@ -2,7 +2,17 @@
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import JazzPrototype from '../../components/jazz/JazzPrototype'
 import items from '../../data/jazz.json'
+import imageManifest from '../../../public/image-manifest.json'
+
+type ImageEntry = { variants?: { webp: string }[] }
+
+const responsiveCover = (source: string) => {
+  const key = decodeURI(source).split('/').map(encodeURIComponent).join('/')
+  return (imageManifest as Record<string, ImageEntry>)[key]?.variants?.at(-1)?.webp ?? source
+}
+
+const responsiveItems = items.map((item) => ({ ...item, cover: responsiveCover(item.cover) }))
 ---
 <BaseLayout title="Jazz" space="jazz">
-  <JazzPrototype client:load items={items} />
+  <JazzPrototype client:load items={responsiveItems} />
 </BaseLayout>

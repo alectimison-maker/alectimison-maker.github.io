@@ -27,7 +27,7 @@ type JazzItem = {
   externalUrl?: string
 }
 
-const coverUrl = (source: string) => encodeURI(decodeURI(source).replace(/^\/media\//, '/'))
+const coverUrl = (source: string) => encodeURI(source)
 
 const writeAlbumToUrl = (item?: JazzItem) => {
   const url = new URL(window.location.href)

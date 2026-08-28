@@ -53,9 +53,8 @@ const outputPathFromUrl = (url) => {
   return path.join(outputRoot, relative)
 }
 
-const entryOutputsExist = async (relative, entry) => {
+const entryOutputsExist = async (entry) => {
   if (!entry?.variants?.length) return false
-  if (!await exists(path.join(publicRoot, relative))) return false
   for (const variant of entry.variants) {
     if (!await exists(outputPathFromUrl(variant.webp))) return false
     if (variant.avif && !await exists(outputPathFromUrl(variant.avif))) return false
@@ -75,6 +74,12 @@ const changedPaths = changedPathsFile && await exists(changedPathsFile)
 
 const previousManifest = await readManifest()
 const canBootstrapFingerprints = changedPaths !== undefined && Object.keys(previousManifest).length > 0
+
+// Pages only serves responsive variants from /media. Remove the former
+// compatibility copies before an exact cache hit can return early.
+await Promise.all(['images', 'anime', 'coffee'].map((directory) =>
+  rm(path.join(publicRoot, directory), { recursive: true, force: true }),
+))
 
 if (process.env.SKIP_IMAGE_OPTIMIZATION === 'true' && await exists(manifestPath)) {
   console.log('Image pipeline: restored from cache.')
@@ -99,13 +104,10 @@ const processSource = async (source) => {
   const normalizedRelative = relative.split(path.sep).join('/')
   const extension = path.extname(relative).toLowerCase()
   const destination = path.join(outputRoot, relative)
-  const legacyDestination = path.join(publicRoot, relative)
   await mkdir(path.dirname(destination), { recursive: true })
-  await mkdir(path.dirname(legacyDestination), { recursive: true })
 
   if (passthroughExtensions.has(extension)) {
     await cp(source, destination)
-    await cp(source, legacyDestination)
     return
   }
   if (!rasterExtensions.has(extension)) return
@@ -119,7 +121,7 @@ const processSource = async (source) => {
     && previousEntry
     && !previousEntry.sourceHash
     && !isMarkedChanged
-  const outputsReady = await entryOutputsExist(relative, previousEntry)
+  const outputsReady = await entryOutputsExist(previousEntry)
 
   if (canReuseImageSource({
     previousHash: previousEntry?.sourceHash,
@@ -149,23 +151,6 @@ const processSource = async (source) => {
     await cp(source, destination)
     return
   }
-
-  const baseline = sharp(source, { animated: false }).rotate().resize({ width: 2560, withoutEnlargement: true })
-  if (extension === '.jpg' || extension === '.jpeg') {
-    await baseline.jpeg({ quality: 82, mozjpeg: true }).toFile(destination)
-  } else if (extension === '.png') {
-    await baseline.png({ compressionLevel: 9, adaptiveFiltering: true, palette: true, quality: 90 }).toFile(destination)
-  } else if (extension === '.webp') {
-    await baseline.webp({ quality: 82, alphaQuality: 90, effort: 5 }).toFile(destination)
-  } else if (extension === '.avif') {
-    await baseline.avif({ quality: 58, effort: 5 }).toFile(destination)
-  } else {
-    await cp(source, destination)
-  }
-  await cp(destination, legacyDestination)
-  // Runtime pages use the responsive variants below. Keep only the optimized
-  // legacy-path copy of the baseline raster to avoid duplicating it in the artifact.
-  await rm(destination, { force: true })
 
   const sourceWidth = metadata.width ?? 1600
   const sourceHeight = metadata.height ?? 1200
@@ -240,8 +225,6 @@ for (const [key, entry] of Object.entries(previousManifest)) {
       await rm(outputPathFromUrl(url), { force: true })
     }
   }
-  const legacyRelative = decodeURI(key).replace(/^\/media\//, '')
-  await rm(path.join(publicRoot, legacyRelative), { force: true })
 }
 
 const sortedManifest = Object.fromEntries(

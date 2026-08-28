@@ -10,6 +10,3 @@ coverage/
 !.env.example
 public/media/
 public/image-manifest.json
-public/images/
-public/anime/
-public/coffee/

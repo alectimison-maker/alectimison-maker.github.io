@@ -9,7 +9,7 @@ Publish the current site through `main` without rebuilding unchanged responsive 
 
 ## Preserve the incremental media contract
 
-- Keep generated files in `public/media`, `public/image-manifest.json`, `public/images`, `public/anime`, and `public/coffee` out of Git.
+- Keep generated files in `public/media` and `public/image-manifest.json` out of Git. Runtime pages must use `/media` responsive variants; do not recreate `public/images`, `public/anime`, or `public/coffee` compatibility copies.
 - Restore the newest `responsive-media-${runner.os}-` cache when the exact source hash key misses.
 - Set `SKIP_IMAGE_OPTIMIZATION=true` only for an exact cache hit. A prefix restore must run `scripts/optimize-images.mjs` so it can merge changes into the restored output.
 - Preserve `sourceHash` values in `public/image-manifest.json`. Reuse an entry only when its source fingerprint matches and every expected output exists.

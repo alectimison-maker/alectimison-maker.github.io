@@ -34,9 +34,6 @@ jobs:
           path: |
             public/media
             public/image-manifest.json
-            public/images
-            public/anime
-            public/coffee
           key: responsive-media-${{ runner.os }}-${{ hashFiles('src/assets/media/**', 'scripts/optimize-images.mjs') }}
           restore-keys: |
             responsive-media-${{ runner.os }}-
