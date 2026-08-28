@@ -23,6 +23,7 @@ const roundGlyphs = [
   { char: 'e', area: 'e-two', size: 'ml', turn: '20deg', shift: '-3%, 3%', stretch: '1.08, 1.14' },
   { char: '?', area: 'question', size: 'xl', turn: '-13deg', shift: '3%, 2%', stretch: '1.12, 1.08' },
 ] as const
+
 ---
 
 {artwork === 'hows-the-coffee' && (
@@ -128,10 +129,56 @@ const roundGlyphs = [
   </span>
 )}
 
+{artwork === 'golden-caffe' && (
+  <span class="title-art title-art--golden" aria-hidden="true">
+    <svg class="golden-ring" viewBox="0 0 100 100" preserveAspectRatio="none" role="presentation">
+      <defs>
+        <linearGradient id="golden-sand" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#b76b16" />
+          <stop offset="48%" stop-color="#f4d782" />
+          <stop offset="100%" stop-color="#d69a27" />
+        </linearGradient>
+        <path id="golden-ring-path" d="M 50,7 A 43,43 0 1,1 49.99,7" />
+      </defs>
+      <text class="golden-ring__text"><textPath href="#golden-ring-path" startOffset="0%" textLength="268" lengthAdjust="spacingAndGlyphs">Golden caffe</textPath></text>
+    </svg>
+    <img class="golden-flower" src="/media/images/coffee/golden-caffe/flower-whole.w480.webp" alt="" />
+  </span>
+)}
+
+{artwork === 'dongbei-lingdan' && (
+  <span class="title-art title-art--dongbei" aria-hidden="true">
+    <span class="dongbei-glyph dongbei-glyph--east">东</span>
+    <span class="dongbei-glyph dongbei-glyph--spirit">灵</span>
+    <span class="dongbei-glyph dongbei-glyph--north">北</span>
+    <span class="dongbei-glyph dongbei-glyph--elixir">丹</span>
+  </span>
+)}
+
+{artwork === 'never-say-uncle' && (
+  <span class="title-art title-art--never" aria-hidden="true">
+    <span class="never-word never-word--never"><span class="never-never-lockup"><span class="never-never-initial">N</span><span class="never-e">e</span>v<span class="never-e">e</span><span class="never-r">r</span></span></span>
+    <span class="never-word never-word--say"><span class="never-say-lockup"><span class="never-s">S</span>ay</span></span>
+    <span class="never-word never-word--uncle"><span class="never-uncle-lockup"><span class="never-uncle-initial">U</span>ncle</span></span>
+  </span>
+)}
+
 <style>
   @font-face {
     font-family: "Coffee Free Jazz";
     src: url("/fonts/jazz/Kranky/Kranky-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Coffee Schoolbell";
+    src: url("/fonts/jazz/Schoolbell/Schoolbell-Regular.ttf") format("truetype");
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: "Coffee Liu Jian Mao Cao";
+    src: url("/fonts/coffee/LiuJianMaoCao/LiuJianMaoCao-Regular.ttf") format("truetype");
     font-display: swap;
   }
 
@@ -452,6 +499,99 @@ const roundGlyphs = [
     transform-origin: center top;
   }
 
+  .title-art--golden {
+    isolation: isolate;
+  }
+  .golden-ring {
+    position: absolute;
+    z-index: 2;
+    width: 90%;
+    height: 92%;
+    left: 5%;
+    top: 4%;
+    overflow: visible;
+  }
+  .golden-ring__text {
+    font-family: "Coffee Schoolbell", "Schoolbell", cursive;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: .8px;
+    fill: url("#golden-sand");
+    stroke: #d69a27;
+    stroke-width: .15px;
+    paint-order: stroke;
+  }
+  .golden-flower {
+    position: absolute;
+    z-index: 1;
+    width: 60.5%;
+    height: 60.5%;
+    left: 50%;
+    top: 50%;
+    object-fit: contain;
+    opacity: .58;
+    filter: saturate(.68) contrast(.84);
+    transform: translate(-50%, -50%) rotate(-9deg);
+  }
+
+  .title-art--dongbei {
+    display: grid;
+    grid-template: repeat(8, minmax(0, 1fr)) / repeat(10, minmax(0, 1fr));
+    padding: clamp(.3rem, .85cqw, .7rem);
+  }
+  .dongbei-glyph {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    color: #382a22;
+    font-family: "Coffee Liu Jian Mao Cao", var(--serif);
+    font-weight: 400;
+    line-height: .68;
+  }
+  .dongbei-glyph--east { grid-area: 1 / 1 / 5 / 4; font-size: min(43cqw, 54cqh); transform: rotate(-8deg) translate(-11%, 2%); }
+  .dongbei-glyph--spirit { grid-area: 5 / 2 / 9 / 7; font-size: min(36cqw, 45cqh); transform: rotate(5deg) translate(-1%, 1%); }
+  .dongbei-glyph--north { grid-area: 1 / 5 / 5 / 10; font-size: min(34cqw, 42cqh); color: #b8743d; transform: rotate(8deg) translate(-1%, -2%); }
+  .dongbei-glyph--elixir { grid-area: 5 / 6 / 9 / 11; font-size: min(27cqw, 33cqh); transform: rotate(-6deg) translate(2%, 3%); }
+
+  .title-art--never {
+    display: grid;
+    grid-template: repeat(8, minmax(0, 1fr)) / repeat(12, minmax(0, 1fr));
+    padding: clamp(.3rem, .8cqw, .7rem);
+    font-family: "Coffee Schoolbell", "Schoolbell", cursive;
+  }
+  .never-word {
+    min-width: 0;
+    min-height: 0;
+    display: grid;
+    place-items: center;
+    overflow: visible;
+    white-space: nowrap;
+    font-weight: 400;
+    line-height: .72;
+    letter-spacing: -.08em;
+  }
+  .never-word--never {
+    grid-area: 1 / 9 / 9 / 13;
+    position: relative;
+    top: 3cqh;
+    left: -10px;
+    color: #9a83bc;
+    font-size: min(52.65cqw, 68.85cqh);
+    text-shadow: 2px 3px 0 #72598f, 4px 6px 0 #4a365f;
+    transform: rotate(-90deg) scaleX(.9) translate(-28%, 0);
+  }
+  .never-word--say { grid-area: 1 / 1 / 4 / 9; position: relative; top: calc(12cqh + 20px); left: 80px; color: #df8292; font-size: min(31.9cqw, 40.7cqh); font-weight: 700; letter-spacing: 20px; text-shadow: 3px 4px 0 #a84d67, 6px 8px 0 #702b43; transform: rotate(30deg) scaleX(1.08); }
+  .never-word--uncle { grid-area: 4 / 1 / 9 / 8; color: #607e5a; font-size: min(25cqw, 33cqh); letter-spacing: calc(-.08em + 8px); text-shadow: 2px 3px 0 #4f704d, 4px 6px 0 #2e4b32; transform: translateX(-100px) scaleY(1.18); }
+  .never-say-lockup { white-space: nowrap; }
+  .never-uncle-lockup { white-space: nowrap; }
+  .never-uncle-initial { display: inline-block; transform: scaleY(1.16); }
+  .never-never-lockup { white-space: nowrap; }
+  .never-never-initial { display: inline-block; transform: scaleY(1.07); }
+  .never-e { font-size: .8em; }
+  .never-r { display: inline-block; transform: scale(.8); transform-origin: left center; }
+  .never-s { display: inline-block; transform: scale(1.2); transform-origin: left center; }
+
   @media (max-width: 760px) {
     .title-art { min-height: clamp(17rem, 72vw, 23rem); }
     .hows-word--how {
@@ -539,5 +679,11 @@ const roundGlyphs = [
       letter-spacing: -.11em;
       transform-origin: left bottom;
     }
+    .golden-flower { width: 62.92%; height: 62.92%; }
+    .dongbei-glyph--east { font-size: min(45cqw, 56cqh); }
+    .dongbei-glyph--spirit { font-size: min(40cqw, 50cqh); }
+    .never-word--never { font-size: min(50.625cqw, 64.8cqh); }
+    .never-word--say { font-size: min(29.7cqw, 38.5cqh); }
+    .never-word--uncle { font-size: min(23cqw, 31cqh); }
   }
 </style>

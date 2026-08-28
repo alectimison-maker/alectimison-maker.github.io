@@ -4,6 +4,9 @@ export type CoffeeArtwork =
   | 'four-seasons'
   | 'the-room'
   | 'datum'
+  | 'golden-caffe'
+  | 'dongbei-lingdan'
+  | 'never-say-uncle'
 export type CoffeeImageSide = 'left' | 'right'
 
 export interface CoffeeEditorialConfig {
@@ -43,6 +46,24 @@ export const COFFEE_EDITORIAL_CONFIG = {
     imageSide: 'right',
     artwork: 'datum',
     coverAlt: 'Datum：窗边的重逢特调、小雏菊与咖啡介绍卡',
+  },
+  'golden-caffe': {
+    sequence: 6,
+    imageSide: 'left',
+    artwork: 'golden-caffe',
+    coverAlt: 'Golden caffe：绿鲤鱼与驴特调、雏菊与甜点',
+  },
+  'dongbei-lingdan': {
+    sequence: 7,
+    imageSide: 'right',
+    artwork: 'dongbei-lingdan',
+    coverAlt: '東北灵丹：黑芝麻维也纳与香芋维也纳',
+  },
+  'never-say-uncle': {
+    sequence: 8,
+    imageSide: 'left',
+    artwork: 'never-say-uncle',
+    coverAlt: 'Never Say Uncle：KenYa 咖啡与店内一景',
   },
 } as const satisfies Record<string, CoffeeEditorialConfig>
 

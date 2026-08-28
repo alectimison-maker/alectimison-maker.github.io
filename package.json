@@ -6,6 +6,7 @@
   "scripts": {
     "predev": "npm run optimize:images",
     "dev": "astro dev",
+    "dev:restart": "astro dev stop && astro dev --host 127.0.0.1 --force",
     "prebuild": "npm run validate:content && npm run optimize:images",
     "build": "astro check && astro build --force && node scripts/validate-built-images.mjs && pagefind --site dist",
     "preview": "astro preview",
