@@ -178,6 +178,7 @@ const readingMinutes = estimateReadingMinutes(post.body)
   .prose :global(th), .prose :global(td) { padding: .65rem; border: 1px solid var(--line); text-align: left; }
   .article-footer { width: min(100%, var(--article-width)); margin-inline: auto; display: grid; grid-template-columns: minmax(0, 1fr) var(--article-aside-width); column-gap: var(--article-column-gap); }
   .article-footer > * { min-width: 0; grid-column: 1; }
+  .article-footer > :global(.comments) { min-width: 0; grid-column: 1; }
   .article-shell:has(.article-grid.toc-collapsed) .article-footer { grid-template-columns: minmax(0, 1fr) auto; column-gap: 1.25rem; }
   .author-strip { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; padding: 1.5rem 0; border-top: 1px solid var(--line); }
   .author-strip img { border-radius: 50%; }
