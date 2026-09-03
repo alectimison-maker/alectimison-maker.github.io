@@ -26,6 +26,8 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Install Waline server dependencies
+        run: npm ci --prefix waline-server
       - run: npm test
       - name: Restore generated responsive images
         id: image-cache
