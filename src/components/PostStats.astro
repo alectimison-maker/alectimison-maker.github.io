@@ -1,0 +1,201 @@
+---
+import { normalizeCommentServerUrl } from '../lib/comments'
+
+interface Props {
+  postId: string
+}
+
+const { postId } = Astro.props
+const serverUrl = normalizeCommentServerUrl(import.meta.env.PUBLIC_WALINE_SERVER_URL)
+const statsConfigured = Boolean(serverUrl)
+---
+
+<section
+  class="post-stats"
+  data-post-stats
+  data-post-id={postId}
+  data-server-url={serverUrl}
+  data-stats-configured={String(statsConfigured)}
+  aria-labelledby="post-stats-title"
+>
+  <div class="post-stats__intro">
+    <p class="eyebrow">RESPONSE / SIGNAL</p>
+    <h2 id="post-stats-title">这篇文章的回声</h2>
+    <p data-stats-status aria-live="polite">
+      {statsConfigured ? '阅读到正文后会记录一次访问。' : '统计服务尚未完成配置。'}
+    </p>
+  </div>
+  <div class="post-stats__controls">
+    <span class="post-stats__metric">
+      <strong data-stats-views aria-label="阅读量">—</strong>
+      <span>阅读</span>
+    </span>
+    <button type="button" data-stats-like disabled aria-pressed="false">
+      <span class="post-stats__heart" aria-hidden="true">♡</span>
+      <span data-stats-like-label>点赞</span>
+      <strong data-stats-likes>—</strong>
+    </button>
+  </div>
+</section>
+
+<script>
+  const VISITOR_COOKIE = 'aliouswe_stats_visitor'
+  const VISITOR_MAX_AGE = 60 * 60 * 24 * 365
+
+  const getCookie = (name: string) => document.cookie
+    .split(';')
+    .map((part) => part.trim())
+    .find((part) => part.startsWith(`${name}=`))
+    ?.slice(name.length + 1)
+
+  const createVisitorId = () => {
+    if (crypto.randomUUID) return crypto.randomUUID()
+    const bytes = crypto.getRandomValues(new Uint8Array(16))
+    return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
+  }
+
+  const ensureVisitorId = () => {
+    const existing = getCookie(VISITOR_COOKIE)
+    if (existing) return existing
+    const domain = location.hostname === 'aliouswe.com' || location.hostname.endsWith('.aliouswe.com')
+      ? '; Domain=aliouswe.com'
+      : ''
+    const secure = location.protocol === 'https:' ? '; Secure' : ''
+    const visitorId = createVisitorId()
+    document.cookie = `${VISITOR_COOKIE}=${visitorId}; Max-Age=${VISITOR_MAX_AGE}; Path=/; SameSite=Lax${secure}${domain}`
+    return visitorId
+  }
+
+  const formatCount = (value: unknown) => {
+    const count = Number(value)
+    return Number.isFinite(count) && count >= 0 ? new Intl.NumberFormat('zh-CN').format(count) : '—'
+  }
+
+  const sections = document.querySelectorAll<HTMLElement>('[data-post-stats]')
+
+  sections.forEach((section) => {
+    const serverUrl = section.dataset.serverUrl
+    const postId = section.dataset.postId
+    const status = section.querySelector<HTMLElement>('[data-stats-status]')
+    const views = section.querySelector<HTMLElement>('[data-stats-views]')
+    const likes = section.querySelector<HTMLElement>('[data-stats-likes]')
+    const likeButton = section.querySelector<HTMLButtonElement>('[data-stats-like]')
+    const likeLabel = section.querySelector<HTMLElement>('[data-stats-like-label]')
+    const heart = section.querySelector<HTMLElement>('.post-stats__heart')
+
+    if (section.dataset.statsConfigured !== 'true' || !serverUrl || !postId || !status || !views || !likes || !likeButton || !likeLabel || !heart) return
+
+    const visitorId = ensureVisitorId()
+    let liked = false
+    let viewRecorded = false
+    let statsLoaded = false
+    let readThresholdReached = false
+
+    const request = async (path: string, init: RequestInit = {}) => {
+      const headers = new Headers(init.headers)
+      headers.set('Accept', 'application/json')
+      headers.set('X-Stats-Visitor', visitorId)
+      if (init.body) headers.set('Content-Type', 'application/json')
+      const response = await fetch(`${serverUrl}${path}`, {
+        ...init,
+        headers,
+        credentials: 'include',
+      })
+      const payload = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : 'Stats request failed')
+      return payload as { views: number; likes: number; liked?: boolean; counted?: boolean; changed?: boolean }
+    }
+
+    const renderStats = (payload: { views: number; likes: number; liked?: boolean }) => {
+      views.textContent = formatCount(payload.views)
+      likes.textContent = formatCount(payload.likes)
+      if (typeof payload.liked === 'boolean') liked = payload.liked
+      likeButton.setAttribute('aria-pressed', String(liked))
+      likeButton.classList.toggle('is-liked', liked)
+      heart.textContent = liked ? '♥' : '♡'
+      likeLabel.textContent = liked ? '已点赞' : '点赞'
+    }
+
+    const loadStats = async () => {
+      const payload = await request(`/stats?postId=${encodeURIComponent(postId)}`)
+      renderStats(payload)
+      statsLoaded = true
+      likeButton.disabled = false
+      status.textContent = '匿名统计；同一浏览器每天只记录一次阅读。'
+    }
+
+    const recordView = async () => {
+      readThresholdReached = true
+      if (!statsLoaded || viewRecorded) return
+      viewRecorded = true
+      try {
+        const payload = await request('/stats/view', {
+          method: 'POST',
+          body: JSON.stringify({ postId, visitorId }),
+        })
+        renderStats(payload)
+      } catch {
+        viewRecorded = false
+      }
+    }
+
+    const reachedReadThreshold = () => {
+      const content = document.querySelector<HTMLElement>('.article-content')
+      if (!content) return false
+      const rect = content.getBoundingClientRect()
+      const contentTop = window.scrollY + rect.top
+      return window.scrollY + window.innerHeight >= contentTop + rect.height * 0.3
+    }
+
+    const checkReadThreshold = () => {
+      if (reachedReadThreshold()) {
+        window.removeEventListener('scroll', checkReadThreshold)
+        void recordView()
+      }
+    }
+
+    likeButton.addEventListener('click', async () => {
+      if (!statsLoaded) return
+      const nextLiked = !liked
+      likeButton.disabled = true
+      status.textContent = nextLiked ? '正在记录点赞…' : '正在取消点赞…'
+      try {
+        const payload = await request('/stats/like', {
+          method: 'POST',
+          body: JSON.stringify({ postId, visitorId, liked: nextLiked }),
+        })
+        renderStats(payload)
+        status.textContent = nextLiked ? '已记录匿名点赞。' : '已取消点赞。'
+      } catch {
+        status.textContent = '点赞暂时不可用，文章仍可正常阅读。'
+      } finally {
+        likeButton.disabled = false
+      }
+    })
+
+    void loadStats().then(() => {
+      if (readThresholdReached) void recordView()
+    }).catch(() => {
+      status.textContent = '统计暂时不可用，文章仍可正常阅读。'
+    })
+    window.addEventListener('scroll', checkReadThreshold, { passive: true })
+    checkReadThreshold()
+  })
+</script>
+
+<style>
+  .post-stats { display: flex; align-items: end; justify-content: space-between; gap: 2rem; padding: 1.5rem 0; border-block: 1px solid var(--line); }
+  .post-stats__intro { display: grid; gap: .35rem; }
+  .post-stats__intro h2 { margin: 0; font: 500 clamp(1.5rem, 3vw, 2.25rem)/1.05 var(--serif); }
+  .post-stats__intro p:last-child { margin: 0; color: var(--muted); font-size: .78rem; }
+  .post-stats__controls { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+  .post-stats__metric, .post-stats__controls button { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.7rem; padding: .65rem .8rem; border: 1px solid var(--line); color: var(--text); background: transparent; font: .72rem/1 var(--mono); }
+  .post-stats__metric strong, .post-stats__controls button strong { font-size: .9rem; }
+  .post-stats__controls button { cursor: pointer; }
+  .post-stats__controls button:hover:not(:disabled), .post-stats__controls button.is-liked { border-color: var(--accent); color: var(--accent); }
+  .post-stats__controls button:disabled { cursor: wait; opacity: .55; }
+  .post-stats__heart { font-size: 1.15rem; line-height: .7; }
+  @media (max-width: 600px) {
+    .post-stats { align-items: start; flex-direction: column; gap: 1rem; }
+  }
+</style>

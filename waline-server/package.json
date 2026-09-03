@@ -3,13 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test policy.node-test.cjs"
+    "test": "node --test policy.node-test.cjs stats.node-test.cjs",
+    "stats:migrate": "node --env-file-if-exists=.env migrate-stats.cjs"
   },
   "dependencies": {
     "@cloudbase/node-sdk": "file:stubs/cloudbase-node-sdk",
     "@waline/vercel": "1.41.4",
     "akismet": "file:stubs/akismet",
-    "leancloud-storage": "file:stubs/leancloud-storage"
+    "leancloud-storage": "file:stubs/leancloud-storage",
+    "pg": "8.23.0"
   },
   "overrides": {
     "dompurify": "3.4.13"

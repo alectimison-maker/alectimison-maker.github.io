@@ -2,6 +2,7 @@
 import type { CollectionEntry } from 'astro:content'
 import BaseLayout from './BaseLayout.astro'
 import Comments from '../components/Comments.astro'
+import PostStats from '../components/PostStats.astro'
 import { estimateReadingMinutes, formatDate, SITE } from '../lib/site'
 
 interface Props {
@@ -67,6 +68,7 @@ const readingMinutes = estimateReadingMinutes(post.body)
         <button type="button" data-copy-link>复制链接</button>
         <button type="button" data-native-share hidden>分享</button>
       </div>
+      <PostStats postId={post.id} />
       <nav class="post-navigation" aria-label="相邻文章">
         {previous ? <a href={`/posts/${previous.id}/`}><span>上一篇</span>{previous.data.title}</a> : <span />}
         {next ? <a href={`/posts/${next.id}/`}><span>下一篇</span>{next.data.title}</a> : <span />}
