@@ -67,8 +67,8 @@ const readingMinutes = estimateReadingMinutes(post.body)
       <div class="article-actions">
         <button type="button" data-copy-link>复制链接</button>
         <button type="button" data-native-share hidden>分享</button>
+        <PostStats postId={post.id} />
       </div>
-      <PostStats postId={post.id} />
       <nav class="post-navigation" aria-label="相邻文章">
         {previous ? <a href={`/posts/${previous.id}/`}><span>上一篇</span>{previous.data.title}</a> : <span />}
         {next ? <a href={`/posts/${next.id}/`}><span>下一篇</span>{next.data.title}</a> : <span />}
@@ -187,7 +187,7 @@ const readingMinutes = estimateReadingMinutes(post.body)
   .author-strip div { display: grid; gap: .25rem; }
   .author-strip span { color: var(--muted); font-size: .8rem; }
   .author-strip a { font: .7rem/1 var(--mono); }
-  .article-actions { display: flex; gap: .75rem; padding: 1rem 0; border-top: 1px solid var(--line); }
+  .article-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; padding: 1rem 0; border-top: 1px solid var(--line); }
   .article-actions button { padding: .6rem .85rem; border: 1px solid var(--line); color: var(--text); background: transparent; }
   .post-navigation { display: grid; grid-template-columns: 1fr 1fr; border-block: 1px solid var(--line); }
   .post-navigation a { padding: 1.5rem 0; font: 1rem/1.35 var(--serif); text-decoration: none; }
