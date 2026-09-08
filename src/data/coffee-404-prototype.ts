@@ -10,6 +10,20 @@ export interface Coffee404Prototype {
   score?: string
 }
 
+export interface Coffee404Post {
+  id: string
+  body?: string
+  headings?: Array<{ depth: number; slug: string; text: string }>
+  data: {
+    title: string
+    description?: string
+    date?: Date | string
+    space: string
+    draft?: boolean
+    cover?: string
+  }
+}
+
 const cup = (
   id: string,
   name: string,
@@ -26,6 +40,7 @@ const roundImage = (file: string) => `/media/images/coffee/round-to-coffee/${fil
 const seasonsImage = (file: string) => `/media/images/coffee/four-seasons/${file}.w960.webp`
 const roomImage = (file: string) => `/media/images/coffee/the-room/${file}.w960.webp`
 const datumImage = (file: string) => `/media/images/coffee/datum/${file}.w960.webp`
+const fallbackImage = '/avatar.webp'
 
 const HOWS = '《How\'s the coffee?》'
 const ROUND = '《Round To Coffee？》'
@@ -84,3 +99,108 @@ export const coffee404Prototype: Coffee404Prototype[] = [
   cup('flat-white', '澳白', datumImage('IMG_3188'), DATUM, '/posts/datum/#澳白', '永州，一座沒有美味咖啡的城市╮(╯▽╰)╭（6/10）', '6/10'),
   cup('letter-from-mountains', '山里来信', datumImage('IMG_3196'), DATUM, '/posts/datum/#山里来信', '以山楂汁和埃塞冷萃為基底，日本柚子的清新，木薑子帶來檸檬薑香，由青梅酒收束，醺的是酒還是咖啡？（9.5/10）', '9.5/10'),
 ]
+
+const sourcePostId = (sourceHref: string) => sourceHref.match(/^\/posts\/([^/#]+)/)?.[1]
+
+const responsiveImage = (image: string, width = 960) => image.replace(
+  /\.w\d+\.(?:avif|webp)$|\.(?:avif|webp|jpe?g|png|gif)$/i,
+  `.w${width}.webp`,
+)
+
+const markdownImage = /!\[[^\]]*\]\(([^)\s]+)(?:\s+["'][^"']*["'])?\)/
+
+const plainText = (value: string) => value
+  .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+  .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+  .replace(/[*_`~]/g, '')
+  .trim()
+
+const firstTextBlock = (section: string) => section
+  .split(/\n\s*\n/)
+  .map((block) => plainText(block.replace(/^\s*>\s?/gm, '')))
+  .find((block) => block && !block.startsWith('#') && !block.startsWith('!['))
+
+const scoreFrom = (section: string) => {
+  const scores = section.match(/[（(]?\d+(?:\.\d+)?\/10[）)]?/g) ?? []
+  return scores.length === 1 ? scores[0].replace(/[（）()]/g, '') : undefined
+}
+
+const toTimestamp = (date?: Date | string) => date instanceof Date
+  ? date.getTime()
+  : date
+    ? new Date(date).getTime()
+    : 0
+
+const automaticCupsForPost = (post: Coffee404Post): Coffee404Prototype[] => {
+  const body = post.body ?? ''
+  const sections = [...body.matchAll(/^##\s+(.+?)\s*$/gm)]
+    .map((match, index, matches) => {
+      const title = match[1].trim()
+      const start = match.index ?? 0
+      const end = matches[index + 1]?.index ?? body.length
+      const section = body.slice(start + match[0].length, end)
+      const image = section.match(markdownImage)?.[1]
+      return { title, section, image, slug: post.headings?.find(
+        (heading) => heading.depth === 2 && heading.text === title,
+      )?.slug ?? title }
+    })
+    .filter((section) => section.title.toLocaleLowerCase() !== 'not the end' && section.image)
+
+  const sourceLabel = `《${post.data.title}》`
+  const buildCup = (
+    name: string,
+    image: string,
+    lead: string,
+    score: string | undefined,
+    slug: string,
+    index: number,
+  ): Coffee404Prototype => cup(
+    `${post.id}-${index + 1}`,
+    name,
+    responsiveImage(image),
+    sourceLabel,
+    slug ? `/posts/${post.id}/#${slug}` : `/posts/${post.id}/`,
+    lead,
+    score,
+  )
+
+  if (sections.length > 0) {
+    return sections.map((section, index) => buildCup(
+      section.title,
+      section.image!,
+      firstTextBlock(section.section) ?? post.data.description ?? `来自《${post.data.title}》的咖啡记录。`,
+      scoreFrom(section.section),
+      section.slug,
+      index,
+    ))
+  }
+
+  const image = post.data.cover ?? body.match(markdownImage)?.[1] ?? fallbackImage
+  return [buildCup(
+    post.data.title,
+    image,
+    post.data.description ?? `来自《${post.data.title}》的咖啡记录。`,
+    undefined,
+    '',
+    0,
+  )]
+}
+
+/**
+ * Keep the hand-written tasting notes, then add every published Coffee article
+ * that has not been curated yet. New articles therefore enter the 404 pool at
+ * build time without requiring a second registry to be updated.
+ */
+export const createCoffee404Pool = (posts: Coffee404Post[]) => {
+  const curatedPostIds = new Set(
+    coffee404Prototype
+      .map((coffee) => sourcePostId(coffee.sourceHref))
+      .filter((postId): postId is string => Boolean(postId)),
+  )
+  const automaticCups = posts
+    .filter((post) => !post.data.draft && post.data.space === 'coffee' && !curatedPostIds.has(post.id))
+    .sort((left, right) => toTimestamp(left.data.date) - toTimestamp(right.data.date))
+    .flatMap(automaticCupsForPost)
+
+  return [...coffee404Prototype, ...automaticCups]
+}

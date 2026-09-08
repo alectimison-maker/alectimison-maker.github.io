@@ -3,10 +3,17 @@ import '@fontsource-variable/noto-sans-sc'
 import '@fontsource/ibm-plex-mono/400.css'
 import '@fontsource/ibm-plex-mono/600.css'
 import '@fontsource/ibm-plex-mono/700.css'
-import { coffee404Prototype } from '../data/coffee-404-prototype'
+import { getCollection, render } from 'astro:content'
+import { createCoffee404Pool } from '../data/coffee-404-prototype'
 
-const result = coffee404Prototype[0]
-const coffeePoolJson = JSON.stringify(coffee404Prototype).replace(/</g, '\\u003c')
+const coffeePosts = await getCollection('posts', ({ data }) => !data.draft && data.space === 'coffee')
+const coffeePostsWithHeadings = await Promise.all(coffeePosts.map(async (post) => ({
+  ...post,
+  headings: (await render(post)).headings,
+})))
+const coffee404Pool = createCoffee404Pool(coffeePostsWithHeadings)
+const result = coffee404Pool[0]
+const coffeePoolJson = JSON.stringify(coffee404Pool).replace(/</g, '\\u003c')
 const digitPatterns: Record<string, string[]> = {
   '4': ['10010', '10010', '10010', '11111', '00010', '00010', '00010'],
   '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
@@ -15,7 +22,7 @@ const digits = [...'404']
 const reelSequences = Array.from({ length: 3 }, (_, reelIndex) => {
   const rollingItems = Array.from(
     { length: 12 + reelIndex * 3 },
-    (_, itemIndex) => coffee404Prototype[(itemIndex + reelIndex) % coffee404Prototype.length],
+    (_, itemIndex) => coffee404Pool[(itemIndex + reelIndex) % coffee404Pool.length],
   )
 
   return [...rollingItems, result]
@@ -88,7 +95,7 @@ const reelSequences = Array.from({ length: 3 }, (_, reelIndex) => {
                               <path class="coffee-handle" d="M24 14h5v7h-5v-3h2v-2h-2z" />
                               <path class="coffee-saucer" d="M5 26h20v3H5z" />
                             </svg>
-                            <span>{String((itemIndex % coffee404Prototype.length) + 1).padStart(2, '0')}</span>
+                            <span>{String((itemIndex % coffee404Pool.length) + 1).padStart(2, '0')}</span>
                           </div>
                         ))}
                       </div>
@@ -96,7 +103,7 @@ const reelSequences = Array.from({ length: 3 }, (_, reelIndex) => {
                   ))}
                 </div>
                 <p class="game-prompt" data-game-prompt>按下 BREW，抽取一杯咖啡</p>
-                <p class="tiny-status">{coffee404Prototype.length} CUPS LOADED / 1 DRAW</p>
+                <p class="tiny-status">{coffee404Pool.length} CUPS LOADED / 1 DRAW</p>
               </section>
 
               <section class="screen-state screen-result" data-screen="result" hidden>
