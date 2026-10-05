@@ -55,12 +55,13 @@ channels = 1 if result.ndim == 2 else result.shape[2]
 print(f"process returned {result.shape[1]} × {result.shape[0]} with {channels} channel(s)")
 `
 
-function collectProcess(command, args, { signal, timeoutMs, onTerminate }) {
+function collectProcess(command, args, { signal, timeoutMs, onTerminate, env = process.env }) {
   return new Promise((resolve) => {
-    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'] })
+    const child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'], env })
     let stdout = ''
     let stderr = ''
     const append = (current, chunk) => (current + chunk).slice(0, LIMITS.outputBytes)
+    const redactDockerConfigPath = (value) => value.replace(/(open )[^:\n]*\/\.docker\/config\.json(?=:)/g, '$1[Docker config]')
     child.stdout.on('data', (chunk) => { stdout = append(stdout, chunk.toString()) })
     child.stderr.on('data', (chunk) => { stderr = append(stderr, chunk.toString()) })
     let timedOut = false
@@ -77,12 +78,12 @@ function collectProcess(command, args, { signal, timeoutMs, onTerminate }) {
     child.on('close', (exitCode, exitSignal) => {
       clearTimeout(timeout)
       signal?.removeEventListener('abort', abort)
-      resolve({ exitCode, exitSignal, stdout, stderr, timedOut, aborted: signal?.aborted ?? false })
+      resolve({ exitCode, exitSignal, stdout: redactDockerConfigPath(stdout), stderr: redactDockerConfigPath(stderr), timedOut, aborted: signal?.aborted ?? false })
     })
     child.on('error', (error) => {
       clearTimeout(timeout)
       signal?.removeEventListener('abort', abort)
-      resolve({ exitCode: -1, stdout, stderr: append(stderr, error.message), timedOut, aborted: signal?.aborted ?? false })
+      resolve({ exitCode: -1, stdout: redactDockerConfigPath(stdout), stderr: redactDockerConfigPath(append(stderr, error.message)), timedOut, aborted: signal?.aborted ?? false })
     })
   })
 }
@@ -98,6 +99,24 @@ export class DockerExecutor {
     this.runtime = runtime
     this.inputImage = inputImage
     this.workRoot = workRoot
+    this.dockerConfigPromise = undefined
+  }
+
+  async dockerEnvironment() {
+    if (!this.dockerConfigPromise) {
+      this.dockerConfigPromise = (async () => {
+        // systemd hides the service account home; never make Docker CLI read its private config or credentials.
+        const directory = await mkdtemp(path.join(tmpdir(), 'opencv-docker-config-'))
+        try {
+          await writeFile(path.join(directory, 'config.json'), '{}\n', { mode: 0o600 })
+          return directory
+        } catch (error) {
+          await rm(directory, { recursive: true, force: true })
+          throw error
+        }
+      })()
+    }
+    return { ...process.env, DOCKER_CONFIG: await this.dockerConfigPromise }
   }
 
   async readiness() {
@@ -119,6 +138,7 @@ export class DockerExecutor {
     await writeFile(path.join(directory, sourceName), job.language === 'cpp' ? cppHarness(job.code) : pythonHarness(job.code), { mode: 0o666 })
     await copyFile(this.inputImage, path.join(directory, 'input.webp'))
     await chmod(path.join(directory, 'input.webp'), 0o644)
+    const dockerEnv = await this.dockerEnvironment()
 
     const commonArgs = [
       'run', '--rm', '--network', 'none', '--read-only', '--memory', '512m', '--memory-swap', '512m', '--cpus', '1',
@@ -127,7 +147,7 @@ export class DockerExecutor {
     ]
     if (this.runtime) commonArgs.push('--runtime', this.runtime)
     const removeContainer = (name) => {
-      const cleanup = spawn('docker', ['rm', '-f', name], { stdio: 'ignore' })
+      const cleanup = spawn('docker', ['rm', '-f', name], { stdio: 'ignore', env: dockerEnv })
       cleanup.unref()
     }
     let result
@@ -137,16 +157,16 @@ export class DockerExecutor {
       const compile = await collectProcess('docker', [
         ...commonArgs, '--name', compileName, '--pids-limit', '128', this.image,
         'bash', '-lc', 'g++ -std=c++17 -O0 -pipe /workspace/main.cpp -o /workspace/app $(pkg-config --cflags --libs opencv4)',
-      ], { signal, timeoutMs: LIMITS.compileMs, onTerminate: () => removeContainer(compileName) })
+      ], { signal, timeoutMs: LIMITS.compileMs, onTerminate: () => removeContainer(compileName), env: dockerEnv })
       if (compile.aborted || compile.timedOut || compile.exitCode !== 0) {
         result = { ...compile, diagnostics: compile.timedOut ? `CompileTimeLimitExceeded: 编译时间超过 ${LIMITS.compileMs / 1_000} 秒。` : '' }
       } else {
-      const runName = `opencv-run-${job.id}`
-      onState('running')
-      result = await collectProcess('docker', [
+        const runName = `opencv-run-${job.id}`
+        onState('running')
+        result = await collectProcess('docker', [
           ...commonArgs, '--name', runName, '--pids-limit', '32',
           '--env', 'OMP_NUM_THREADS=1', '--env', 'OPENBLAS_NUM_THREADS=1', this.image, '/workspace/app',
-      ], { signal, timeoutMs: LIMITS.runMs, onTerminate: () => removeContainer(runName) })
+        ], { signal, timeoutMs: LIMITS.runMs, onTerminate: () => removeContainer(runName), env: dockerEnv })
       }
     } else {
       const runName = `opencv-run-${job.id}`
@@ -154,7 +174,7 @@ export class DockerExecutor {
       result = await collectProcess('docker', [
         ...commonArgs, '--name', runName, '--pids-limit', '32',
         '--env', 'OMP_NUM_THREADS=1', '--env', 'OPENBLAS_NUM_THREADS=1', this.image, 'python3', '/workspace/main.py',
-      ], { signal, timeoutMs: LIMITS.runMs, onTerminate: () => removeContainer(runName) })
+      ], { signal, timeoutMs: LIMITS.runMs, onTerminate: () => removeContainer(runName), env: dockerEnv })
     }
 
     if (result.aborted) {
