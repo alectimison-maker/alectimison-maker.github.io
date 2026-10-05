@@ -1,0 +1,22 @@
+[Unit]
+Description=Aliouswe OpenCV tutorial runner
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=opencv-runner
+Group=docker
+WorkingDirectory=/srv/aliouswe/app/opencv-runner
+EnvironmentFile=/etc/aliouswe/opencv-runner.env
+ExecStart=/usr/bin/node src/index.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/srv/aliouswe/runner-work /run/docker.sock
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 1280" role="img" aria-labelledby="title desc">
+  <title id="title">神经网络知识关系图</title>
+  <desc id="desc">从 RoboMaster 任务与数据出发，经过学习方式、网络结构、训练、评估、优化和部署，最终接入机器人视觉系统，并通过评估反馈迭代。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#55718f"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/>
+    </marker>
+    <style>
+      text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; fill: #18304b; }
+      .title { font-size: 32px; font-weight: 700; }
+      .subtitle { font-size: 17px; fill: #52667d; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .body { font-size: 17px; fill: #344b63; }
+      .small { font-size: 15px; fill: #52667d; }
+      .card { fill: #ffffff; stroke: #cbd8e6; stroke-width: 2; rx: 18; }
+      .blue { fill: #eff6ff; stroke: #8bb7f0; }
+      .teal { fill: #ecfdf8; stroke: #83cfb7; }
+      .purple { fill: #f5f3ff; stroke: #b5a8ef; }
+      .orange { fill: #fff7ed; stroke: #f2bd78; }
+      .dark { fill: #183b5b; stroke: #183b5b; }
+      .darktext { fill: #ffffff; }
+      .line { fill: none; stroke: #55718f; stroke-width: 3; marker-end: url(#arrow); }
+      .feedback { fill: none; stroke: #2563eb; stroke-width: 3; stroke-dasharray: 8 7; marker-end: url(#arrow-blue); }
+    </style>
+  </defs>
+
+  <rect width="1280" height="1280" fill="#f7f9fc" rx="24"/>
+  <text x="640" y="54" text-anchor="middle" class="title">神经网络知识关系图</text>
+  <text x="640" y="84" text-anchor="middle" class="subtitle">先定义任务和数据，再选择模型、训练与评估，最后面向机器人部署；结果会反过来推动下一轮改进。</text>
+
+  <text x="64" y="126" class="small" font-weight="700">RoboMaster 应用问题（本教程的实例入口）</text>
+  <rect x="64" y="144" width="350" height="94" class="card blue"/>
+  <text x="239" y="181" text-anchor="middle" class="heading">装甲板检测 / 关键点</text>
+  <text x="239" y="210" text-anchor="middle" class="small">框、类别、角点 → 位姿解算</text>
+  <rect x="465" y="144" width="350" height="94" class="card teal"/>
+  <text x="640" y="181" text-anchor="middle" class="heading">大符结构点检测</text>
+  <text x="640" y="210" text-anchor="middle" class="small">多个有语义的关键点 → 几何关系</text>
+  <rect x="866" y="144" width="350" height="94" class="card orange"/>
+  <text x="1041" y="181" text-anchor="middle" class="heading">反无人机单点检测</text>
+  <text x="1041" y="210" text-anchor="middle" class="small">目标位置 → 后续瞄准逻辑</text>
+
+  <path d="M239 238 V265 H640 V282" class="line"/>
+  <path d="M640 238 V282" class="line"/>
+  <path d="M1041 238 V265 H640 V282" class="line"/>
+
+  <rect x="220" y="286" width="840" height="126" class="card"/>
+  <text x="640" y="322" text-anchor="middle" class="heading">① 任务定义与数据</text>
+  <text x="640" y="352" text-anchor="middle" class="body">输入：图像 / 视频　 ·　 标签：类别、边界框、关键点或掩码</text>
+  <text x="640" y="382" text-anchor="middle" class="body">数据按训练集、验证集、测试集划分；任务和标注决定模型要学什么</text>
+
+  <path d="M640 412 V438 H240 V458" class="line"/>
+  <path d="M640 412 V458" class="line"/>
+  <path d="M640 438 H1040 V458" class="line"/>
+
+  <rect x="64" y="462" width="352" height="186" class="card teal"/>
+  <text x="240" y="500" text-anchor="middle" class="heading">② 学习方式</text>
+  <text x="240" y="536" text-anchor="middle" class="body">监督学习：用标注答案训练</text>
+  <text x="240" y="566" text-anchor="middle" class="body">半监督 / 自监督 / 无监督</text>
+  <text x="240" y="596" text-anchor="middle" class="body">强化学习：用奖励表达目标</text>
+  <text x="240" y="625" text-anchor="middle" class="small">区别在于训练信号从哪里来</text>
+
+  <rect x="464" y="462" width="352" height="186" class="card purple"/>
+  <text x="640" y="500" text-anchor="middle" class="heading">③ 网络结构</text>
+  <text x="640" y="536" text-anchor="middle" class="body">MLP · CNN · RNN / LSTM / GRU</text>
+  <text x="640" y="566" text-anchor="middle" class="body">注意力 · Transformer · GNN</text>
+  <text x="640" y="596" text-anchor="middle" class="body">自编码器 · GAN · 扩散模型</text>
+  <text x="640" y="625" text-anchor="middle" class="small">结构要匹配任务、数据和算力</text>
+
+  <rect x="864" y="462" width="352" height="186" class="card blue"/>
+  <text x="1040" y="500" text-anchor="middle" class="heading">④ 训练机制</text>
+  <text x="1040" y="536" text-anchor="middle" class="body">前向传播 → 预测 → 损失函数</text>
+  <text x="1040" y="566" text-anchor="middle" class="body">反向传播 / 自动微分 → 梯度</text>
+  <text x="1040" y="596" text-anchor="middle" class="body">优化器更新参数，按批次迭代</text>
+  <text x="1040" y="625" text-anchor="middle" class="small">参数由数据学习，超参数由人设置</text>
+
+  <path d="M240 648 V684 H640 V702" class="line"/>
+  <path d="M640 648 V702" class="line"/>
+  <path d="M1040 648 V684 H640 V702" class="line"/>
+
+  <rect x="220" y="706" width="840" height="126" class="card orange"/>
+  <text x="640" y="744" text-anchor="middle" class="heading">⑤ 评估与泛化</text>
+  <text x="640" y="775" text-anchor="middle" class="body">分类看准确率 / Precision / Recall；检测看 IoU / mAP；Pose 还要看关键点误差</text>
+  <text x="640" y="805" text-anchor="middle" class="body">分析训练与验证差距、失败样本和场景偏差，判断模型能否处理未见数据</text>
+
+  <path d="M640 832 V862 H335 V881" class="line"/>
+  <path d="M640 862 H945 V881" class="line"/>
+
+  <rect x="64" y="885" width="542" height="162" class="card purple"/>
+  <text x="335" y="923" text-anchor="middle" class="heading">⑥ 改进精度与效率</text>
+  <text x="335" y="958" text-anchor="middle" class="body">数据清理 · 数据增强 · 正则化 · 调整模型</text>
+  <text x="335" y="988" text-anchor="middle" class="body">剪枝 · 量化 · 知识蒸馏</text>
+  <text x="335" y="1020" text-anchor="middle" class="small">每次改动都要重新评估精度和实际速度</text>
+
+  <rect x="674" y="885" width="542" height="162" class="card blue"/>
+  <text x="945" y="923" text-anchor="middle" class="heading">⑦ 导出与部署</text>
+  <text x="945" y="958" text-anchor="middle" class="body">PyTorch → ONNX → TensorRT / 其他推理后端</text>
+  <text x="945" y="988" text-anchor="middle" class="body">C++ / OpenCV 接入相机、后处理和机器人程序</text>
+  <text x="945" y="1020" text-anchor="middle" class="small">对齐预处理、坐标、类别与时延</text>
+
+  <path d="M606 966 H674" class="line"/>
+  <path d="M335 1047 V1082 H640 V1100" class="line"/>
+  <path d="M945 1047 V1082 H640 V1100" class="line"/>
+
+  <rect x="220" y="1104" width="840" height="116" class="card dark"/>
+  <text x="640" y="1146" text-anchor="middle" class="heading darktext">⑧ 接回 RoboMaster 感知系统</text>
+  <text x="640" y="1180" text-anchor="middle" class="body darktext">模型输出 → 坐标还原 / 几何与 PnP → 跟踪预测 → 云台控制</text>
+  <text x="640" y="1206" text-anchor="middle" class="small darktext">检测网络负责感知；位姿解算、跟踪和控制仍由各自模块完成</text>
+
+  <path d="M220 770 H38 V348 H220" class="feedback"/>
+  <rect x="48" y="668" width="170" height="76" fill="#f7f9fc"/>
+  <text x="133" y="695" text-anchor="middle" class="small" fill="#2563eb">失败分析反馈</text>
+  <text x="133" y="719" text-anchor="middle" class="small" fill="#2563eb">补数据 / 改任务</text>
+</svg>

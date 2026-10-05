@@ -1,0 +1,489 @@
+---
+title: "OpenCV装甲板识别"
+description: "从 Mat、颜色通道、滤波与形态学出发，沿 RoboMaster 传统视觉链路完成灯条筛选与装甲板配对。"
+date: "2026-09-24"
+space: article
+tags: ["robomaster", "opencv", "computer-vision", "c++"]
+lang: zh-CN
+draft: false
+featured: false
+---
+
+import OpenCVLab from '../../components/opencv/OpenCVLab'
+import OpenCVMatInspector from '../../components/opencv/OpenCVMatInspector'
+import OpenCVDetectionPipeline from '../../components/opencv/OpenCVDetectionPipeline.astro'
+
+## 概述
+OpenCV（Open Source Computer Vision Library）是一个开源计算机视觉库，提供图像读写、颜色空间转换、滤波、形态分析和目标检测等常用工具。它支持 C++、Python 等语言，广泛应用于机器人、工业视觉和实时视频处理。
+
+计算机视觉之所以常要经过多步预处理，是因为相机交给程序的不是“灯条”或“装甲板”，而是由像素构成的**数值矩阵**。机器能直接读取每个像素的亮度和颜色通道，却不会天然理解哪些变化来自目标、哪些来自噪声、反光或背景。预处理会逐步压制不重要的细节、突出有用的颜色与形状，让后续算法更容易从复杂画面中找到候选区域；每一步也都在取舍信息，因此参数过强时可能连目标细节一起抹掉。
+
+OpenCV 的处理顺序通常遵循“先整理输入，再生成候选，最后验证结构”的逻辑：先**读取和检查**图像，再按任务需要做**颜色转换、平滑或阈值分割**；随后用**形态学**操作清理候选像素，通过**轮廓提取**获得可测量的形状，最终结合**几何与颜色**条件判断目标。前一步输出的表示形式会决定下一步能做什么，所以应从原始图像逐层处理，并保留中间结果，便于观察信息在哪一步被保留或丢失。
+
+在 RoboMaster 自瞄中，OpenCV 常用于处理相机图像：从像素和颜色通道出发，逐步提取目标区域与几何特征。本篇将以 C++17 和 OpenCV 4.5.4 为基础，从一帧赛场图像开始，介绍矩阵、颜色通道、平滑、阈值与形态学，并沿传统视觉流程尝试筛选灯条、组合候选装甲板。
+
+### 你将会学到：
+- 检查图片与视频输入，并观察、保存处理结果
+- 使用 `cv::Mat` 的常用属性和函数，理解矩阵共享与独立复制
+- 正确处理像素坐标、BGR 像素读取、ROI 裁剪与图像缩放
+- OpenCV 的 BGR 通道顺序与通道拆分
+- 均值、高斯、中值与双边滤波的原理、差异及参数取舍
+- 灰度化与阈值二值化
+- 形态学开运算与结构元素
+- 轮廓提取、轮廓面积与最小外接旋转矩形
+- 灯条的长度、长宽比、倾角和颜色置信度筛选
+- 根据长度、间距、纵向差和角度差进行灯条配对
+<OpenCVDetectionPipeline />
+
+## 1. 图像矩阵 `cv::Mat`
+
+图像进入 OpenCV 后会以 `cv::Mat` 表示，本章先说明如何读入和观察图像，再认识矩阵的常用信息、内存共享关系和像素访问方式，最后处理裁剪与缩放，为后续颜色筛选和几何检测准备稳定输入。
+
+### 1.1 图像输入与观察
+
+在本地程序的入口中调试静态图片时，用 `imread` 读入图像，并通过 `empty()` 检查读取是否成功。示例中的 `process` 暂作后续检测函数；下一小节会说明它接收和返回什么：
+
+```cpp
+const cv::Mat image = cv::imread("frame.png", cv::IMREAD_COLOR);
+if (image.empty()) {
+    std::cerr << "无法读取 frame.png\n";
+    return 1;
+}
+
+const cv::Mat result = process(image);
+if (!cv::imwrite("debug-result.png", result)) {
+    std::cerr << "无法保存 debug-result.png\n";
+    return 1;
+}
+cv::imshow("armor detection", result);
+cv::waitKey(0);
+```
+
+处理摄像头或录制视频时，用 `VideoCapture` 打开视频源，再逐帧读取：
+
+```cpp
+cv::VideoCapture capture(0); // 读取视频文件时可传入 "match.mp4"
+if (!capture.isOpened()) {
+    std::cerr << "无法打开视频源\n";
+    return 1;
+}
+
+cv::Mat frame;
+while (capture.read(frame)) {
+    const cv::Mat result = process(frame);
+    cv::imshow("armor detection", result);
+    if (cv::waitKey(1) == 27) break; // Esc
+}
+```
+
+`read()` 返回 `false` 时循环结束。调试时可保存有代表性的单帧中间结果，例如二值图；不要在实时循环中无条件写入每一帧。
+
+### 1.2 `cv::Mat` 常用属性与函数
+
+`cv::Mat` 同时保存图像尺寸、像素类型和像素数据。学习装甲板识别链时，先掌握下面这些常用接口即可，不需要一次记住全部矩阵操作：
+
+| 用途 | 属性或函数 | 在本教程中的作用 |
+| --- | --- | --- |
+| 检查图像 | `empty()` | 判断读图或处理中间结果是否为空 |
+| 查询尺寸 | `cols`、`rows`、`size()` | 获取宽、高；`cols` 是宽，`rows` 是高 |
+| 查询像素格式 | `channels()`、`type()` | 区分彩色输入与灰度、二值中间图 |
+| 复制数据 | `clone()`、`copyTo()` | 需要独立修改时复制像素，详见 1.3 |
+| 访问像素 | `at<T>()`、`ptr<T>()` | 读取像素值，详见 1.4 |
+| 提取局部图像 | `operator()(Rect)` | 取得 ROI，详见 1.5 |
+
+
+赛场原始彩色帧通常是 `CV_8UC3`：`8U` 表示每个通道是 8 位无符号整数，`C3` 表示三个通道；经过灰度化或二值化后，常见结果是 `CV_8UC1`。OpenCV 彩色图默认按 BGR 排列，通道含义会在第 2 章展开。
+```cpp
+std::cout << image.cols << " × " << image.rows << '\n';
+std::cout << image.channels() << " channels\n";
+if (image.type() == CV_8UC3) {
+    std::cout << "8-bit, 3-channel image\n";
+}
+```
+
+`process` 是本文统一使用的处理接口：它接收一帧图像，不复制输入，并返回供观察的结果图像。中间步骤可以另建灰度图、二值图或绘图副本：
+
+```cpp
+cv::Mat process(const cv::Mat& image)
+{
+    // 在这里处理 image，并返回要显示的图像。
+}
+```
+
+
+
+### 1.3 矩阵共享与独立复制
+
+给 `cv::Mat` 赋值通常只复制矩阵头，像素数据仍由多个对象共享。因此，修改共享矩阵中的像素也会影响其他对象看到的内容。需要保留原始输入或安全地修改副本时，用 `clone()` 或 `copyTo()` 复制像素数据：
+
+```cpp
+cv::Mat shared = image;
+cv::Mat independent = image.clone();
+cv::Mat copied;
+image.copyTo(copied);
+```
+
+`copyTo(destination)` 也会复制像素；目标矩阵尺寸或类型不匹配时，OpenCV 会按源矩阵重新分配目标空间。ROI 默认共享原图数据，相关行为会在 1.5 裁剪时继续用到。
+
+下面的实验练习为后续修改准备独立副本。参考代码使用 `clone()`；也可以在编辑器中用 `copyTo()` 改写返回逻辑。
+
+<OpenCVLab client:visible moduleId="mat" />
+
+### 1.4 像素坐标与访问
+
+图像坐标从左上角 `(0, 0)` 开始，`x` 向右、`y` 向下。`Mat::at<T>(row, col)` 的两个整数参数按“行、列”排列，所以访问坐标 `(x, y)` 时要写成 `image.at<T>(y, x)`。若传入 `cv::Point`，点的构造顺序仍是 `(x, y)`：
+
+```cpp
+const int x = image.cols / 2;
+const int y = image.rows / 2;
+const cv::Point point{x, y};
+const cv::Vec3b bgr = image.at<cv::Vec3b>(point);
+```
+
+`CV_8UC3` 像素可用 `cv::Vec3b` 表示；它的 `[0]`、`[1]`、`[2]` 分别对应 B、G、R。逐行访问大量像素时也可以用 `ptr<T>(row)` 取得该行首地址，再按列索引；灯条颜色统计会用轮廓点和 `at()` 读取原图像素。
+
+
+<OpenCVMatInspector client:visible />
+
+### 1.5 ROI 裁剪与坐标还原
+
+ROI（Region of Interest）用矩形从图像中取出局部视图，可用于单独观察候选灯条或减少后续计算。`Rect` 参数依次是左上角 `x`、`y`、宽和高；有效矩形需满足 `x >= 0`、`y >= 0`、`x + width <= image.cols` 和 `y + height <= image.rows`。ROI 默认与原图共享像素数据，需要独立处理时再调用 `clone()`：
+
+```cpp
+const cv::Rect roi(x, y, width, height);
+const cv::Mat view = image(roi);
+const cv::Mat crop = view.clone();
+```
+
+ROI 内的点以 ROI 左上角为原点。要把 ROI 中的位置还原到原图，应加上 ROI 的左上角坐标：`pointInImage = roi.tl() + pointInRoi`。轮廓提取时也可以把偏移量直接交给 `findContours`；具体代码留在轮廓章节，因为那时才会用到轮廓点集。
+
+### 1.6 图像缩放与像素参数
+
+`resize` 可以按比例缩小图像。缩小彩色图像时，`INTER_AREA` 通常适合重采样；宽、高按同一比例缩小可以保持装甲板形状。缩放会改变灯条的像素长度、间距和轮廓面积，相关阈值需要重新验证：
+
+```cpp
+cv::Mat halfSize;
+cv::resize(image, halfSize, {}, 0.5, 0.5, cv::INTER_AREA);
+```
+
+比较中心区域裁剪与半尺寸图像，观察远处灯条在缩放后还剩多少像素，以及像素阈值为什么不能直接照搬。
+
+<OpenCVLab client:visible moduleId="roi-resize" />
+
+## 2. BGR 颜色通道
+
+BGR 通道把每个彩色像素表示为蓝、绿、红三个响应值，明确通道顺序后才能正确完成颜色提取与目标筛选。`CV_8UC3` 中的 `C3` 表示每个像素有三个通道；OpenCV 默认按 **B、G、R** 排列，而不是网页里常见的 RGB。`split` 可以把三个通道拆成三张单通道图：
+
+```cpp
+std::vector<cv::Mat> channels;
+cv::split(image, channels);
+cv::Mat blue = channels[0];
+cv::Mat green = channels[1];
+cv::Mat red = channels[2];
+```
+
+单独查看蓝色通道时，蓝方灯条会很亮，但受蓝紫色环境光照亮的墙面同样会增强。这提前揭示了一条重要原则：**单个像素条件只负责产生候选，不能独自证明目标存在。**  所以在后面的章节中，我们会从候选区域中提取轮廓，并结合形状、几何关系与颜色逐步筛选，最终找出更可信的目标。
+
+<OpenCVLab client:visible moduleId="channels" />
+
+## 3. 图像滤波
+
+图像滤波根据像素邻域重新估计像素值，用于在保留目标结构的同时抑制噪声，为后续阈值分割提供更稳定的输入。
+
+### 3.1 邻域处理与尺度选择
+
+邻域处理通过滑动窗口汇总周围像素，用局部信息降低单个像素波动对检测结果的影响。数字图像既是画面，也是二维离散信号；设像素值为 $f(x, y)$，滤波器读取当前位置周围的一小块邻域，再计算新的输出 $g(x, y)$。可以把它想成一个在图像上逐像素滑动的小窗口：窗口中的像素按某种规则“投票”，决定中心像素的新值。
+
+装甲板画面中的细碎变化主要来自三处：相机传感器的读出与散粒噪声、视频压缩和量化误差，以及地面反光、墙面纹理等真实环境细节。它们在原图里可能只相差几个灰度级，但经过阈值化后会被突然分成纯黑或纯白，继而形成大量小连通域和伪轮廓。滤波放在阈值化之前，就是为了让这些不稳定的小尺度变化先被削弱。
+
+滤波并不是“越模糊越好”。它实际表达的是一个尺度假设：**比卷积核小很多的变化更可能是噪声，比卷积核大的连续结构更值得保留。** 核太小，噪声仍在；核太大，远处灯条也会被抹宽、变暗，甚至与相邻区域粘连。
+
+### 3.2 二维离散卷积
+
+二维离散卷积用邻域像素的加权求和描述线性滤波，是理解均值滤波与高斯滤波参数作用的统一数学框架。对半径为 $r$ 的核，它们逐通道执行：
+
+$$
+g(x,y)=\sum_{i=-r}^{r}\sum_{j=-r}^{r}K(i,j)f(x-i,y-j),
+\qquad \sum_{i,j}K(i,j)=1.
+$$
+
+$K(i,j)$ 是窗口内每个位置的权重。权重之和设为 1，是为了让均匀区域在滤波前后保持大致相同的亮度。对彩色图像，OpenCV 会分别处理 B、G、R 三个通道。
+
+均值滤波给窗口内所有像素相同权重。以 $k \times k$ 的方形核为例：
+
+$$
+K_{\text{mean}}=\frac{1}{k^2}
+\begin{bmatrix}
+1 & \cdots & 1\\
+\vdots & \ddots & \vdots\\
+1 & \cdots & 1
+\end{bmatrix}.
+$$
+
+它计算便宜，但边缘两侧的像素会被一视同仁地混合，因此轮廓容易变宽。高斯滤波则让离中心越近的像素权重越大，连续形式为：
+
+$$
+G(i,j)=\frac{1}{2\pi\sigma^2}
+\exp\left(-\frac{i^2+j^2}{2\sigma^2}\right),
+\qquad K(i,j)=\frac{G(i,j)}{\sum G}.
+$$
+
+$\sigma$ 控制权重随距离衰减的速度：$\sigma$ 小时只轻微平滑中心附近，$\sigma$ 大时更远的像素也会参与平均。与均值核相比，高斯权重从中心向外平滑衰减，通常能得到更自然、位置偏移更小的平滑结果，因此常被用作阈值化、边缘检测之前的默认预处理。
+
+### 3.3 常用滤波方法
+
+常用滤波方法通过不同的邻域统计规则处理不同类型的噪声；在前述线性卷积之外，非线性方法还能针对异常像素或强边缘保留特定结构。
+
+| 方法 | 数学类型 | 邻域规则 | 擅长处理 | 主要代价 |
+| --- | --- | --- | --- | --- |
+| 均值滤波 | 线性低通 | 所有像素等权平均 | 普通随机噪声，快速预览 | 边缘和亮点一起被抹宽 |
+| 高斯滤波 | 线性低通 | 距中心越近权重越大 | 连续的小幅噪声，通用预处理 | 大核仍会削弱细灯条 |
+| 中值滤波 | 非线性次序统计 | 取邻域像素的中位数 | 椒盐噪声、孤立亮点 | 大核会吞掉细小结构，速度较慢 |
+| 双边滤波 | 非线性保边滤波 | 同时考虑空间距离和颜色差 | 既要降噪又想保住强边缘 | 计算更贵，对参数敏感 |
+
+中值滤波不是卷积，它直接对邻域排序：
+
+$$
+g(x,y)=\operatorname{median}\{f(x+i,y+j)\mid(i,j)\in\Omega\}.
+$$
+
+因此一个极亮或极暗的异常像素通常不会改变中位数。双边滤波则把“离得近”和“颜色相似”同时写进权重：
+
+$$
+g(p)=\frac{1}{W_p}\sum_{q\in\Omega}
+\exp\left(-\frac{\lVert p-q\rVert^2}{2\sigma_s^2}\right)
+\exp\left(-\frac{\lVert I_p-I_q\rVert^2}{2\sigma_r^2}\right)I_q.
+$$
+
+其中 $\sigma_s$ 控制空间邻域，$\sigma_r$ 控制跨越颜色差异的程度，$W_p$ 用来把权重归一化。强边缘两侧颜色差大，互相获得的权重会很低，所以边缘比普通卷积更容易保留。
+
+![同一装甲板区域经过均值、高斯、中值和双边滤波后的对比，以及高斯滤波移除细节的放大图](/media/images/opencv/filter-comparison.png)
+
+*同一原图裁剪区域、相同显示尺度下的比较。最后一幅把原图与高斯结果的绝对差放大 4 倍；亮处表示滤波移除较多的信息，可以看到它主要集中在数字、灯条、车体和墙面纹理的边缘。*
+
+<OpenCVLab client:visible moduleId="filters" />
+
+### 3.4 高斯滤波的参数选择
+
+高斯滤波以较低计算量抑制连续的小幅噪声，是本检测链在实时性与边缘保留之间的折中。这里不把计算更重的双边滤波作为默认方案：
+
+```cpp
+cv::Mat blurred;
+cv::GaussianBlur(image, blurred, {9, 9}, 0);
+```
+
+`{9, 9}` 是核宽和核高。它们使用正奇数尺寸，使窗口拥有唯一的中心像素；最后一个 `0` 表示让 OpenCV 根据核尺寸推导 $\sigma$。实验使用较大的 `9 × 9`，是为了让变化便于肉眼观察；后续完整检测链只使用保守的 `3 × 3`，避免细灯条明显变暗或边缘位置漂移。
+
+参数本身也是实验的一部分：依次尝试 `3 × 3`、`9 × 9` 和 `15 × 15`，不要只比较哪张图“更干净”，还要检查灯条宽度、亮度和间距是否仍足以支撑后面的轮廓与配对。
+
+<OpenCVLab client:visible moduleId="gaussian-params" />
+
+## 4. 灰度化与二值化
+
+经过滤波后，灰度化把多个颜色通道压缩为单一亮度值，二值化再按阈值生成黑白候选区域，从而降低后续形状分析的输入复杂度。这个过程会丢失颜色信息，也可能把背景中的高亮部分一并保留下来。
+
+传统检测器并不一开始就理解“灯条”。它先把三个颜色通道压缩为一个亮度通道：
+
+```cpp
+cv::Mat gray;
+cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
+```
+
+灰度化会丢掉颜色，却保留明暗结构。接着用阈值把连续的 0–255 切成黑白两类：
+
+```cpp
+cv::Mat binary;
+cv::threshold(gray, binary, 150, 255, cv::THRESH_BINARY);
+```
+
+当灰度值大于阈值，输出像素设为 255；否则设为 0。阈值并不是放之四海而皆准的常数，它会受到曝光、增益、环境灯光和反射影响。对固定图片实测，`120` 会保留过多墙面和数字笔画，`180` 又开始丢失较弱目标，因此后续链路选 `150` 作为起点。
+
+注意原图中的数字、墙面灯带和地面反光同样很亮。二值化只能产生候选区域，无法独自完成识别。
+
+在本地排查检测结果时，也可以临时保存这一阶段的二值图：`cv::imwrite("debug-binary.png", binary);`
+
+<OpenCVLab client:visible moduleId="threshold" />
+
+## 5. 形态学开运算
+
+形态学通过结构元素在局部邻域内处理二值图。结构元素是用于定义邻域形状与范围的模板。
+
+对二值前景集合 $A$ 和结构元素 $B$，**腐蚀**定义为：
+
+$$
+A\ominus B=\{x\mid B_x\subseteq A\}.
+$$
+
+只有当以 $x$ 平移后的整个结构元素都落在前景内时，输出位置 $x$ 才属于前景；因此腐蚀会收缩白色区域并去掉无法容纳结构元素的细小凸起。
+
+**膨胀**定义为：
+
+$$
+A\oplus B=\{x\mid (\hat B)_x\cap A\ne\varnothing\}.
+$$
+
+其中 $\hat B$ 是关于原点反射的结构元素。只要平移后的结构元素与前景有交集，输出位置就属于前景；因此膨胀会扩展白色区域，可填补小间隙并连接邻近区域。开运算是先腐蚀、再膨胀，适合去除放不下结构元素的小型亮部和孤立噪声，同时尽量恢复较大目标的原有尺寸。
+
+> 与开运算相对，**闭运算**先膨胀、再腐蚀，通常用于填补前景中的小孔洞和窄缝、连接距离较近的亮部，同时尽量保留目标整体轮廓。
+
+```cpp
+const auto kernel = cv::getStructuringElement(cv::MORPH_RECT, {3, 3});
+cv::morphologyEx(binary, binary, cv::MORPH_OPEN, kernel);
+```
+
+结构元素就是“噪声尺寸”的假设。`3 × 3` 只清理很小的碎点，`7 × 7` 会更激进，也可能抹掉远处装甲板的细灯条。这里不追求一眼看上去最干净，而要保住后续仍然有价值的形状。
+
+<OpenCVLab client:visible moduleId="morphology" />
+
+## 6. 轮廓与旋转矩形
+
+轮廓提取把二值图中的连通白色边界转换为点集，使候选区域能够被测量、筛选和绘制。经过形态学清理后，`findContours` 将像素网格整理为几何对象：
+
+```cpp
+std::vector<std::vector<cv::Point>> contours;
+cv::findContours(
+    binary,
+    contours,
+    cv::RETR_EXTERNAL,
+    cv::CHAIN_APPROX_NONE
+);
+```
+
+这里只取最外层轮廓。对于每组轮廓点，`minAreaRect` 会寻找能够包住它的最小旋转矩形。与普通水平矩形相比，它能描述倾斜灯条的中心、长短边和角度。
+
+```cpp
+const cv::RotatedRect rect = cv::minAreaRect(contour);
+const float length = std::max(rect.size.width, rect.size.height);
+const float width = std::min(rect.size.width, rect.size.height);
+```
+
+非常小的轮廓往往来自噪声。先用 `contourArea` 去掉它们，可以减少后续几何计算和误检。为了检查矩形是否贴合灯条，可取出它的四个角点并画在原图副本上：
+
+```cpp
+cv::Mat drawing = image.clone();
+cv::Point2f corners[4];
+rect.points(corners);
+for (int i = 0; i < 4; ++i) {
+    cv::line(drawing, corners[i], corners[(i + 1) % 4], {0, 255, 0}, 2);
+}
+```
+
+ROI 内的轮廓点默认以 ROI 左上角为原点。若要让 `findContours` 输出可直接用于原图绘制的坐标，可把 ROI 起点作为偏移量传入：
+
+```cpp
+cv::findContours(binary, contours, cv::RETR_EXTERNAL,
+                 cv::CHAIN_APPROX_NONE, roi.tl());
+```
+
+<OpenCVLab client:visible moduleId="contours" />
+
+## 7. 灯条几何与颜色筛选
+
+灯条筛选结合轮廓的几何比例、方向和颜色响应，排除数字笔画、场地标识与反光产生的伪候选。上一节得到的高亮矩形只是可测量对象，还需要逐层加入约束。
+
+最基础的几何条件包括：
+
+- 最短边不能为零；
+- 长边必须达到最小像素长度；
+- 长宽比需要位于合理区间，而不是只有下限；
+- 长轴相对竖直方向的偏角不能过大；
+- 颜色差异必须足够明显，不能把每个白色区域强行分成红或蓝。
+
+下面先在轮廓循环中加入几何筛选。最小外接旋转矩形提供长、短边；四个角点则用于求长轴相对竖直方向的倾角：
+
+```cpp
+for (const auto& contour : contours) {
+    // 面积太小的轮廓通常是孤立噪声，先跳过。
+    if (cv::contourArea(contour) < 20) continue;
+
+    const cv::RotatedRect rect = cv::minAreaRect(contour);
+    const float length = std::max(rect.size.width, rect.size.height);
+    const float width = std::min(rect.size.width, rect.size.height);
+    // 短边为零时无法计算长宽比，跳过这个退化矩形。
+    if (width <= 0.0f) continue;
+    const float ratio = length / width;
+
+    cv::Point2f corners[4];
+    rect.points(corners);
+    const auto edge0 = corners[1] - corners[0];
+    const auto edge1 = corners[2] - corners[1];
+    const auto longAxis = cv::norm(edge0) > cv::norm(edge1) ? edge0 : edge1;
+    const float angle = std::atan2(std::abs(longAxis.x), std::abs(longAxis.y))
+                      * 180.0f / CV_PI;
+
+    // 长边不足最小像素长度时，通常无法作为有效灯条。
+    if (length <= 8.0f) continue;
+    // 长宽比过小的轮廓不够细长，不像灯条。
+    if (ratio <= 1.8f) continue;
+    // 长宽比过大通常是极细的噪声线，也排除。
+    if (ratio >= 15.0f) continue;
+    // 倾角过大时，轮廓方向不符合近似竖直灯条的假设。
+    if (angle >= 35.0f) continue;
+
+    // 通过几何筛选后，再检查这个候选的颜色。
+}
+```
+
+这里的 `ratio` 是长边与短边之比，`angle` 是长轴偏离竖直方向的角度。面积、长度、长宽比和角度阈值只是当前固定图像上的起点；逐项放宽或收紧时，要观察哪些背景候选被去掉、哪些细小或倾斜的真实灯条也随之丢失。
+
+通过几何筛选后，再回到原始 BGR 图像判断颜色。这里沿轮廓点累加红蓝通道，并把通道差归一化为颜色置信度：
+
+```cpp
+double blueSum = 0.0;
+double redSum = 0.0;
+for (const cv::Point point : contour) {
+    const cv::Vec3b bgr = image.at<cv::Vec3b>(point);
+    blueSum += bgr[0];
+    redSum += bgr[2];
+}
+
+const double confidence =
+    std::abs(redSum - blueSum) / (redSum + blueSum + 1.0);
+if (confidence < 0.08) continue;
+```
+
+这里 `point` 是 `(x, y)` 坐标，`bgr` 的下标顺序是蓝、绿、红。轮廓从二值图中提取，颜色值则回到原始彩色图上读取。
+
+单看轮廓与颜色仍会把标识和墙面亮线混进来，所以实验 9 只绘制能找到同色伙伴、且长度、间距、纵向位置与倾角关系合理的候选灯条；实验 10 再把这些灯条组合成装甲板框。这些数值是固定样本上的调参起点，换相机或视角后需要重新验证。
+
+<OpenCVLab client:visible moduleId="lightbars" />
+
+## 8. 装甲板灯条配对
+
+灯条配对通过检查两根候选灯条的尺寸、位置和方向关系，将单个局部特征组合为装甲板候选。把筛选后的灯条从左到右排序，再为左右候选检查相对关系：
+
+- 两根灯条的长度应当接近；
+- 中心纵向差相对于平均灯条长度不能过大；
+- 横向距离应落在平均灯条长度的合理倍数内；
+- 两根灯条的方向应当一致。
+
+假设前面已经完成单根灯条筛选，`left` 和 `right` 是两根同色候选，且代码位于遍历候选灯条对的循环中。四项条件可以分别写成：
+
+```cpp
+const float averageLength = (left.length + right.length) / 2.0f;
+
+// 1. 长度差过大时，不像同一块装甲板的左右灯条。
+const float lengthRatio =
+    std::max(left.length, right.length) / std::min(left.length, right.length);
+if (lengthRatio > 1.4f) continue;
+
+// 2. 两根灯条中心的纵向差，不能超过平均长度的四分之一。
+const float yDifferenceRatio =
+    std::abs(left.rect.center.y - right.rect.center.y) / averageLength;
+if (yDifferenceRatio > 0.25f) continue;
+
+// 3. 横向间距应为平均灯条长度的 1.5 到 4 倍。
+const float distanceRatio =
+    std::abs(left.rect.center.x - right.rect.center.x) / averageLength;
+if (distanceRatio < 1.5f || distanceRatio > 4.0f) continue;
+
+// 4. 两根灯条的倾角差不能超过 10 度。
+const float angleDifference = std::abs(left.angle - right.angle);
+if (angleDifference > 10.0f) continue;
+```
+
+这些比例应尽量以灯条长度为尺度，而不是写死绝对像素。这样目标远近变化时，约束仍具有一定稳定性。
+
+本节只框出几何候选装甲板。正式工程还会进行数字分类、置信度过滤、共用灯条去重、四点修正与 `solvePnP` 位姿解算。
+
+<OpenCVLab client:visible moduleId="pairing" />

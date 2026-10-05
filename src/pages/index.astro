@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import FlowTicker from '../components/FlowTicker.astro'
-import PostCard from '../components/PostCard.astro'
 import CoffeeEditorialCard from '../components/CoffeeEditorialCard.astro'
 import ParticleTitle from '../components/physics/ParticleTitle'
 import KineticPostGrid from '../components/physics/KineticPostGrid'
@@ -11,7 +10,7 @@ import { SPACE_META } from '../lib/site'
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-const featuredPosts = posts.slice(0, 3)
+const featuredPosts = posts.filter((post) => post.data.space === 'coffee').slice(0, 3)
 const featuredIds = new Set(featuredPosts.map((post) => post.id))
 const recent = posts.filter((post) => !featuredIds.has(post.id)).slice(0, 6)
 const recentKinetic = recent.map((post) => ({
@@ -60,9 +59,7 @@ const spaces = Object.entries(SPACE_META).map(([space, meta], index) => ({
       <div class="section-heading"><div class="section-title-stack"><span class="eyebrow">FEATURED / 01</span><h2 class="script-section-title">So?</h2></div></div>
       <div class="featured-post-list">
         {featuredPosts.map((post, index) => (
-          post.data.space === 'coffee'
-            ? <CoffeeEditorialCard post={post} eager={index === 0} />
-            : <PostCard post={post} featured />
+          <CoffeeEditorialCard post={post} eager={index === 0} />
         ))}
       </div>
     </section>

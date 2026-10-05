@@ -1,0 +1,526 @@
+---
+title: "RoboMaster 装甲板 YOLO-Pose 训练与推理"
+description: "从 Ubuntu 环境和数据检查开始，使用 Ultralytics YOLO26n-Pose 完成装甲板四角点训练、验证与 Python 图片/视频推理。"
+date: "2026-10-05"
+space: article
+series: "从零开始的 RoboMaster 神经网络教程"
+tags: ["robomaster", "yolo", "pose", "computer-vision"]
+lang: zh-CN
+draft: false
+featured: false
+---
+
+本篇直接从 YOLO-Pose 项目开始，我们要完成一条实际流程：
+
+```text
+Ubuntu 环境 → 检查装甲板数据 → 配置 Pose 标签 → 训练 YOLO26n-Pose
+→ 查看验证结果 → 对图片和视频推理
+```
+
+下面用四个角点定位 RoboMaster 装甲板。
+
+## 1. 在 Ubuntu 准备训练环境
+
+本文以 2026 年 10 月的 Python 3.12、PyTorch 2.14.1、TorchVision 0.29.1 和 Ultralytics 8.4.172 为参考。[PyTorch 2.14.1 发布说明](https://dev-discuss.pytorch.org/t/pytorch-2-14-1-general-availability/3455)列出了对应的 TorchVision 版本，[Ultralytics 8.4.172](https://pypi.org/project/ultralytics/8.4.172/)是本文示例使用的包版本。PyTorch 的 CPU 与 CUDA 安装包不同；CUDA 版本还要适配 NVIDIA 显卡和驱动。安装前可用 `nvidia-smi` 查看显卡和驱动，再到 [PyTorch 官方安装选择器](https://pytorch.org/get-started/locally/)选择 Linux、Pip、Python 和对应计算平台。
+
+先建立单独的 Python 虚拟环境：
+
+~~~bash
+sudo apt update
+sudo apt install python3-venv
+
+mkdir -p ~/robomaster-yolo-pose
+cd ~/robomaster-yolo-pose
+
+python3 --version
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+~~~
+
+建议使用 Python 3.12；PyTorch 2.14.1 支持 Python 3.10 及以上版本。每次重新打开终端继续训练时，都要先进入项目目录并激活 `.venv`。
+
+### CPU 训练环境
+
+没有 NVIDIA CUDA 环境时，安装 CPU 版本的 PyTorch：
+
+~~~bash
+python -m pip install torch==2.14.1 torchvision==0.29.1 \
+  --index-url https://download.pytorch.org/whl/cpu
+~~~
+
+### NVIDIA GPU / CUDA 训练环境
+
+如果使用 NVIDIA GPU，先确认驱动能够支持所选的 CUDA 构建。下面以 PyTorch 2.14.1 的 CUDA 13.2 wheel 为例：
+
+~~~bash
+python -m pip install torch==2.14.1 torchvision==0.29.1 \
+  --index-url https://download.pytorch.org/whl/cu132
+~~~
+
+如果当前显卡驱动不支持 CUDA 13.2，不要照抄这个索引地址，在 PyTorch 安装选择器里选一组兼容当前驱动的 PyTorch 和 CUDA 版本。CPU 版与 CUDA 版二选一，不要在同一个环境里来回覆盖安装。
+
+装好 PyTorch 后安装 Ultralytics：
+
+~~~bash
+python -m pip install ultralytics==8.4.172
+~~~
+
+用下面的命令核对 Python 包版本和 CUDA 是否可用：
+
+~~~bash
+python -c "import torch, torchvision, ultralytics; print('torch:', torch.__version__); print('torchvision:', torchvision.__version__); print('ultralytics:', ultralytics.__version__); print('CUDA available:', torch.cuda.is_available()); print('CUDA build:', torch.version.cuda)"
+~~~
+
+CPU 环境显示 `CUDA available: False` 是正常的。CUDA 环境如果仍是 `False`，先检查是否装成 CPU 版、驱动是否可用，再开始训练。[PyTorch 安装说明](https://pytorch.org/get-started/locally/)会随发行版本更新；重现旧实验时，保存当时的版本信息：
+
+~~~bash
+python -m pip freeze > requirements-installed.txt
+~~~
+
+## 2. 整理数据集
+
+YOLO 会按图片文件名寻找同名标签。训练集和验证集都要分别放图片和标签：
+
+~~~text
+datasets/armor_pose/
+├── images/
+│   ├── train/
+│   ├── val/
+│   └── test/       # 可选；最终检查时留出的独立数据
+└── labels/
+    ├── train/
+    ├── val/
+    └── test/
+~~~
+
+例如，`images/train/frame_001.jpg` 对应 `labels/train/frame_001.txt`。一张图片里的每个目标占标签文件一行；没有目标的背景图片也保留同名空标签文件。
+
+上面的 `labels/` 放本文 Pose 主线使用的 13 字段标签。如果手头已有每行 9 个数的四角点标签，可以直接改用 YOLO OBB 训练；只有继续使用本文的 Pose 模型时，才需要把 9 字段标签转换为 13 字段。两种任务使用各自的数据配置和模型，标签不要混放。
+
+划分数据时，按比赛、视频、录制日期或相机来源分组。同一段视频的相邻帧不要拆到训练集和验证集两边，否则两边画面过于相似，验证分数可能虚高。
+
+### 装甲板四角点标签
+
+四角点 Pose 的标签行包含类别编号、归一化边界框和四个归一化角点：
+
+~~~text
+类别编号 cx cy w h x1 y1 x2 y2 x3 y3 x4 y4
+~~~
+
+前五个数分别是类别编号、框中心横坐标、框中心纵坐标、框宽和框高；之后每两个数表示一个角点的横纵坐标。除类别编号外，这些坐标都相对于图片宽高归一化到 0 到 1。四点顺序必须对每个目标保持一致。本文沿用原数据约定：**1 左上、2 左下、3 右下、4 右上**，不是每一帧都重新按屏幕位置排序。
+
+下面是一条格式示例，共 13 个数。这里的类别编号 3 对应配置中的 B4（蓝方4号步兵）：
+
+~~~text
+3 0.50 0.50 0.16 0.12 0.42 0.44 0.42 0.56 0.58 0.56 0.58 0.44
+~~~
+
+Ultralytics 用 `kpt_shape: [关键点数, 坐标维度]` 描述 Pose 标签。四点只记录 x、y，所以配置是 `[4, 2]`，每行应有 `1 + 4 + 4 × 2 = 13` 个数。
+
+如果你的标注是常见的 9 字段格式：
+
+~~~text
+类别编号 x1 y1 x2 y2 x3 y3 x4 y4
+~~~
+
+这种 `类别编号 + 四角点坐标` 格式正好是 [Ultralytics OBB 标签格式](https://docs.ultralytics.com/datasets/obb/)，可以直接用 OBB 模型训练：
+
+为这套数据单独准备 `armor_obb.yaml`。`path`、`train`、`val` 和 `names` 按下文的数据配置填写；OBB 配置不写 `kpt_shape` 和 `flip_idx`。图片和标签仍按 `images/train`、`labels/train` 等对应目录放置。
+
+~~~python
+from ultralytics import YOLO
+
+model = YOLO("yolo26n-obb.pt")
+model.train(data="armor_obb.yaml", epochs=100, imgsz=640, batch=8, device=0)
+~~~
+
+图片推理时，四个角点可从 `result.obb.xyxyxyxy` 读取：
+
+~~~python
+result = model.predict("armor.jpg", imgsz=640, conf=0.25)[0]
+corners = result.obb.xyxyxyxy.cpu().tolist()
+~~~
+
+OBB 学习的是旋转框几何形状，不会保证四个输出点一直对应你定义的“左上、左下、右下、右上”；若后续要把点送给 PnP，先检查并处理角点顺序。
+
+本文后续仍以 Ultralytics Pose 为例，如果对OBB有兴趣可以自行研究。
+
+无论是什么格式，使用Pose还是OBB，都需要先对数据预处理。如果原始坐标是像素值，需要先对原始数据归一化到 `[0, 1]`，方法是除以图片宽、高。例如，图片宽为 1920、高为 1080，像素点 `(960, 540)` 归一化后为 `(0.5, 0.5)`：
+
+~~~python
+image_width = 1920
+image_height = 1080
+pixel_x, pixel_y = 960, 540
+
+normalized_x = pixel_x / image_width
+normalized_y = pixel_y / image_height
+print(normalized_x, normalized_y)  # 0.5 0.5
+~~~
+Pose 的四点二维格式需要 13 个字段，接下来我会给出OBB到Pose格式的转换脚本，脚本根据四个点算出最小轴对齐框，再按 `cls_id cx cy w h x1 y1 ... x4 y4` 的顺序写出 Pose 标签。
+
+例如，9 字段原始行中的四个角点范围为 `x: 0.42–0.58`、`y: 0.44–0.56`，转换后会补出中心 `(0.50, 0.50)`、宽 `0.16`、高 `0.12`：
+
+~~~text
+# 原始 9 字段：cls_id + 四组 x,y
+3 0.42 0.44 0.42 0.56 0.58 0.56 0.58 0.44
+
+# 转换后 13 字段：cls_id + cx cy w h + 原顺序的四组 x,y
+3 0.50 0.50 0.16 0.12 0.42 0.44 0.42 0.56 0.58 0.56 0.58 0.44
+~~~
+
+仅当你要把 9 字段标签转换给本文的 Pose 模型使用时，才运行这个脚本。将原始标签放到 `labels_9/train/` 和 `labels_9/val/`；`labels/` 是转换输出目录（具体的路径和名称根据实际情况而定）。若里面已有需要保留的标签，先备份，避免同名文件被覆盖。直接训练 OBB 时跳过此转换，并让 OBB 数据集使用原始 9 字段标签。原始 `labels_9/` 文件不会被修改。
+
+~~~python
+from pathlib import Path
+
+DATA_ROOT = Path("/home/your_name/robomaster-yolo-pose/datasets/armor_pose")
+SOURCE_ROOT = DATA_ROOT / "labels_9"  # 原始格式：类别编号 + 四个点
+OUTPUT_ROOT = DATA_ROOT / "labels"   # 输出 Ultralytics 所需的 13 字段格式
+
+for split in ("train", "val"):
+    source_dir = SOURCE_ROOT / split
+    output_dir = OUTPUT_ROOT / split
+    if not source_dir.is_dir():
+        raise FileNotFoundError(f"找不到原始标签目录：{source_dir}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    for source_path in sorted(source_dir.glob("*.txt")):
+        output_rows = []
+        for row_number, line in enumerate(source_path.read_text().splitlines(), 1):
+            if not line.strip():  # 空文件或空行表示这张图里没有目标
+                continue
+
+            values = [float(value) for value in line.split()]
+            if len(values) != 9:
+                raise ValueError(f"{source_path}:{row_number} 应有 9 个字段，实际 {len(values)} 个")
+            if not values[0].is_integer():
+                raise ValueError(f"{source_path}:{row_number} 的类别编号不是整数")
+
+            points = values[1:]  # x1,y1,...,x4,y4；顺序沿用标注定义
+            if not all(0.0 <= value <= 1.0 for value in points):
+                raise ValueError(f"{source_path}:{row_number} 的点坐标不在 0 到 1 之间")
+
+            xs = points[0::2]
+            ys = points[1::2]
+            x_min, x_max = min(xs), max(xs)
+            y_min, y_max = min(ys), max(ys)
+            box_w = x_max - x_min
+            box_h = y_max - y_min
+            if box_w <= 0 or box_h <= 0:
+                raise ValueError(f"{source_path}:{row_number} 的四点无法组成有效边界框")
+
+            box_cx = (x_min + x_max) / 2
+            box_cy = (y_min + y_max) / 2
+            # YOLO Pose 行 = 类别 + cx,cy,w,h + 原顺序的四组关键点坐标。
+            converted = [values[0], box_cx, box_cy, box_w, box_h, *points]
+            output_rows.append(" ".join(f"{value:.8f}".rstrip("0").rstrip(".") for value in converted))
+
+        output_path = output_dir / source_path.name
+        output_path.write_text("\n".join(output_rows) + ("\n" if output_rows else ""))
+
+print("已转换 9 字段四角点标签；接下来检查 labels/ 中的 13 字段训练标签。")
+~~~
+
+
+### 配置数据 YAML
+
+在项目目录创建 `armor_pose.yaml`。将 `path` 改为自己机器上的数据集根目录：
+
+~~~yaml
+path: /home/your_name/robomaster-yolo-pose/datasets/armor_pose
+train: images/train
+val: images/val
+# 有独立测试集时再启用这一项
+# test: images/test
+
+kpt_shape: [4, 2]
+flip_idx: [3, 2, 1, 0]
+
+names:
+  0: B1   # 蓝方 1 号英雄
+  1: B2   # 蓝方 2 号工程
+  2: B3   # 蓝方 3 号步兵
+  3: B4   # 蓝方 4 号步兵
+  4: BS   # 蓝方哨兵
+  5: BO   # 蓝方前哨站
+  6: BG   # 蓝方基地
+  7: R1   # 红方 1 号英雄
+  8: R2   # 红方 2 号工程
+  9: R3   # 红方 3 号步兵
+  10: R4  # 红方 4 号步兵
+  11: RS  # 红方哨兵
+  12: RO  # 红方前哨站
+  13: RG  # 红方基地
+~~~
+
+`names` 的编号必须与标签行首的类别编号一致。比如标签里的类别 `3` 会显示为 B4。删减或重排类别时，数据标签和 YAML 要一起改。
+
+`flip_idx` 描述水平翻转后各角点应映射到哪个编号。按“左上、左下、右下、右上”的编号，翻转映射为 `[3, 2, 1, 0]`。如果点的镜像关系配置错误，增强后的图像和标签就会互相矛盾；阅读不同开源时，如果自己的角点定义不同，应重新推导映射，不能照抄。
+
+下面的检查脚本针对 `labels/` 中已经转换好的 Ultralytics Pose 标签：它检查图片与标签是否对应、类别是否越界、四点二维行是否有 13 个字段，以及坐标是否归一化。将 `DATA_ROOT` 改成自己的数据集路径：
+
+~~~python
+from pathlib import Path
+
+DATA_ROOT = Path("/home/your_name/robomaster-yolo-pose/datasets/armor_pose")
+CLASS_NAMES = [
+    "B1", "B2", "B3", "B4", "BS", "BO", "BG",
+    "R1", "R2", "R3", "R4", "RS", "RO", "RG",
+]
+KEYPOINT_COUNT = 4
+KEYPOINT_DIMS = 2
+IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp"}
+
+for split in ("train", "val"):
+    images_dir = DATA_ROOT / "images" / split
+    labels_dir = DATA_ROOT / "labels" / split
+
+    if not images_dir.is_dir() or not labels_dir.is_dir():
+        raise FileNotFoundError(f"{split} 的 images 或 labels 目录不存在")
+
+    image_stems = {
+        path.stem
+        for path in images_dir.iterdir()
+        if path.is_file() and path.suffix.lower() in IMAGE_SUFFIXES
+    }
+    label_stems = {path.stem for path in labels_dir.glob("*.txt")}
+
+    missing_labels = sorted(image_stems - label_stems)
+    orphan_labels = sorted(label_stems - image_stems)
+    problems = []
+    class_counts = [0] * len(CLASS_NAMES)
+    expected_fields = 1 + 4 + KEYPOINT_COUNT * KEYPOINT_DIMS
+
+    for label_path in labels_dir.glob("*.txt"):
+        for row_number, line in enumerate(label_path.read_text().splitlines(), 1):
+            if not line.strip():  # 空文件可表示没有目标的背景图
+                continue
+
+            try:
+                values = [float(value) for value in line.split()]
+            except ValueError:
+                problems.append((label_path.name, row_number, "存在非数字字段"))
+                continue
+
+            if len(values) != expected_fields:
+                problems.append(
+                    (label_path.name, row_number, f"应有 {expected_fields} 个字段，实际 {len(values)} 个")
+                )
+                continue
+
+            if not values[0].is_integer():
+                problems.append((label_path.name, row_number, "类别编号不是整数"))
+                continue
+
+            class_id = int(values[0])
+            if not 0 <= class_id < len(CLASS_NAMES):
+                problems.append((label_path.name, row_number, "类别编号越界"))
+                continue
+
+            class_counts[class_id] += 1
+
+            # 检查框的 4 个归一化值，以及每个关键点的 x、y。
+            # 若 KEYPOINT_DIMS=3，第三个值是可见性，不参与坐标范围检查。
+            coordinates = values[1:5]
+            for start in range(5, len(values), KEYPOINT_DIMS):
+                coordinates.extend(values[start : start + 2])
+
+            if not all(0.0 <= value <= 1.0 for value in coordinates):
+                problems.append((label_path.name, row_number, "框或关键点坐标超出 0 到 1"))
+
+    print(f"\n[{split}] 图片 {len(image_stems)}，标签 {len(label_stems)}")
+    print("缺少标签文件:", missing_labels[:5])
+    print("没有对应图片的标签:", orphan_labels[:5])
+    print("格式或坐标问题:", problems[:5])
+    print("各类别目标数:", dict(zip(CLASS_NAMES, class_counts)))
+
+    if missing_labels or orphan_labels or problems:
+        print("先处理以上结构问题，再开始训练。")
+~~~
+
+这个脚本只检查文件名和标签结构，不能判断框是否贴合目标、角点顺序是否正确。抽查标注时，要对照图片确认四点语义和边界框；类别分布也要查看，避免训练集中某些类别远多于其他类别。
+
+## 3. 训练 YOLO26n-Pose
+
+Ultralytics 负责读取数据、批量增强、执行前向计算和参数更新，并在训练过程中使用 YAML 里的验证集。我们不需要自己写 PyTorch 训练循环，因为YOLO官方已经封装好了。这里从官方的 YOLO26n Pose 预训练权重开始，再让它适配装甲板的类别和四个角点，Pose 权重初始面向人体关键点，不能直接当作装甲板识别结果使用。[YOLO26 Pose 训练文档](https://docs.ultralytics.com/tasks/pose/)给出了同一套 Python API。
+
+将下面代码保存为 `train.py`：
+
+~~~python
+from pathlib import Path
+
+import torch
+from ultralytics import YOLO
+
+ROOT = Path(__file__).resolve().parent
+DATA_YAML = ROOT / "armor_pose.yaml"
+DEVICE = 0 if torch.cuda.is_available() else "cpu"
+
+
+def main():
+    if not DATA_YAML.is_file():
+        raise FileNotFoundError(f"找不到数据配置：{DATA_YAML}")
+
+    print("训练设备：", "CUDA GPU 0" if DEVICE == 0 else "CPU")
+
+    # 加载预训练 Pose 权重，训练接口会按 armor_pose.yaml 适配自定义类别和关键点。
+    # 首次运行会下载官方权重文件，确保训练机可以访问模型下载地址。
+    model = YOLO("yolo26n-pose.pt")
+
+    model.train(
+        data=str(DATA_YAML),              # 训练集、验证集、类别和关键点配置
+        epochs=100,                        # 最多训练 100 轮
+        imgsz=640,                         # 输入图像边长
+        batch=4,                           # 每批图片数；显存不足时先调小
+        device=DEVICE,                     # 0 表示第一张 NVIDIA GPU，cpu 表示 CPU
+        workers=4,                         # 数据加载进程数；遇到加载问题可设为 0
+        patience=30,                       # 验证表现连续 30 轮未改善时提前停止
+        seed=42,                           # 固定随机种子，便于复现实验设置
+        project=str(ROOT / "runs" / "robomaster"),
+        name="armor_pose_yolo26n",
+    )
+
+
+if __name__ == "__main__":
+    main()
+~~~
+
+执行训练：
+
+~~~bash
+source .venv/bin/activate
+python train.py
+~~~
+
+先理解几项会直接影响运行的参数：
+
+| 参数 | 作用 | 调参指南 |
+| --- | --- | --- |
+| `data` | 指向数据集 YAML，决定训练集、验证集、类别和关键点格式 | 路径、类别映射和 `kpt_shape` 正确性 |
+| `epochs` | 训练轮数上限；每轮遍历一次训练集 | 训练时间与验证表现 |
+| `imgsz` | 训练时的目标输入尺寸 | 小装甲板多时可评估更大尺寸，同时会增加计算和显存 |
+| `batch` | 每个批次的图片数 | CUDA 显存不足先减小，CPU 训练也可调小但仍会较慢 |
+| `device` | 选择计算设备 | 有可用 CUDA 时用 `0`；纯 CPU 环境用 `"cpu"` |
+| `workers` | 并行读取数据的进程数 | 如果初次运行遇到数据加载问题，先设为 0 |
+
+`epochs=100` 是上限，不代表一定训练满 100 轮；验证集长期没有改善时，`patience` 会让训练提前停止。CPU 可以用同一份脚本跑通流程，但训练会明显慢于合适的 NVIDIA GPU。CUDA OOM （爆显存）时先降低 `batch`，仍不够再降低 `imgsz`。
+
+每轮训练都会生成训练损失和验证指标。输出通常在 `runs/robomaster/armor_pose_yolo26n/` 下，包括：
+
+- `weights/best.pt`：验证表现较好的训练权重，后续优先用它验证和推理。
+- `weights/last.pt`：最后一轮保存的权重，可用于继续训练。
+- `results.csv`、`results.png`：逐轮指标记录和训练曲线。
+- 验证预测图：用于直观看框和关键点有没有落在正确位置。
+
+如果同名运行目录已经存在，Ultralytics 可能自动增加目录编号。以控制台打印的实际保存路径为准，后续推理时也要使用那个目录下的 `best.pt`。
+
+## 4. 验证训练结果
+
+训练脚本默认按 `armor_pose.yaml` 的验证集计算指标。装甲板任务要同时看目标框和关键点结果：框的指标不错，不代表四个角点也定位准确。
+
+也可以单独加载训练得到的 `best.pt` 再验证一次：
+
+~~~python
+from pathlib import Path
+
+import torch
+from ultralytics import YOLO
+
+ROOT = Path(__file__).resolve().parent
+DATA_YAML = ROOT / "armor_pose.yaml"
+WEIGHTS = ROOT / "runs" / "robomaster" / "armor_pose_yolo26n" / "weights" / "best.pt"
+DEVICE = 0 if torch.cuda.is_available() else "cpu"
+
+model = YOLO(str(WEIGHTS))
+metrics = model.val(data=str(DATA_YAML), device=DEVICE)
+
+print("框 mAP50-95:", metrics.box.map)
+print("框 mAP50:", metrics.box.map50)
+print("关键点 mAP50-95:", metrics.pose.map)
+print("关键点 mAP50:", metrics.pose.map50)
+~~~
+
+这里的 `metrics.box` 衡量目标框，`metrics.pose` 衡量关键点。mAP 是汇总指标，适合比较同一验证集上的模型；它不能替代逐图检查。重点看远距离小装甲板、运动模糊、遮挡和强反光样本。验证样本与训练视频相邻帧太相似时，分数也可能偏乐观。
+
+若有独立测试集，等模型和参数选定后再用它作最后检查，不要反复根据测试结果调参。[Ultralytics Pose 验证结果](https://docs.ultralytics.com/tasks/pose/)列出了框和关键点各自的 mAP 属性。
+
+## 5. 对单张图片推理
+
+训练完成后，推理时不需要标注。把图片传给模型，Ultralytics 返回每张图片对应的 `Results` 对象。目标框、类别和角点从这个对象中读取。
+
+将路径替换成自己的图片，并确认权重路径对应实际训练输出：
+
+~~~python
+from pathlib import Path
+
+import torch
+from ultralytics import YOLO
+
+ROOT = Path(__file__).resolve().parent
+WEIGHTS = ROOT / "runs" / "robomaster" / "armor_pose_yolo26n" / "weights" / "best.pt"
+IMAGE = ROOT / "samples" / "armor_frame.jpg"
+DEVICE = 0 if torch.cuda.is_available() else "cpu"
+
+model = YOLO(str(WEIGHTS))
+results = model.predict(
+    source=str(IMAGE),
+    imgsz=640,
+    conf=0.25,
+    device=DEVICE,
+    save=True,
+    verbose=False,
+)
+
+result = results[0]  # 这次输入只有一张图，取第一个结果对象
+
+for index in range(len(result.boxes)):
+    class_id = int(result.boxes.cls[index].item())
+    confidence = float(result.boxes.conf[index].item())
+    box_xyxy = result.boxes.xyxy[index].cpu().tolist()
+    corners_xy = result.keypoints.xy[index].cpu().tolist()
+
+    print("类别:", result.names[class_id])
+    print("目标置信度:", round(confidence, 3))
+    print("边界框 xyxy:", box_xyxy)
+    print("四角点像素坐标:", corners_xy)
+~~~
+
+`conf=0.25` 是目标置信度阈值，低于它的候选会被过滤。调低阈值通常会留下更多候选，也可能增加误检；要在验证图片和比赛视频上观察后再定。
+
+`result.boxes.xyxy` 给出每个目标的像素边界框，格式为左上角与右下角坐标；`result.keypoints.xy` 给出原始图片坐标系中的角点像素坐标。若后续模块需要 0 到 1 的归一化坐标，可读 `result.keypoints.xyn`。类别编号通过 `result.names` 转成 YAML 中的名字。以上是 Python 侧的预测结果；相机坐标、PnP 位姿和机器人端 C++ 接入属于后续工作。
+
+设置 `save=True` 后，预测可视化图会保存到 Ultralytics 的预测输出目录。若想让程序读取预测并自行处理，继续使用 `result.boxes` 和 `result.keypoints`，不要从绘制后的图像反向读取坐标。[Ultralytics Pose 预测结果](https://docs.ultralytics.com/tasks/pose/)说明了 `xy`、`xyn` 和 `Results` 的结构。
+
+## 6. 对视频逐帧推理
+
+视频是连续的图片。开启 `stream=True` 后，预测结果按帧逐个返回，不会一次把整段视频的所有结果都留在内存里：
+
+~~~python
+from pathlib import Path
+
+import torch
+from ultralytics import YOLO
+
+ROOT = Path(__file__).resolve().parent
+WEIGHTS = ROOT / "runs" / "robomaster" / "armor_pose_yolo26n" / "weights" / "best.pt"
+VIDEO = ROOT / "samples" / "match_clip.mp4"
+DEVICE = 0 if torch.cuda.is_available() else "cpu"
+
+model = YOLO(str(WEIGHTS))
+
+for frame_index, result in enumerate(
+    model.predict(
+        source=str(VIDEO),
+        imgsz=640,
+        conf=0.25,
+        device=DEVICE,
+        stream=True,
+        save=True,
+        verbose=False,
+    )
+):
+    print(f"第 {frame_index} 帧：检测到 {len(result.boxes)} 个装甲板")
+~~~
+
+每次循环拿到当前帧的 `Results`，读取框和四角点的方式与单图示例相同。这里是离线视频文件推理；实时相机采集、结果时序和 C++ 接入不在本篇范围内。[Ultralytics 预测模式](https://docs.ultralytics.com/modes/predict/)支持图片、视频、目录和摄像头等输入。

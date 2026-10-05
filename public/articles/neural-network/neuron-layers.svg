@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+<title id="title">神经网络的输入层、隐藏层和输出层</title>
+<desc id="desc">一个全连接前馈神经网络示意图：4个输入节点连接到两个隐藏层，最后连到3个输出节点。每个节点表示一个神经元，连线表示可学习的权重。</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+    <path d="M0,0 L10,5 L0,10 z" fill="#71849b"/>
+  </marker>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #18304b; }
+    .title { font-size: 29px; font-weight: 700; }
+    .sub { font-size: 16px; fill: #61738a; }
+    .layer { font-size: 19px; font-weight: 700; }
+    .count { font-size: 14px; fill: #61738a; }
+    .node-label { font-size: 16px; font-weight: 600; }
+    .note { font-size: 15px; fill: #40556d; }
+    .formula { font-size: 21px; font-weight: 600; }
+  </style>
+</defs>
+<rect width="1200" height="700" rx="22" fill="#f7f9fc"/>
+<text x="600" y="43" text-anchor="middle" class="title">从输入层到输出层：神经网络如何逐层计算</text>
+<text x="600" y="72" text-anchor="middle" class="sub">每个圆点是一个神经元；每条连线代表可学习的权重；数据和中间结果从左向右传递</text>
+<line x1="140" y1="105" x2="1050" y2="105" stroke="#71849b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="595" y="98" text-anchor="middle" class="count">前向传播方向</text>
+
+<line x1="130" y1="155" x2="430" y2="130" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="155" x2="430" y2="197" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="155" x2="430" y2="264" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="155" x2="430" y2="331" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="155" x2="430" y2="398" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="235" x2="430" y2="130" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="235" x2="430" y2="197" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="235" x2="430" y2="264" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="235" x2="430" y2="331" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="235" x2="430" y2="398" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="315" x2="430" y2="130" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="315" x2="430" y2="197" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="315" x2="430" y2="264" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="315" x2="430" y2="331" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="315" x2="430" y2="398" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="395" x2="430" y2="130" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="395" x2="430" y2="197" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="395" x2="430" y2="264" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="395" x2="430" y2="331" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="130" y1="395" x2="430" y2="398" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="130" x2="750" y2="155" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="130" x2="750" y2="235" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="130" x2="750" y2="315" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="130" x2="750" y2="395" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="197" x2="750" y2="155" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="197" x2="750" y2="235" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="197" x2="750" y2="315" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="197" x2="750" y2="395" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="264" x2="750" y2="155" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="264" x2="750" y2="235" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="264" x2="750" y2="315" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="264" x2="750" y2="395" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="331" x2="750" y2="155" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="331" x2="750" y2="235" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="331" x2="750" y2="315" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="331" x2="750" y2="395" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="398" x2="750" y2="155" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="398" x2="750" y2="235" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="398" x2="750" y2="315" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="430" y1="398" x2="750" y2="395" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="155" x2="1060" y2="185" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="155" x2="1060" y2="275" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="155" x2="1060" y2="365" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="235" x2="1060" y2="185" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="235" x2="1060" y2="275" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="235" x2="1060" y2="365" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="315" x2="1060" y2="185" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="315" x2="1060" y2="275" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="315" x2="1060" y2="365" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="395" x2="1060" y2="185" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="395" x2="1060" y2="275" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<line x1="750" y1="395" x2="1060" y2="365" stroke="#aebdce" stroke-width="1.35" opacity="0.76"/>
+<circle cx="130" cy="155" r="23" fill="#eff6ff" stroke="#4f83cc" stroke-width="2.5"/>
+<text x="130" y="160" text-anchor="middle" class="node-label">x₁</text>
+<circle cx="130" cy="235" r="23" fill="#eff6ff" stroke="#4f83cc" stroke-width="2.5"/>
+<text x="130" y="240" text-anchor="middle" class="node-label">x₂</text>
+<circle cx="130" cy="315" r="23" fill="#eff6ff" stroke="#4f83cc" stroke-width="2.5"/>
+<text x="130" y="320" text-anchor="middle" class="node-label">x₃</text>
+<circle cx="130" cy="395" r="23" fill="#eff6ff" stroke="#4f83cc" stroke-width="2.5"/>
+<text x="130" y="400" text-anchor="middle" class="node-label">x₄</text>
+<text x="130" y="452" text-anchor="middle" class="layer">输入层</text>
+<text x="130" y="474" text-anchor="middle" class="count">4 个示意节点</text>
+<circle cx="430" cy="130" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="430" y="135" text-anchor="middle" class="node-label">h₁</text>
+<circle cx="430" cy="197" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="430" y="202" text-anchor="middle" class="node-label">h₂</text>
+<circle cx="430" cy="264" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="430" y="269" text-anchor="middle" class="node-label">h₃</text>
+<circle cx="430" cy="331" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="430" y="336" text-anchor="middle" class="node-label">h₄</text>
+<circle cx="430" cy="398" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="430" y="403" text-anchor="middle" class="node-label">h₅</text>
+<text x="430" y="452" text-anchor="middle" class="layer">隐藏层 1</text>
+<text x="430" y="474" text-anchor="middle" class="count">5 个示意节点</text>
+<circle cx="750" cy="155" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="750" y="160" text-anchor="middle" class="node-label">h₁</text>
+<circle cx="750" cy="235" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="750" y="240" text-anchor="middle" class="node-label">h₂</text>
+<circle cx="750" cy="315" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="750" y="320" text-anchor="middle" class="node-label">h₃</text>
+<circle cx="750" cy="395" r="23" fill="#f3f0ff" stroke="#8067c8" stroke-width="2.5"/>
+<text x="750" y="400" text-anchor="middle" class="node-label">h₄</text>
+<text x="750" y="452" text-anchor="middle" class="layer">隐藏层 2</text>
+<text x="750" y="474" text-anchor="middle" class="count">4 个示意节点</text>
+<circle cx="1060" cy="185" r="23" fill="#ecfdf5" stroke="#3d9b76" stroke-width="2.5"/>
+<text x="1060" y="190" text-anchor="middle" class="node-label">ŷ₁</text>
+<circle cx="1060" cy="275" r="23" fill="#ecfdf5" stroke="#3d9b76" stroke-width="2.5"/>
+<text x="1060" y="280" text-anchor="middle" class="node-label">ŷ₂</text>
+<circle cx="1060" cy="365" r="23" fill="#ecfdf5" stroke="#3d9b76" stroke-width="2.5"/>
+<text x="1060" y="370" text-anchor="middle" class="node-label">ŷ₃</text>
+<text x="1060" y="452" text-anchor="middle" class="layer">输出层</text>
+<text x="1060" y="474" text-anchor="middle" class="count">3 个示意节点</text>
+<rect x="55" y="500" width="350" height="54" rx="13" fill="#eff6ff" stroke="#4f83cc" stroke-width="1.4"/>
+<text x="230" y="523" text-anchor="middle" class="layer" style="font-size:16px">输入层</text>
+<text x="230" y="543" text-anchor="middle" class="count">接收图像或数值特征</text>
+<rect x="425" y="500" width="350" height="54" rx="13" fill="#f3f0ff" stroke="#8067c8" stroke-width="1.4"/>
+<text x="600" y="523" text-anchor="middle" class="layer" style="font-size:16px">隐藏层</text>
+<text x="600" y="543" text-anchor="middle" class="count">加权求和后经过激活函数</text>
+<rect x="795" y="500" width="350" height="54" rx="13" fill="#ecfdf5" stroke="#3d9b76" stroke-width="1.4"/>
+<text x="970" y="523" text-anchor="middle" class="layer" style="font-size:16px">输出层</text>
+<text x="970" y="543" text-anchor="middle" class="count">给出类别、坐标或关键点</text>
+<rect x="125" y="579" width="950" height="65" rx="14" fill="#ffffff" stroke="#d3deea" stroke-width="1.5"/>
+<text x="600" y="608" text-anchor="middle" class="formula">单个神经元： z = w₁x₁ + w₂x₂ + … + b　 →　 h = f(z)</text>
+<text x="600" y="630" text-anchor="middle" class="count">实际网络的层数、每层神经元数量和连接方式由具体模型决定；此图展示全连接结构</text>
+</svg>

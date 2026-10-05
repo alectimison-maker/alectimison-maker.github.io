@@ -1,0 +1,1177 @@
+---
+title: "神经网络基础"
+description: "以 RoboMaster 自瞄视觉为主线，从监督学习、神经网络与 CNN 原理，走到 YOLO-Pose 数据训练、模型评估、剪枝和部署。"
+date: "2026-09-26"
+space: article
+series: "从零开始的 RoboMaster 神经网络教程"
+tags: ["robomaster", "neural-network", "deep-learning", "yolo", "computer-vision"]
+lang: zh-CN
+draft: false
+featured: false
+---
+
+## 神经网络之于自瞄系统
+
+```Plain Text
+相机采图 → 图像预处理 → 神经网络推理 → 装甲板目标筛选 → PnP 位姿解算 → 目标跟踪与预测 → 云台控制 → 发射决策
+```
+但不只是装甲板检测，神经网络可以根据具体任务输出类别、边界框或关键点等不同形式的结果，也能在合适的数据和模型支持下识别多种目标，这取决于我们在训练一个神经网络模型时输入的数据格式。
+
+比如，你甚至可以做一个超级复杂的格式（但一般训练效果极差，这是我们之前做的一个兑矿工具的自动标注，不是训练后结果）。
+
+![兑矿工具自动标注示例](/articles/neural-network/complex-auto-label-preview.jpg)
+
+先直观了解一下神经网络模型识别的效果（图中的数字为置信度）：
+
+- 反无人机：
+
+![image.png](/articles/neural-network/anti-uav-point-detection.jpg)
+
+- 打符：
+
+![image.png](/articles/neural-network/rune-pose-detections.jpg)
+
+![image.png](/articles/neural-network/rune-keypoint-geometry.png)
+
+- 装甲板：
+
+![image.png](/articles/neural-network/armor-labeling-ui.jpg)
+
+
+## 1. RoboMaster 视觉系统与神经网络
+
+![神经网络知识关系图：从任务数据、模型训练与评估，到优化部署和 RoboMaster 系统集成](/articles/neural-network/neural-network-knowledge-map.svg)
+
+图中知识关系覆盖任务定义、数据标注、学习方式、网络结构、前向计算、反向传播、泛化评估、模型迭代与部署优化。RoboMaster 装甲板、大符和反无人机任务具有不同的输出形式；模型结果还需经过坐标变换、几何解算，并接入机器人控制模块。
+
+---
+
+## 2. 机器学习基础
+
+传统程序识别装甲板通常依赖人工设计的颜色、形状和几何规则。机器学习则通过输入样本及其对应答案，让模型从数据中学习输入到输出的映射；神经网络的内部结构见下一节。
+
+不同机器学习方法的区别，在于训练时能拿到什么信号：
+
+| 学习方式 | 训练信号 | 例子 |
+| --- | --- | --- |
+| 监督学习 | 每个样本都有人工标注的答案 | RoboMaster 装甲板图像及其类别、框和角点标注 |
+| 半监督学习 | 少量有标签样本加大量无标签样本 | 用少量标注的医疗影像配合大量未标注影像训练 |
+| 自监督学习 | 从数据本身构造学习目标 | 从无标签图片学习图像表示，或让语言模型预测被遮住的词 |
+| 无监督学习 | 不提供人工答案，寻找数据结构 | 科研中，研究者可以根据肿瘤样本的基因表达特征聚类，探索可能的分子亚型。 |
+| 强化学习 | 根据动作后的奖励学习策略 | 根据动作后的奖励学习策略，例如机械臂通过抓取成功或失败的反馈，逐步学会如何调整动作。 |
+
+RoboMaster 的目标检测与关键点感知主要采用**监督学习**：标签就是模型要学习的目标。
+
+### 从输入和标签定义任务
+
+同一张图像可以对应不同学习任务，区别在于模型输出和标签表示：
+
+| 任务 | 输入 | 标签 | RM示例 |
+| --- | --- | --- | --- |
+| 分类 | 装甲板裁剪图 | 一个类别 | 判断是哪一种装甲板 |
+| 回归 | 图像或目标特征 | 连续数值 | 预测图像中的位置或尺寸 |
+| 目标检测 | 完整图像 | 多个目标的类别与边界框 | 找到画面中的所有装甲板 |
+| 关键点 / Pose | 完整图像 | 目标框、类别和有固定语义的点 | 定位装甲板四角 |
+
+数据集中的每张图片都需要与任务匹配的标签。改变输出任务通常也要同步调整标注格式和模型输出内容。
+
+数据按用途分成训练集、验证集和测试集：训练集用于学习，验证集用于比较训练设置和选择模型，测试集留到最后做独立检查。
+
+---
+
+## 3. 神经网络的基本框架
+
+### 神经元
+
+人工神经元是神经网络中的一个计算单元，不是对生物神经元的完整模拟。它接收一组数值，计算后产生一个输出；多个神经元组成一层，前一层的输出可以传给下一层。
+
+全连接前馈网络由输入层、隐藏层和输出层构成：输入层接收数据，隐藏层逐层计算，输出层给出任务结果。
+
+![全连接前馈神经网络的层级示意图：输入层、两个隐藏层和输出层](/articles/neural-network/neuron-layers.svg)
+
+图中每个圆点代表一个神经元，连线代表相邻层之间的连接。层中节点数为示意值，实际网络会按任务选择层数和宽度。
+
+当多个神经元按层连接，前一层的输出传给后一层，就构成多层网络。最基础的一种叫**多层感知机**（Multilayer Perceptron，MLP）：输入经过一个或多个隐藏层，最后由输出层给出预测，相邻层通常全连接。后面将学到的 CNN 也由神经元层组成，但使用局部连接和共享权重来处理图像。
+
+### 权重和偏置
+
+神经元会把各个输入按不同的权重相乘后求和，再加上偏置：
+
+$$
+z=\mathbf{w}^T\mathbf{x}+b
+=\sum_{i=1}^{n}w_i x_i+b
+$$
+
+其中 **xᵢ** 是第 i 个输入特征，**wᵢ** 是对应的权重，**b** 是偏置，**z** 是加权结果。
+
+训练会调整权重和偏置。在输入特征尺度相近时，权重的正负表示该特征会把 **z** 推高还是压低，绝对值越大通常表示它对 **z** 的影响越强；偏置则整体平移 **z**，改变神经元开始响应的输入范围。
+
+
+### 激活函数
+
+加权结果 **z** 还要经过激活函数 **f**，形成神经元输出
+
+$$
+h=f(z)
+$$
+
+激活函数的关键作用是加入非线性：如果每层只做线性变换，那么不管叠多少层，整体仍等价于一次线性变换，难以表达复杂的决策边界。
+
+常见激活函数及使用场景如下：
+
+ | 函数 | 理解 | 常用场景 |
+| --- | --- | --- |
+| ReLU：max(0, z) | 负数变成 0，正数不变 | 神经网络的隐藏层 |  |
+| LeakyReLU | 负数缩小后保留，正数不变 | 希望负数也能影响后续计算时 |  |
+| SiLU / Swish：z·σ(z) | 平滑地处理正数和负数 | YOLO 等视觉网络 |  |
+| GELU | 平滑地调整输入大小 | Transformer 隐藏层 |  |
+| Sigmoid：1/(1+e⁻ᶻ) | 把数值变成 0 到 1 之间 | 二分类输出、LSTM 的开关 |  |
+| Tanh | 把数值变成 -1 到 1 之间 | RNN、LSTM 等处理连续数据的网络 |  |
+| Softmax | 把多个分数变成总和为 1 的概率 | 从多个互斥类别中选一个 |  |
+| 线性 / Identity | 数值原样输出，不限制范围 | 预测坐标、距离等数值 |  | |
+
+对应本文 RoboMaster 实例：
+- 红蓝二分类小模型在输出端使用 Sigmoid，得到红方概率；
+- CNN 在隐藏层使用 ReLU；
+- 装甲板 Ultralytics YOLO-Pose 的卷积模块使用 SiLU。YOLO-Pose 的框和关键点由任务头按模型格式输出，训练框架负责配套的损失计算与解码，不需要手动再加 Softmax。
+
+一层里的多个神经元会并行计算，权重可以排成矩阵 **W**，偏置可以排成向量 **b**：
+
+$$
+\mathbf{h}^{(l)}=f\left(W^{(l)}\mathbf{h}^{(l-1)}+\mathbf{b}^{(l)}\right)
+$$
+
+其中 **h⁽ˡ⁻¹⁾** 是上一层的输出，**h⁽ˡ⁾** 是当前层的输出。实际训练时，通常沿用网络结构默认的激活函数；随意替换会改变模型行为和梯度。
+
+### 前向传播和反向传播
+
+前向传播是输入经过各层计算并产生预测的过程。
+
+模型预测与正确答案之间的差异由损失函数衡量，损失函数在不同类别任务中的选择不同。
+
+回归常用均方误差：
+
+$$
+L_{MSE}=\frac{1}{N}\sum_{i=1}^{N}(y_i-\hat{y}_i)^2
+$$
+
+二分类常用交叉熵：
+
+$$
+L_{BCE}=-\frac{1}{N}\sum_{i=1}^{N}\left[y_i\log(p_i)+(1-y_i)\log(1-p_i)\right]
+$$
+
+反向传播依据链式法则，计算每个参数对损失的影响，优化器再用梯度调整参数。
+
+> **优化器**是一类根据梯度更新模型参数的算法，负责把反向传播得到的梯度转化为具体的更新步长和方向。
+>
+> 常见类别包括但不限于：
+>  - 以固定学习率更新参数的随机梯度下降（SGD）
+>  - 根据梯度历史自适应调整步长的动量法
+>  - RMSprop
+>  - Adam
+>  - 将权重衰减与梯度更新解耦的AdamW
+>
+> 选择优化器时还需设置学习率等超参数，并结合验证表现比较效果。
+
+梯度下降的一般形式是：
+
+$$
+\theta_{t+1}=\theta_t-\eta\nabla_\theta L
+$$
+
+其中 **η** 是学习率。它与每批样本数 batch size、训练轮数 epoch 一样，属于训练前设置的超参数。学习率过大可能让损失震荡，过小则训练很慢。
+
+以 $z = wx + b$、$y = f(z)$ 为例，链式法则把损失对参数的影响逐层传回：
+
+$$
+\frac{\partial L}{\partial w}
+=\frac{\partial L}{\partial y}
+ \frac{\partial y}{\partial z}
+ \frac{\partial z}{\partial w}
+$$
+
+训练流程由前向计算、损失评估、反向传播和参数更新构成：
+
+![神经网络训练流程：输入图像与真实标签经过前向计算、损失评估和反向传播，由优化器更新参数](/articles/neural-network/nn-training-loop.png)
+
+以下 NumPy 代码用红色和蓝色平均亮度作为两个简化特征，展示单个 Sigmoid 神经元如何完成二分类及参数更新。
+
+真实视觉网络直接处理整张图像张量，梯度通常由 PyTorch 自动计算。
+
+~~~python
+import numpy as np
+
+# 每行是 [红色平均亮度, 蓝色平均亮度]；1 表示红方，0 表示蓝方
+x = np.array([
+    [0.90, 0.10], [0.75, 0.20],
+    [0.12, 0.88], [0.22, 0.78],
+], dtype=np.float32)
+y = np.array([[1.0], [1.0], [0.0], [0.0]], dtype=np.float32)
+
+w = np.zeros((2, 1), dtype=np.float32) #权重
+b = np.zeros((1,), dtype=np.float32) #偏置
+learning_rate = 0.5
+
+for step in range(500):
+    logits = x @ w + b
+    probability = 1.0 / (1.0 + np.exp(-logits))
+    error = probability - y
+
+    # Sigmoid 与二元交叉熵组合后的梯度
+    grad_w = x.T @ error / len(x)
+    grad_b = error.mean(axis=0)
+    w -= learning_rate * grad_w #更新权重
+    b -= learning_rate * grad_b #更新偏置
+
+probability = 1.0 / (1.0 + np.exp(-(x @ w + b)))
+safe_probability = np.clip(probability, 1e-7, 1.0 - 1e-7)
+loss = -(y * np.log(safe_probability) + (1 - y) * np.log(1 - safe_probability)).mean()
+predicted_class = (probability >= 0.5).astype(np.int32)
+print("二元交叉熵：", round(float(loss), 4))
+print("预测为红方的概率：", probability.round(2).ravel())
+print("预测类别：", predicted_class.ravel())
+~~~
+
+训练后，红方样本的预测概率升高，蓝方样本的预测概率降低。
+
+**损失**用于训练时优化参数， **指标**用于评价模型效果。
+
+### 神经网络发展脉络
+
+神经网络的发展经历了从人工神经元、感知机，到多层网络训练方法、专用网络结构，再到深度学习、注意力机制与生成模型等阶段。
+
+![神经网络发展脉络图，按 S 形时间顺序展示从 1943 年人工神经元到 2020 年扩散模型的 16 个代表性节点，每行四个](/articles/neural-network/nn-history-timeline.png)
+
+这些节点展示的是发展脉络，不表示新方法会取代旧方法：CNN、RNN、GNN 和 Transformer 描述不同的网络结构或信息处理方式，GAN 与扩散模型关注生成任务，许多方法至今仍在并行使用，也可以组合。
+
+Transformer 的核心机制之一是自注意力，它让不同位置的特征相互参考；介绍完 CNN 后，再看这种机制如何与卷积网络组合。
+
+后续内容将继续介绍 CNN 和 PyTorch 训练实践，再结合RM视觉介绍目标检测、Pose、模型评估、模型剪枝与部署，其他结构和生成方法作为扩展内容简要说明。
+
+---
+
+## 4. 卷积神经网络 CNN
+
+[![LeNet-5 CNN 结构：卷积、下采样（池化）、全连接与输出层](/articles/neural-network/lenet5-1998-fig2.png)](https://doi.org/10.1109/5.726791)
+
+CNN 的层通常包括输入层、卷积层、激活层、池化层（或步长卷积）和输出层；具体网络还可能包含全连接层等。
+
+CNN 将图像输入卷积层，利用局部连接和共享权重提取特征，再通过激活函数引入非线性；池化层或步长卷积逐步缩小特征图，多层计算将简单特征组合成更复杂的表示，最后由输出层完成具体任务。
+
+如图LeNet-5 是一个经典的卷积神经网络模型，最初用于识别手写数字。图中它先用卷积和下采样提取特征，再通过全连接层输出 0 到 9 共 10 个数字类别。RoboMaster 装甲板任务还需要定位目标和关键点，后续会介绍 YOLO-Pose 如何使用检测头输出这些结果。
+
+### 图像张量
+
+一张彩色图像可以表示成 `C × H × W` 张量：`C` 是颜色通道，`H` 是高度，`W` 是宽度。训练时通常再加批次维度，变成 `B × C × H × W`。OpenCV 读出的常是 `H × W × C` 且通道顺序为 BGR；PyTorch 图像模型常用 `B × C × H × W` 与 RGB，需要在预处理时转换。
+
+下面示例将 OpenCV 读取的 BGR 图像转成 RGB，再调整维度并添加批次维度，得到 PyTorch 常用的输入形状：
+
+```python
+import cv2
+import torch
+
+image = cv2.imread("frame.jpg")  # H × W × C，BGR
+if image is None:
+    raise FileNotFoundError("frame.jpg")
+
+image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+tensor = torch.from_numpy(image_rgb).permute(2, 0, 1).float() / 255.0
+batch = tensor.unsqueeze(0)  # B × C × H × W
+print(batch.shape)
+```
+
+### 卷积核和特征图
+
+**卷积**可以想象成用一个小窗口在图像上逐格扫描：每到一个位置，就把窗口覆盖的像素与卷积核对应的权重逐项相乘并加起来，得到新图上的一个数；所有位置算完后，就形成一张**特征图**。
+[![Fukushima 1980, Neocognitron, Fig. 3](/articles/neural-network/fukushima-1980-neocognitron-fig3.png)](https://doi.org/10.1007/BF00344251)
+小窗口里的权重叫**卷积核**，由训练数据学习。训练出的卷积核可能对局部边缘、明暗变化或纹理响应较强，网络再把这些简单响应组合成更复杂的特征。
+
+同一个卷积核会在图像不同位置重复使用，这称为**共享参数**。可以把它想成拿同一个小模板检查整张图：无论装甲板出现在画面哪边，网络都能寻找相似的局部特征。这样通常比让每个像素都单独连接到大量神经元所需的权重少。
+
+
+二维卷积的简化形式是：
+
+$$
+Y(i,j)=\sum_m\sum_n X(i+m,j+n)K(m,n)
+$$
+
+卷积输出的空间尺寸由输入 `H`、卷积核 `K`、填充 `P` 和步长 `S` 决定：
+
+$$
+H_{out}=\left\lfloor\frac{H+2P-K}{S}\right\rfloor+1
+$$
+
+宽度同理。步长大于 1 时，输出尺寸会缩小，这叫**下采样**。
+
+>**下采样**是降低特征图宽度和高度的操作。
+>
+> 例如，将 64 × 64 的特征图缩小到 32 × 32，可减少后续层的计算量，并让每个特征位置对应输入图像中更大的区域。它会压缩空间细节，因此网络通常会结合不同分辨率的特征来兼顾细节与上下文。
+
+```python
+import torch
+import torch.nn as nn
+
+# 创建形状为 [批次, 通道, 高度, 宽度] 的随机输入张量
+x = torch.randn(1, 3, 64, 64)  # batch=1, RGB, 64×64
+# 定义二维卷积：3 个输入通道、16 个输出通道，3×3 卷积核，步长为 1，边缘补 1 像素
+conv = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1)
+# 将输入传入卷积层，得到输出特征图
+y = conv(x)
+print(y.shape)  # [1, 16, 64, 64]：批次为 1，输出通道为 16，空间尺寸保持 64×64
+```
+
+### 特征层级、池化和残差连接
+
+浅层特征通常响应边缘和方向，中间层组合局部结构，深层特征更接近目标部件和类别语义。
+
+池化是一种对特征图局部区域进行汇总的下采样操作，可缩小空间尺寸、减少后续计算。最大池化保留局部最大响应，平均池化计算局部均值。现代网络也常用步长卷积下采样。
+
+深层网络可以使用残差连接：
+
+$$
+y=F(x)+x
+$$
+
+它将输入直接加到某一层的输出上，让信息和梯度更容易传过深层网络。
+
+对 RoboMaster 图像来说，多层卷积从局部灯条纹理逐渐组合成装甲板结构；远近目标尺寸差异大，因此检测网络还要利用不同分辨率的特征。
+
+```python
+class SmallCNN(nn.Module):
+    def __init__(self, num_classes=14):
+        super().__init__()
+        self.features = nn.Sequential(
+            # 卷积层提取特征，ReLU 激活，最大池化层下采样。
+            nn.Conv2d(3, 32, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
+            # 卷积层增加特征通道，ReLU 激活，最大池化层再次下采样。
+            nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(), nn.MaxPool2d(2),
+            # 卷积层提取更高层特征，ReLU 激活。
+            nn.Conv2d(64, 128, 3, padding=1), nn.ReLU(),
+            # 自适应平均池化层将每个通道的特征图汇总为 1×1。
+            nn.AdaptiveAvgPool2d(1),
+        )
+        # 全连接输出层：将 128 维特征映射为 num_classes 个类别分数。
+        self.head = nn.Linear(128, num_classes)
+
+    def forward(self, x):
+        # 特征提取层：依次执行卷积、激活、池化和全局平均池化。
+        x = self.features(x)
+        # 展平空间维度后输入全连接输出层，得到各类别分数。
+        return self.head(torch.flatten(x, 1))
+```
+
+这个分类网络用于理解 CNN 的组成，不是最终装甲板检测器。它只对整张裁剪图给一个类别，不能同时输出多个目标框。
+
+网络某一层的一个特征值对应输入图像上的一片区域，这片区域叫**感受野**。层数增加、步长下采样后，深层特征能“看到”更大的图像范围。检测器需要不同尺寸的特征图：高分辨率有利于小目标定位，低分辨率能整合更大范围的上下文。
+
+以 `Conv2d(3, 16, 3)` 为例，不计偏置时参数数目是 `3 × 16 × 3 × 3 = 432`；若加偏置再多 16 个。卷积输出的 16 个通道是模型学出的特征，不等同于 RGB 的三个颜色通道。
+
+### 自注意力、Transformer 与 CNN
+
+CNN 和 Transformer 是两类网络架构，**自注意力**则是一种可以放进网络的计算机制。
+
+CNN 主要用卷积核在局部区域提取特征，通过多层计算逐步扩大感受野；原始 Transformer 以自注意力为核心，让每个位置按输入内容参考其他位置的信息，并配合前馈网络等结构。两者也可以组合：在以卷积为主的模型中加入自注意力，但这并不会让整个模型变成 Transformer。本文使用的 YOLO26 Pose 就在卷积结构中加入了 `C2PSA` 自注意力模块。
+
+下图为 Vaswani 的论文《Attention Is All You Need》提出的 Transformer 架构，左侧是编码器：输入经过嵌入和位置编码，再由重复的多头自注意力、前馈网络处理。右侧是解码器：先用掩码自注意力处理已生成的内容，再参考编码器输出，最后经线性层和 Softmax 得到输出概率。图中的 `Add & Norm` 表示残差连接与归一化。本文的 YOLO26 Pose 使用其中的自注意力机制，不采用图中的完整编码器—解码器结构。
+
+[![Vaswani 等在 2017 年提出的 Transformer 编码器—解码器结构，原论文图 1](/articles/neural-network/vaswani-2017-transformer-fig1.png)](https://papers.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf)
+
+
+---
+
+## 5. PyTorch 基础与训练循环
+
+PyTorch 是一个开源的深度学习框架，用它可以构建和训练神经网络，并把模型部署到不同计算设备上。神经网络训练需要反复计算预测误差并调整参数，PyTorch 能自动求梯度，简化这一过程。
+
+PyTorch 的 Tensor 和 NumPy 数组相似，但可以记录计算过程、自动求梯度，也可以运行在 CPU 或支持的加速设备上。`nn.Module` 定义网络，`Dataset` 提供样本，`DataLoader` 负责分批和打乱数据。
+
+PyTorch 的安装包应与操作系统和计算设备匹配；CUDA、Apple Silicon 和纯 CPU 环境所需的版本不同，具体选项见[官方安装选择器](https://pytorch.org/get-started/locally/)。
+
+```python
+import torch
+from torch import nn
+from torch.utils.data import DataLoader, TensorDataset
+
+# 两维输入特征和二分类标签，只用于演示训练流程
+x = torch.tensor([
+    [0.90, 0.10], [0.75, 0.20], [0.12, 0.88], [0.22, 0.78],
+], dtype=torch.float32)
+y = torch.tensor([[1.0], [1.0], [0.0], [0.0]], dtype=torch.float32)
+# 将特征和标签配对，并按每批 2 个样本打乱顺序
+loader = DataLoader(TensorDataset(x, y), batch_size=2, shuffle=True)
+
+# 两个输入特征经 8 个隐藏神经元映射为一个二分类分数
+model = nn.Sequential(nn.Linear(2, 8), nn.ReLU(), nn.Linear(8, 1))
+# 直接接收 logits 的二元交叉熵损失，内部包含数值稳定的 Sigmoid
+criterion = nn.BCEWithLogitsLoss()
+# Adam 根据梯度更新模型参数，学习率为 0.03
+optimizer = torch.optim.Adam(model.parameters(), lr=0.03)
+
+# train() 切换到训练模式；Dropout、BatchNorm 等层会按训练方式工作
+model.train()
+# 每轮遍历所有小批次；200 轮让模型反复学习这些示例
+for epoch in range(200):
+    for xb, yb in loader:
+        # 前向计算，得到尚未经过 Sigmoid 的预测分数
+        logits = model(xb)
+        # 比较预测分数与真实标签，计算当前批次损失
+        loss = criterion(logits, yb)
+        # PyTorch 默认累加梯度；每批先清零，再反向传播并更新参数
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+# eval() 切换到评估模式；Dropout、BatchNorm 等层会按评估方式工作
+model.eval()
+# no_grad() 暂停梯度记录；Sigmoid 将分数转换为红方概率
+with torch.no_grad():
+    probabilities = torch.sigmoid(model(x)).squeeze(1)
+# 输出每个样本的预测概率，保留两位小数
+print(probabilities.round(decimals=2))
+```
+
+训练循环的顺序是：
+
+```text
+取一批数据
+  → 前向预测
+  → 计算 loss
+  → 清空旧梯度
+  → backward 计算新梯度
+  → optimizer.step 更新参数
+```
+
+数据与模型必须在同一设备上，例如都在 CPU 或都在 CUDA 设备上。
+
+真实图像任务的 `Dataset.__getitem__` 通常负责读图、转换通道、缩放并返回标签，`DataLoader` 再把多个样本组合成 batch。
+
+使用 YOLO 时，这些图像变换和标注解析由训练框架的数据管线处理，但排查错误时仍要理解它们。
+
+---
+
+## 6. 目标检测基础
+
+### 框
+
+目标检测既要判断类别，也要定位目标。边界框可以用两种方式表示：
+
+- `xyxy`：左上角 `(x1, y1)` 和右下角 `(x2, y2)`。
+- `xywh`：中心点 `(cx, cy)`、宽 `w` 和高 `h`。
+
+>值得注意的是，目前我们在装甲板识别中采用 YOLO-Pose 格式：一行包含类别编号、`cx, cy, w, h` 和四个角点的 `(x, y)` 坐标，共 13 个数，前五个数描述类别与边界框，后八个数描述四个关键点。四点需要按数据集规定的固定顺序排列。YOLO 标签中的框和关键点坐标都相对图片宽、高归一化到 `[0, 1]`。
+
+还原边界框的像素坐标时：
+
+```python
+left = (cx - box_w / 2) * image_width
+top = (cy - box_h / 2) * image_height
+right = (cx + box_w / 2) * image_width
+bottom = (cy + box_h / 2) * image_height
+```
+
+### IoU
+
+交并比（IoU）是交集面积除以并集面积，用于衡量预测框与真实框的重叠程度（数值越接近 1，重叠越多）：
+
+$$
+IoU(A,B)=\frac{|A\cap B|}{|A\cup B|}
+$$
+
+```python
+def iou_xyxy(a, b):
+    # a、b 均为 (x1, y1, x2, y2)
+    ix1, iy1 = max(a[0], b[0]), max(a[1], b[1])
+    ix2, iy2 = min(a[2], b[2]), min(a[3], b[3])
+    inter = max(0, ix2 - ix1) * max(0, iy2 - iy1)
+    area_a = max(0, a[2] - a[0]) * max(0, a[3] - a[1])
+    area_b = max(0, b[2] - b[0]) * max(0, b[3] - b[1])
+    union = area_a + area_b - inter
+    return inter / union if union > 0 else 0.0
+```
+
+### NMS
+
+一个目标可能产生多个相近的预测框。非极大值抑制（NMS）先按置信度从高到低排序，保留最高分框，再删除与它 IoU 过高的候选，继续处理剩余框。
+
+NMS 阈值和置信度阈值共同影响最终输出；其取值会改变漏检与误检，需要结合验证数据和实际视频评估。
+
+标签常用归一化中心点格式，推理接口常返回原图像素坐标的左上角和右下角。两种表示不能混用。归一化 `xywh` 转为像素 `xyxy` 的方式如下：
+
+```python
+def yolo_xywh_to_pixels(cx, cy, w, h, image_width, image_height):
+    cx, w = cx * image_width, w * image_width
+    cy, h = cy * image_height, h * image_height
+    return (cx - w / 2, cy - h / 2, cx + w / 2, cy + h / 2)
+```
+
+置信度阈值和 NMS 的 IoU 阈值作用不同：前者决定低分候选是否保留，后者决定两个重叠框是否视作重复。评估时还会用 IoU 将预测框与标注框匹配，达到指定阈值才记作正确检测。
+
+---
+
+## 7. YOLO
+
+### 总述
+
+YOLO 是 **You Only Look Once** 的缩写，最初指 2016 年提出的一种实时目标检测方法。它的核心思路是：把整张图像交给一个神经网络，在一次前向计算中直接预测目标的位置和类别，而不是先逐个提出候选区域、再分别分类。
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 2rem 0;">
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/everything-you-need-to-know-about-computer-vision-in-2025" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/684d85b9d27dff4ac910acb5_67ed5411c09a053b44f2e0dc_67dd82cd982f9235260435dc_Computer%252520Vision_FIG8.webp" alt="YOLO 道路交通监测示例，检测车辆和行人" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>道路交通监测</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/deploy-ultralytics-yolo-models-using-the-executorch-integration" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/690a1cd3dea5797dea17153b_ExecuTorch_fig3.webp" alt="YOLO 工业生产线包装检测示例" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>工业生产线检测</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/how-to-use-ultralytics-yolo11-for-pose-estimation" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/696fa005af48be7597527dd2_680a070c3b99253410dd477a_67ed561f9a7788252a7cc328_670cfc84618a1ca7287e7fdb_670cfb6f2ce2788b5bb7767c_YOLO11_PE_Fig3.png" alt="YOLO 姿态估计示例，用关节点和连线表示人体骨架" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>人体姿态：关键点与骨架</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/enhancing-hand-keypoints-estimation-with-ultralytics-yolo11" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/684d85652575826aacdbfe23_67ed519f12ca43a63355b5f4_67c871eb26cb6dab0c71d664_Hands_fig1.webp" alt="YOLO 手部姿态估计示例，以点标出手腕、指关节和指尖" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>手部关键点：关节与指尖</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/how-to-benchmark-ultralytics-yolo-models-like-yolo11" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/6479eab6eb2ed5e597810e9e/680f69124be6b516663111ef_Benchmark_fig3.webp" alt="YOLO 实例分割示例，用彩色掩码区分画面中的每个人" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>实例分割：像素级目标轮廓</figcaption>
+  </figure>
+  <figure style="margin: 0;">
+    <a href="https://www.ultralytics.com/blog/what-is-oriented-bounding-box-obb-detection-a-quick-guide" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.prod.website-files.com/680a070c3b99253410dd3df5/684d84f5f3a3145136e7f904_6847077d246811e645e6e900_OBB-guide_Fig%25204.webp" alt="YOLO OBB 示例，用旋转矩形框贴合港口中不同方向的船只" loading="lazy" style="display: block; width: 100%; height: 180px; object-fit: cover; margin: 0;" />
+    </a>
+    <figcaption>旋转框 OBB：表示目标方向</figcaption>
+  </figure>
+</div>
+
+YOLO 有多个版本，网络结构、检测头与工具链各有特点：YOLOv5 采用锚框机制，生态成熟；YOLOv8 转向无锚框检测头，并扩展了多种视觉任务；YOLO11 和 YOLO26 则在特征模块、推理方式等方面继续演进。
+
+在 RoboMaster 装甲板识别模型训练的公开案例中，战队选择并不统一：能找到使用 YOLOv5、YOLOv8、YOLO11 和 YOLO26 的项目，也有采用传统几何检测加数字分类的方案。以下列出有明确案例的代表项目：
+
+| 版本 / 路线 | 主要特点 | 公开的 RoboMaster 装甲板案例 |
+| --- | --- | --- |
+| YOLOv5 | 经典 YOLOv5 检测头采用锚框机制，并结合 C3 特征提取模块和多尺度预测；训练、导出与部署生态成熟。 | [深圳大学 RobotPilots（RM2026）](https://bbs.robomaster.com/article/1942761?source=11)：YOLOv5n 骨干网络 + 自定义四关键点检测头。<br />[同济大学 SuperPower（RM2025）](https://github.com/TongjiSuperPower/sp_vision_25)：[默认程序](https://github.com/TongjiSuperPower/sp_vision_25/blob/main/src/standard.cpp)读取[standard3.yaml](https://github.com/TongjiSuperPower/sp_vision_25/blob/main/configs/standard3.yaml)，该配置选择 YOLOv5。<br />[吉林大学 TARS Go（RM2026）](https://github.com/Fskaaaaaaaa/jlu_vision_26)：[配置](https://github.com/Fskaaaaaaaa/jlu_vision_26/blob/master/configs/auto_aim/armor_detector.yaml)选择 YOLOv5 并加载深圳大学 RobotPilots 开源的 0526 ONNX 权重，[检测器说明](https://github.com/Fskaaaaaaaa/jlu_vision_26/blob/master/src/auto_aim/armor_detector/README.md)还提到用 PCA 修正灯条角点 |
+| YOLOv8 | 主要变化是采用无锚框、分类与定位解耦的检测头，并以 C2f 模块提取特征；官方工具链扩展到检测、分割、分类、Pose 和旋转框等任务。 | [北京科技大学 Reborn（RM2024）](https://github.com/gaoxinstudent/RM-Armor-Detect)：基于 YOLOv8-Pose 的装甲板四点模型。<br />[华北理工大学 Horizon（RM2026）](https://bbs.robomaster.com/article/1883640?source=11)：YOLOv8n-Ghost-P2 装甲检测。<br />[深圳大学 RobotPilots（RM2026）](https://bbs.robomaster.com/article/1942761?source=11)：YOLOv8n-Pose 骨干网络 + 自定义装甲板检测头。 |
+| YOLO11 | 主要结构变化是用 C3k2 替换 C2f，并加入 C2PSA 注意力模块；继续采用无锚框检测头，并提供多种视觉任务模型。 | 同济仓库也包含 YOLO11 模型路径。 |
+| YOLO26 | 主要特点是提供端到端无 NMS 推理路径，并移除 DFL 检测头设计；同时提供检测、分割、Pose 等任务模型。 | [河北科技大学 Actor&Thinker（RM2026）](https://bbs.robomaster.com/article/1886180?source=5)：基于 YOLO26n-Pose 的装甲板姿态模型，并公开了 ONNX 与面向 Axera650 的量化部署模型。 |
+| 非 YOLO 对照：传统装甲检测 + LeNet 数字分类 | 用灯条轮廓和几何规则定位目标，再由独立的轻量分类网络识别数字；把目标定位与数字分类拆成两个步骤。 | [中南大学 FYT（RM2024）](https://github.com/CSU-FYT-Vision/FYT2024_vision)：[装甲检测节点](https://github.com/CSU-FYT-Vision/FYT2024_vision/blob/main/rm_auto_aim/armor_detector/src/armor_detector_node.cpp)设置灯条/装甲几何筛选参数，并加载 `lenet.onnx` 分类数字，不是 YOLO 装甲检测模型。 |
+
+> 表中模块理解：
+>
+> - **C3（YOLOv5）**：把特征分成两路，一路经过若干卷积块处理，另一路保留后再与处理结果合并。
+> - **C2f（YOLOv8）**：也采用分路处理，但会把中间多个阶段的结果一起合并，让后续网络能利用不同深度的特征。
+> - **C3k2（YOLO11）**：用于替换 C2f 的特征块，延续分路和合并的思路，并调整内部特征处理结构。
+> - **C2PSA（YOLO11）**：注意力模块，用来建模特征图不同位置之间的关系，让网络根据图像内容侧重处理更有用的位置。
+>
+> 这些名称描述的是网络内部结构，不是装甲板类别或训练标签；初读时先理解它们都在帮助网络提取和组合图像特征即可。[Ultralytics 的 YOLO 结构说明](https://docs.ultralytics.com/guides/yolo-architecture) 展示了这些模块在各版本中的位置和变化。
+
+表中的战队方案不一定直接使用官方原版权重。例如 RobotPilots 明确为 YOLOv5n、YOLOv8n-Pose 改造了装甲板检测头；学习时应区分**基础网络、任务头、训练权重和部署模型**。同济大学 SuperPower 的 2025 赛季 [README](https://github.com/TongjiSuperPower/sp_vision_25) 说明，其识别器采用其他战队开源的神经网络四点检测模型，并引用了 RobotPilots 与 Reborn 的模型资料。
+
+版本不能单独说明模型的精度或速度，比较时应统一数据集、任务、输入尺寸和硬件，并核对实现来源、模型规模与权重文件。
+
+本文后面的实操采用 Ultralytics 的 YOLO 接口。它把模型训练、验证、预测和导出放在一套工作流里，后文会用提供的装甲板数据集练习其中的 Pose 任务。[Ultralytics 支持的模型与任务](https://docs.ultralytics.com/models)
+
+### 模型结构组成
+
+前面讲过，CNN 用卷积从图像中提取特征；随着卷积和下采样不断进行，特征图会变小，但包含的信息会从边缘、纹理逐渐变成更抽象的形状和语义。检测装甲板时，模型既要同时判断类别和观测位置，还要适应远近造成的目标尺寸变化。因此，YOLO 这类检测网络需要先提取特征，再组合不同分辨率的特征，最后根据任务产生预测。
+
+这条流程通常按功能分为 **Backbone、Neck、Head**。它们不是新的神经网络家族，而是描述检测模型内部各部分的职责：
+
+```text
+图像张量
+  ↓ 前处理：缩放、填充、归一化
+Backbone：逐层提取图像特征
+  ↓ 多种分辨率的特征图
+Neck：融合不同分辨率的特征（常见设计包括 FPN、PAN）
+  ↓ 融合后的特征
+Head：按当前任务把特征变成预测（下面是不同任务的例子）
+  ├─ Detect：类别 + 边界框
+  ├─ Pose：类别 + 边界框 + 关键点
+  └─ Segment：类别 + 像素掩码
+  ↓ 解码、筛选、坐标还原
+机器人程序可读取的结果
+```
+
+下面用 PyTorch 搭一个极简示意网络，把 Backbone、Neck 和 Pose Head 串起来。它演示三部分如何传递特征。
+
+```python
+import torch
+import torch.nn as nn
+
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super().__init__()
+        self.block = nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, 3, stride=stride, padding=1, bias=False),
+            nn.BatchNorm2d(out_channels),
+            nn.SiLU(),
+        )
+
+    def forward(self, x):
+        return self.block(x)
+
+class TinyPoseModel(nn.Module):
+    def __init__(self, num_classes=14, num_keypoints=4):
+        super().__init__()
+        # Backbone：逐步下采样，提取高层语义特征
+        self.backbone = nn.Sequential(
+            ConvBlock(3, 32, stride=2),
+            ConvBlock(32, 64, stride=2),
+            ConvBlock(64, 128, stride=2),
+        )
+        # Neck：处理融合后的特征；此简化示例未实现完整 FPN/PAN
+        self.neck = ConvBlock(128, 128)
+        # Head：分别预测类别分数、边界框参数和关键点坐标
+        self.cls_head = nn.Conv2d(128, num_classes, kernel_size=1)
+        self.box_head = nn.Conv2d(128, 4, kernel_size=1)
+        self.keypoint_head = nn.Conv2d(128, num_keypoints * 2, kernel_size=1)
+
+    def forward(self, x):
+        features = self.backbone(x)
+        features = self.neck(features)
+        return {
+            "class_logits": self.cls_head(features),
+            "box_raw": self.box_head(features),
+            "keypoints_raw": self.keypoint_head(features),
+        }
+
+model = TinyPoseModel()
+outputs = model(torch.randn(1, 3, 256, 256))
+for name, value in outputs.items():
+    print(name, value.shape)
+```
+
+该示例的 Head 在每个特征图位置产生原始预测，实际 YOLO-Pose 还需要按具体版本解码预测、筛选候选，并将坐标还原到输入图像。
+
+
+### 按任务类型分类
+
+同一套模型工具可以提供不同任务的模型，但任务类型决定了标注内容、输出头和损失函数。Ultralytics 当前文档列出检测、分割、分类、Pose、旋转框等任务；视频跟踪则是在逐帧预测的基础上关联目标身份。[任务列表](https://docs.ultralytics.com/models)
+
+| 任务 | 输出示例 | RoboMaster 视觉 |
+| --- | --- | --- |
+| 目标检测 Detect | 类别、边界框 | 找到装甲板并判断类别 |
+| 关键点 Pose | 类别、边界框、关键点坐标 | 定位装甲板四角 |
+| 实例分割 Segment | 类别、边界框、像素掩码 | 分离形状不规则或互相遮挡的目标 |
+| 图像分类 Classify | 一组类别分数 | 判断一张裁剪图的类别；不直接给出位置 |
+| 旋转框 OBB | 类别、旋转矩形 | 表示倾斜目标的整体方向 |
+| 多目标跟踪 Track | 检测结果加持续身份编号 | 连续帧中维持目标身份；它不等同于另一个标注头 | |
+
+模型文件名也包含这些信息。例如 `yolo26n-pose.pt` 中，`yolo26` 是模型版本，`n` 表示 nano 小模型，`pose` 表示关键点任务，`.pt` 是保存模型权重的文件。常见的 `n/s/m/l/x` 是从小到大的模型规模标记，不是任务名称；规模越大通常计算需求也越高，实际精度和速度仍要在目标设备上测量。
+
+模型结构 YAML 描述网络如何搭建，数据 YAML（例如下一节的 `armor_pose.yaml`）则描述数据集路径、类别与关键点形状，两者用途不同。
+
+### 训练和推理
+
+训练和推理是使用同一模型的**两个不同流程**：准备数据、让模型学习参数时进行训练；模型训练完成并用于处理新的相机画面时进行推理。
+
+训练通常在开发阶段或需要更新模型时进行，推理则在验证、测试和机器人运行时进行。
+
+**训练时有标签参与。** 一批图像和标注进入网络，任务头产生预测；损失函数比较预测与标注的差异，反向传播再更新参数。**检测任务**至少要学习类别和边界框，**Pose 任务**还要学习关键点位置。训练、验证和数据配置会在第 8、10、11 节具体展开。
+
+**推理时没有标签。** 摄像头图像先经过预处理，再由网络生成预测；框和关键点经过解码、置信度筛选、必要的重叠框处理及坐标还原，最后才成为机器人程序可以使用的数据。第 6 节已经解释了框、IoU 和 NMS；具体版本也可能提供不同的端到端后处理方式（第 14 节），所以部署时要按实际模型和导出格式核对输出。具体 C++ 推理流程可跳转第 15 节。
+
+```text
+训练：图像 + 标注 → 网络预测 → 计算损失 → 更新参数 → 验证
+推理：相机帧 → 预处理 → 网络预测 → 后处理 → 坐标与类别
+```
+
+### 选择YOLO-Pose的原因
+
+如果任务只要求“找到装甲板并分类”，检测模型输出类别和边界框就够了。但机器人还需要稳定地取得装甲板四角，用于后续几何位姿解算，边界框四个角描述的是矩形范围，并不等于装甲板自身的四个角。因此，本文使用**带四个关键点的 Pose 模型**：对每块装甲板同时预测类别、边界框和按固定语义顺序排列的四个角点。
+
+数据配置中的 `kpt_shape: [4, 2]` 表示每个目标有 4 个关键点、每个点由 `(x, y)` 两个坐标组成。它需要与标签行中的四组点坐标、关键点顺序以及 Pose 权重相匹配。Ultralytics 的 Pose 结果也同时提供目标框和关键点坐标。[Pose 任务说明](https://docs.ultralytics.com/tasks/pose)
+
+下面用训练得到的权重读取一帧，观察每个目标对应的框和四点；图像预处理、置信度、关键点语义顺序与坐标系都会影响后续位姿解算。
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("runs/robomaster/armor_pose_yolo26n/weights/best.pt")
+result = model.predict(source="frame.jpg", imgsz=640, conf=0.25, verbose=False)[0]
+
+for i in range(len(result.boxes)):
+    class_id = int(result.boxes.cls[i].item())
+    box_xyxy = result.boxes.xyxy[i].tolist()
+    corners_xy = result.keypoints.xy[i].tolist()
+    print("类别:", result.names[class_id])
+    print("边界框:", box_xyxy)
+    print("四个角点:", corners_xy)
+```
+
+模型规模、输入分辨率、推理后端和硬件共同决定实际速度与精度。较小的 `n` 模型通常计算量更低，较大的模型通常有更高的容量，但不能只看名称推断机器人上的效果；要用验证集和目标计算设备测量。下一节先检查装甲板数据是否符合 Pose 训练要求，再开始配置模型和训练。
+
+---
+
+## 8. 数据集检查与配置
+
+数据质量是模型训练成功与否的关键之一。训练集、标签、类别分布和数据来源共同影响模型表现。
+
+划分数据时，先按完整比赛、视频文件、录制日期或相机来源分组，再将各组分配到训练集、验证集和独立测试集，避免同一段视频的相邻帧跨集合出现。以下只展示训练脚本使用的 train/val 目录，独立测试集应另行保留：
+
+```text
+dataset/
+├── train/
+│   ├── images/
+│   └── labels/
+└── val/
+    ├── images/
+    └── labels/
+```
+
+数据集格式：类别编号、4 个框坐标和 4 个关键点的 8 个坐标。这是带四角点的 Pose 数据。标注示例中的编号顺序为：**1 左上、2 左下、3 右下、4 右上**（我提供的数据集是这样的），沿装甲板边缘依次排列；标签行按这个编号顺序成对记录四组 `(x, y)`。目标旋转或从不同方向被观察时，关键点在图像中的绝对位置会变化，应沿用标注编号，不要逐张图重新按屏幕上的上下左右排序。
+
+```python
+from pathlib import Path
+
+root = Path("dataset/armor-pose")
+
+for split in ("train", "val"):
+    class_count = [0] * 14
+    images_dir = root / split / "images"
+    labels_dir = root / split / "labels"
+    images = list(images_dir.glob("*.jpg"))
+    missing = [p.stem for p in images if not (labels_dir / f"{p.stem}.txt").exists()]
+    bad = []
+
+    for label in labels_dir.glob("*.txt"):
+        for row_number, line in enumerate(label.read_text().splitlines(), 1):
+            values = [float(x) for x in line.split()]
+            if len(values) != 13:
+                bad.append((label.name, row_number, len(values)))
+                continue
+            class_id = int(values[0])
+            if not 0 <= class_id < 14:
+                bad.append((label.name, row_number, "class id 越界"))
+                continue
+            class_count[class_id] += 1
+            if any(v < 0 or v > 1 for v in values[1:]):
+                bad.append((label.name, row_number, "归一化坐标越界"))
+
+    print(split, "图片数", len(images), "缺标签", len(missing), "异常标注", len(bad))
+    print("异常示例", bad[:3])
+    print(split, "类别实例数", class_count)
+```
+
+统计脚本只能检查结构性错误。标注是否准确还取决于角点顺序、框边界和目标完整性。装甲板框与四角点[标注工具](https://github.com/alectimison-maker/LabelMaster-for-Yuelu.git)示例如下：
+
+![标注工具中的装甲板目标框与四角点](/articles/neural-network/armor-labeling-ui.jpg)
+
+数据配置通过 `armor_pose.yaml` 声明类别映射与关键点结构。角点顺序需与标签定义一致；若原顺序为左上、左下、右下、右上，水平翻转后的对应顺序为 `[3, 2, 1, 0]`：
+
+```yaml
+path: ./dataset/armor-pose
+train: train/images
+val: val/images
+
+names:
+  # 类别名称和 ID 按 LabelMaster-for-Yuelu README 的映射排列
+  0: B1   # 蓝方 1 号英雄装甲
+  1: B2   # 蓝方 2 号工程装甲
+  2: B3   # 蓝方 3 号步兵装甲
+  3: B4   # 蓝方 4 号步兵装甲
+  4: BS   # 蓝方哨兵装甲
+  5: BO   # 蓝方前哨站装甲
+  6: BG   # 蓝方基地装甲
+  7: R1   # 红方 1 号英雄装甲
+  8: R2   # 红方 2 号工程装甲
+  9: R3   # 红方 3 号步兵装甲
+  10: R4  # 红方 4 号步兵装甲
+  11: RS  # 红方哨兵装甲
+  12: RO  # 红方前哨站装甲
+  13: RG  # 红方基地装甲
+
+kpt_shape: [4, 2]
+flip_idx: [3, 2, 1, 0]
+```
+
+
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("yolo26n-pose.pt")
+model.train(
+    data="armor_pose.yaml",
+    epochs=100,
+    imgsz=640,
+    batch=4,
+    workers=0,
+)
+```
+
+这段代码展示的是最小训练调用。完整脚本还要把预训练权重、数据配置、增强选项和实验输出目录连起来：第 9 节讲数据增强，第 10 节再给出完整训练脚本。训练轮数和 `batch` 大小需结合数据规模、设备速度与显存确定。不同设备的吞吐量和显存容量存在差异；Mac 上 Pose 与 MPS 的兼容性也取决于 PyTorch、Ultralytics 和具体算子版本，CPU 与 NVIDIA CUDA 是其他可用的计算环境。
+
+数据集质量由文件完整性、标签范围、类别定义和视觉标注共同决定。程序可以检查文件对应关系、类别编号和坐标范围，但不能仅凭格式正确判断图像标注是否准确。
+
+类别实例数应按 train/val 分开统计。现有训练统计中 B4 约有 2,589 个目标、BO 约 191 个目标，数量差距明显（数据集收集也是个难事）。类别不平衡可能使少数类表现较差，类别指标和失败样本可用于判断数据覆盖是否充分。
+
+训练结果的可复现性取决于数据版本、类别映射、关键点顺序、图像尺寸、权重文件、训练参数和验证结果等信息是否完整。
+
+---
+
+## 9. 数据增强
+
+**数据增强**通过对训练图像做合理变换，增加模型遇到光照、尺度和角度变化时的适应能力。增强不应该破坏标签含义。
+
+亮度变化不会改变框和关键点坐标：
+
+```python
+import cv2
+
+image = cv2.imread("frame.jpg")
+bright = cv2.convertScaleAbs(image, alpha=1.08, beta=12)
+```
+
+几何变换则必须同步变换标注。以水平翻转为例，如果框是归一化 `cx, cy, w, h`，则 `cx' = 1 - cx`；关键点的 x 坐标变为 `1 - x`，还要按语义交换关键点顺序：
+
+```python
+import numpy as np
+
+def flip_pose_labels(cx, cy, width, height, points):
+    # points 形状为 [4, 2]，顺序：左上、左下、右下、右上
+    flipped_cx = 1.0 - cx
+    flipped_points = points[[3, 2, 1, 0]].copy()
+    flipped_points[:, 0] = 1.0 - flipped_points[:, 0]
+    return flipped_cx, cy, width, height, flipped_points
+```
+
+如果忘了交换角点，图像虽然翻转了，标签却会告诉模型“左上角在右上角”，产生互相矛盾的训练样本。颜色、类别和角点语义也要一并检查。
+
+适合做起点的增强还包括：
+
+```python
+# 对图像进行高斯模糊，模拟轻微失焦或运动模糊
+blurred = cv2.GaussianBlur(image, (3, 3), 0)
+# 将图像宽高分别放大 10%
+resized = cv2.resize(image, None, fx=1.1, fy=1.1)
+# 从图像中截取 y1:y2、x1:x2 范围内的区域
+cropped = image[y1:y2, x1:x2]
+# 将图像中 y1:y2、x1:x2 范围内的像素置为 0（黑色）
+image[y1:y2, x1:x2] = 0
+```
+亮度、对比度、色彩变化属于像素增强，框和关键点通常不变；翻转、旋转、缩放、裁剪属于几何增强，必须同步变换图像和全部标签。
+
+但对称翻转、颜色反转或大角度旋转不一定符合真实比赛画面，这意味着增强越强不代表数据越好，增强分布应近似真实相机可能产生的变化。过暗、严重拉伸或不可能出现的姿态会造成训练分布偏移，降低模型在真实比赛画面上的适用性。
+
+---
+
+## 10. 正式训练
+
+数据集 YAML参数文件已经定义了训练集、验证集、类别名称和四个关键点的结构；现在把它交给 Pose 预训练模型。预训练权重提供通用视觉特征，训练过程再根据装甲板数据调整模型。下面是一个完整的起点脚本，参数含义可查阅 [Ultralytics 训练文档](https://docs.ultralytics.com/modes/train)：
+
+```python
+from pathlib import Path
+from ultralytics import YOLO
+
+# 将 armor_pose.yaml 放在本脚本旁边，并在其中设置数据集根目录
+DATA_YAML = Path(__file__).parent / "armor_pose.yaml"
+
+def main():
+    if not DATA_YAML.is_file():
+        raise FileNotFoundError(f"找不到数据配置文件：{DATA_YAML}")
+
+    # 加载带有人体关键点预训练特征的 Pose 模型，再迁移训练到装甲板四角点任务
+    model = YOLO("yolo26n-pose.pt")
+    model.train(
+        data=str(DATA_YAML),
+        epochs=100,          # 最多遍历训练集 100 轮
+        imgsz=640,           # 训练输入边长
+        batch=4,             # 每次参数更新使用 4 张图；显存不足时调小
+        workers=0,            # 数据加载进程数，初次运行先用 0 便于排查问题
+        patience=30,          # 验证效果连续 30 轮未改善时提前停止
+        seed=42,              # 固定随机种子，便于复现实验
+        fliplr=0.5,           # 以 50% 概率水平翻转；需与 YAML 中 flip_idx 一致
+        project="runs/robomaster",
+        name="armor_pose_yolo26n",
+    )
+
+if __name__ == "__main__":
+    main()
+```
+
+`device` 不写时，Ultralytics 会自动选择可用设备，也可以按硬件显式设置为 `"mps"`（Apple 芯片）、`0`（第一张 NVIDIA 显卡）或 `"cpu"`。
+
+训练期间会按 `armor_pose.yaml` 中的 `val` 集合检查模型，并把每轮的损失和验证指标写入本次实验目录。训练结束后，在该目录的 `weights/` 下查看 `best.pt`（验证表现最佳的权重）和 `last.pt`（最后一轮权重）。重复运行同名实验时，日志目录可能自动增加编号。
+
+接下来会解释如何阅读这些验证指标。
+
+---
+
+## 11. 模型评估
+
+在完成模型训练后，还需要通过验证集上的指标和实际部署测试，系统评估模型的识别效果与运行开销。
+
+比如华北理工大学 Horizon 战队的 RM2026 装甲板检测模型同时公布Precision、Recall、mAP50、mAP50-95 和推理时间，还列出参数量、计算量与权重大小，展示了从识别效果到部署开销的多方面指标。[Horizon RM2026 模型指标](https://bbs.robomaster.com/article/1883640?source=11)
+
+下面分别介绍如何评估模型识别精准度和部署开销。
+
+### 检测框指标：P、R 与 mAP
+
+先看三个基础计数：**TP** 是正确检测到的目标，**FP** 是误报，**FN** 是漏检。一个检测框要与真实框重叠足够多、类别也正确，才会计为 TP；重叠程度用 IoU 衡量。
+
+$$
+Precision=\frac{TP}{TP+FP},\qquad Recall=\frac{TP}{TP+FN}
+$$
+
+- **Precision（精确率，P）**：模型报出来的装甲板中，有多少是真的。P 低通常表示误报多。
+- **Recall（召回率，R）**：图像中真实存在的装甲板，有多少被模型找到了。R 低通常表示漏检多。
+- **AP（Average Precision，平均精度）**：针对一个类别，在固定 IoU 判定标准下逐步改变置信度阈值，会得到一系列 P、R 组合，连成 Precision–Recall 曲线。AP 用一个分数概括这条曲线下方的面积，综合反映这个类别在不同阈值下的检测表现。
+- **mAP50**：在 IoU 不低于 0.50 的判定标准下，先分别计算每个类别的 AP，再对类别取平均；它对框的位置要求相对宽松。
+- **mAP50-95**：分别按 IoU 0.50、0.55 一直到 0.95 计算 AP，再取平均；框越贴近真实位置才越容易通过，因此比 mAP50 严格。
+
+对本文的四角点 Pose 模型，还应分别查看验证结果中的框指标 `metrics.box` 与关键点指标 `metrics.pose`，并在远距离小装甲板样本上检查角点偏差；框的 mAP 高不代表四角点定位也准。[Ultralytics Pose 验证说明](https://docs.ultralytics.com/tasks/pose)
+
+置信度阈值改变时，P 和 R 往往此消彼长：阈值放低会留下更多候选，通常能少漏一些目标，但也可能多报背景。训练损失用于观察优化过程，不能代替验证集上的 P、R 和 mAP。查看结果时还要看**每个类别**的指标、混淆矩阵和预测图，避免样本多的类别把少数类别的问题遮住。
+
+下面是实际训练曲线示例：蓝线表示损失，红线表示 mAP。横轴是训练轮数；观察时可以看损失是否整体下降、mAP 是否整体上升并逐渐稳定。单次波动很常见。
+
+![PolySTAR RoboMaster YOLOv3 训练曲线示例，蓝线为损失，红线为 mAP](https://user-images.githubusercontent.com/31957192/160454134-82696932-78b6-48c8-a920-05326fbb5bfe.png)
+
+
+### 部署测速
+
+装甲板识别要在实时系统里运行，所以还需记录**单帧端到端延迟**或 **FPS**。测量时固定推理设备、输入分辨率、精度和运行框架，并注明是否包含预处理、后处理与数据传输。
+
+最后要用没有参与训练和调参的比赛视频或者上实车检查远距离小装甲板、运动模糊、遮挡和强反光，并结合目标连续性与实际系统时延判断是否可用。验证集 mAP 高不保证实战一定稳定，如果相邻视频帧同时进入训练集和验证集，验证分数也可能虚高。
+
+---
+
+## 12. 泛化与过拟合
+
+**泛化**是模型把训练中学到的规律用到新图像上的能力。对装甲板模型来说，泛化意味着模型不只认得训练视频中的画面，还能在没见过的比赛、场地、光照、相机或目标距离下继续找对装甲板。
+
+训练时应把数据分成三部分：**训练集**用于更新模型参数；**验证集**用于比较训练过程中的模型、调整配置和选择权重；**测试集**留到最后，估计模型面对真正未见数据时的表现。反复根据测试集结果调模型后，测试集就不再是独立测试集。
+
+**过拟合**是泛化变差的一种常见原因：模型越来越贴合训练样本中的细节，却没有学到能迁移到新场景的规律。常见信号是训练损失持续下降，但验证损失开始上升，或验证集上的 P、R、mAP 停止改善并逐渐变差。训练与验证之间的表现差距称为泛化差距。
+
+```text
+训练损失下降 + 验证指标改善       → 模型正在学习，继续观察
+训练损失下降 + 验证指标变差       → 检查过拟合或训练/验证分布差异
+训练损失和验证指标都没有改善     → 检查数据、标签或训练配置
+验证集效果好 + 新比赛视频效果差   → 检查数据划分和跨场景泛化
+```
+
+RoboMaster 数据尤其容易发生训练集与验证集“看起来独立、实际很相似”的情况：同一段视频的相邻帧背景和目标几乎相同。若随机拆分图片，这些近似帧可能同时进入训练集和验证集，导致验证分数虚高。应按完整比赛、视频文件、录制日期或相机来源分组拆分，确保同一段视频的帧只进入一个集合；再用另一场比赛的视频作为独立测试集，检查跨场景泛化。
+
+| 训练损失 | 验证损失 / 指标 | 优先排查 |
+| --- | --- | --- |
+| 下降 | 验证损失上升，或 P/R/mAP 变差 | 过拟合；训练集与验证集场景差异；标签问题 |
+| 偏高或停滞 | 验证指标也较差 | 标签格式、学习率、数据量、模型容量或训练配置 |
+| 下降 | 验证指标好，但独立比赛视频效果差 | 数据拆分泄漏；场景、相机或目标尺度发生变化 |
+| 下降 | 验证指标改善并稳定 | 暂无明显过拟合信号，仍需独立测试确认 |
+
+发现泛化不足时，先检查训练和验证数据是否覆盖真实比赛变化，再检查标注质量；之后再考虑增加场景多样性、调整逼真的数据增强、启用早停或减小模型规模。常见排查点包括：
+
+1. 标签错位、漏标，或四个角点的顺序不一致。
+2. 类别与目标尺度分布和真实赛场差异过大。
+3. 训练数据缺少验证失败所对应的场景，例如强反光、遮挡或远距离小目标。
+4. 数据增强不符合真实相机画面，或权重衰减、早停、模型规模设置不合适。
+
+权重衰减、早停、贴近真实场景的数据增强和减小模型容量都可能缓解过拟合，但不能代替多样、准确的数据。`best.pt` 通常对应验证表现较好的权重，`last.pt` 对应最后一轮权重，具体含义以训练记录为准。
+
+---
+
+## 13. 实时模型优化与剪枝
+
+自瞄系统要同时考虑精度、延迟、帧率、稳定性、显存和功耗。模型推理只是总时延的一部分：
+
+$$
+T_{total}=T_{capture}+T_{pre}+T_{infer}+T_{post}+T_{pose}+T_{tracking}
+$$
+
+只测网络本身的推理时间，无法代表相机到机器人决策的完整延迟。性能比较要固定设备、输入尺寸、预热次数、批大小和推理后端。
+
+模型变小常用的方法包括减小网络规模、剪枝、量化和知识蒸馏。剪枝把部分权重或结构移除；非结构化剪枝将单个权重置零，结构化剪枝则移除通道或滤波器。权重变成零不代表普通稠密计算自动变快；要有稀疏算子或真正缩小网络结构，部署硬件才可能获得收益。
+
+>- **量化**是用较低位宽表示权重和计算中的数值，例如将 FP32 转为 FP16 或 INT8，以减少模型存储、内存带宽和计算开销；但精度损失、硬件支持和推理后端的算子实现都会影响最终效果。
+>- **知识蒸馏**是让学生模型学习教师模型的预测结果或中间特征，把教师模型学到的知识迁移过来，比如提出一个问题，学生学习教师的答案，最终通过额外训练得到一个可独立部署的学生模型。一般而言这个学生模型有着某个领域的专业知识（我们训练他就是为了能得到一个小参数、易部署但是在该专业领域强的模型），而教师模型一般是有着全量知识的大模型。
+>- **算子**是卷积、矩阵乘法、激活等计算图中的基本计算单元，部署后端会把它们映射到 CPU、GPU 或专用加速器上执行；只有目标硬件和推理框架支持相应的低精度或稀疏算子，量化或剪枝才可能转化为实际速度收益。
+
+非结构化剪枝可通过 PyTorch 实现：
+
+```python
+import torch.nn as nn
+import torch.nn.utils.prune as prune
+
+layer = nn.Conv2d(3, 16, kernel_size=3)
+prune.l1_unstructured(layer, name="weight", amount=0.3)
+prune.remove(layer, "weight")
+
+zero_ratio = (layer.weight == 0).float().mean().item()
+print(f"权重零值比例：{zero_ratio:.1%}")
+```
+
+该代码只把权重置零，不会改变卷积层形状，也不保证推理变快。剪枝效果需要结合精度、文件大小和实际端侧延迟评估；剪枝后通常还需微调，且导出格式需要支持相应结构。
+
+>**微调**是指从剪枝后的权重继续训练一段时间，用训练数据和原有任务目标调整剩余参数，补偿剪枝带来的精度损失。完成后仍需在验证集和目标设备上重新评估模型。
+
+稳态延迟应排除首次加载权重的时间，并在固定设备、输入尺寸和推理后端的条件下统计多帧结果。Ultralytics 的预测结果包含预处理、模型推理和后处理耗时，可用于分析各环节的耗时：
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("runs/robomaster/armor_pose_yolo26n/weights/best.pt")
+for result in model.predict(source="held-out-match.mp4", stream=True, verbose=False):
+    print(result.speed)  # preprocess / inference / postprocess，单位为毫秒
+```
+
+部署优化可以按顺序尝试更小模型、较合适的输入尺寸、半精度或量化、结构化剪枝、减少 CPU/GPU 数据搬运。每一步都要重新测精度和端到端延迟, 零权重比例、FLOPs 或参数量都不能单独证明实际变快。
+
+---
+
+## 14. 最佳权重文件部署格式转换
+
+训练结束得到的 `best.pt` 是 PyTorch/Ultralytics 权重，自瞄程序最终加载什么文件，取决于它接入的推理后端。
+
+| 文件 | 自瞄系统中的用途 | 需要注意 |
+| --- | --- | --- |
+| `.pt` | 训练保存的权重，也常用于 Python 验证和导出 | C++ 主程序通常还要通过相应后端加载或转换 |
+| `.onnx` | 通用交换格式，可由 ONNX Runtime 直接加载，也可转换到其他后端 | 要确认输入尺寸是固定还是动态，以及输入/输出张量名称和形状 |
+| `.engine` / `.trtmodel` | TensorRT 序列化后的推理引擎 | 与 GPU 架构、TensorRT/CUDA 环境相关；换设备时常需重新构建 |
+| `.xml` + `.bin` | OpenVINO IR；XML 保存网络结构，BIN 保存权重 | 可能还需配套类别或输出映射文件，按项目的 C++ 加载代码准备 |
+
+常见转换关系如下。实际部署只生成并使用自瞄程序所需的那一支：
+
+```text
+best.pt → best.onnx ──→ ONNX Runtime
+                     ├→ armor.engine       → TensorRT
+                     └→ armor.xml + .bin   → OpenVINO
+```
+
+先将训练权重导出为 ONNX，固定使用 640 × 640 网络输入时，可导出静态尺寸模型：
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("runs/robomaster/armor_pose_yolo26n/weights/best.pt")
+model.export(format="onnx", imgsz=640, dynamic=False)
+```
+
+如果自瞄程序使用 TensorRT，可将 ONNX 编译成 `.engine`：
+
+```bash
+trtexec --onnx=best.onnx --saveEngine=armor.engine --fp16
+```
+
+如果自瞄程序使用 OpenVINO，可将 ONNX 转成 IR 文件。转换后会生成 `.xml` 网络结构文件和同名 `.bin` 权重文件：
+
+```bash
+ovc best.onnx --output_model armor.xml --compress_to_fp16=True
+```
+
+Ultralytics 也支持直接从 `.pt` 导出 OpenVINO IR，例如 `model.export(format="openvino", imgsz=640, quantize=16)`，生成的文件夹包含 XML 和 BIN。[Ultralytics OpenVINO 导出说明](https://docs.ultralytics.com/integrations/openvino)
+
+
+---
+
+## 15. C++ 实时推理流程
+
+C++ 推理把模型接入相机采集和机器人视觉程序。部署组件一般包含：
+
+```text
+Camera → cv::Mat → Preprocess → Inference Runtime
+       → Decode / NMS → Target Selection → 后续几何与控制
+```
+
+接口结构示意如下；`Detector::infer` 的内部实现取决于所用的 ONNX Runtime、TensorRT 或 OpenVINO API：
+
+```cpp
+#include <opencv2/opencv.hpp>
+#include <string>
+#include <vector>
+
+// 单个目标的检测结果：类别编号、置信度和边界框。
+struct Detection {
+    int class_id;
+    float confidence;
+    cv::Rect2f box;
+};
+
+// 检测器接口：加载模型，并对输入帧执行推理。
+class Detector {
+public:
+    bool init(const std::string& model_path);
+    std::vector<Detection> infer(const cv::Mat& frame);
+};
+
+int main() {
+    // 打开编号为 0 的摄像头；若打开失败则退出。
+    cv::VideoCapture camera(0);
+    if (!camera.isOpened()) {
+        return 1;
+    }
+
+    // 初始化检测器并加载 TensorRT 引擎；失败时退出。
+    Detector detector;
+    if (!detector.init("armor.engine")) {
+        return 2;
+    }
+
+    cv::Mat frame;
+    // 持续读取相机画面，直到读取失败或用户按下 Esc。
+    while (camera.read(frame)) {
+        // 对当前帧推理，并复制一份图像用于绘制，保留原始帧。
+        auto detections = detector.infer(frame);
+        cv::Mat display = frame.clone();
+
+        // 遍历检测结果，将浮点边界框坐标取整后绘制到画面上。
+        for (const auto& detection : detections) {
+            const cv::Rect box(
+                cvRound(detection.box.x), cvRound(detection.box.y),
+                cvRound(detection.box.width), cvRound(detection.box.height)
+            );
+            cv::rectangle(display, box, cv::Scalar(0, 255, 0), 2);
+        }
+
+        // 显示标注后的画面；按下 Esc 键时结束循环。
+        cv::imshow("RoboMaster perception", display);
+        if (cv::waitKey(1) == 27) break;
+    }
+}
+```
+
+端侧运行受内存分配、CPU/GPU 数据拷贝、线程阻塞和相机缓冲影响。采图、预处理、推理、后处理和总延迟分别反映不同环节的耗时，可视化绘制耗时不属于模型推理耗时。
+
+训练端负责学习模型参数，但类别编号、置信度含义、框坐标格式（`xyxy` 或 `xywh`）、坐标所对应的图像，以及关键点语义顺序，都必须与推理端保持一致。把推理结果封装成**结构化数据**，也能减少把可视化逻辑误当成模型输出的情况。
+
+下面两段代码都属于**推理端**的结果封装：Python 示例可用于离线验证或算法原型中的后处理；C++ 示例用于机器人端实时程序，并额外记录图像采集时间。
+```python
+from dataclasses import dataclass
+
+@dataclass
+class ArmorDetection:
+    class_id: int
+    confidence: float
+    box_xyxy: tuple[float, float, float, float]  # 原图像素坐标
+    corners_xy: tuple[tuple[float, float], ...]  # 固定顺序的 4 个角点
+```
+
+
+
+```cpp
+#include <opencv2/opencv.hpp>
+#include <array>
+#include <cstdint>
+
+struct ArmorPose {
+    int class_id;
+    float confidence;
+    cv::Rect2f box;
+    std::array<cv::Point2f, 4> corners;
+    std::uint64_t capture_time_ns;
+};
+```
+缩放或 letterbox 填充后的预测坐标需要还原到原始图像，再交给位姿解算。预测框整体偏移通常与缩放比例或填充量还原错误有关。Python 与 C++ 两侧都应使用一致的坐标系和角点顺序。
+
+实时系统除 FPS 外，还需考虑预测对应的帧和结果到达时间。推理速度低于采集速度时，队列积压会使程序持续处理过期画面。采集时间戳、有限队列长度和优先处理最新帧的策略有助于控制结果时效性。

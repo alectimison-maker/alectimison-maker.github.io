@@ -42,7 +42,7 @@ npm run build
 - Formspree：联系表单，目标邮箱设为 `alec.timison@gmail.com`。
 - Umami Cloud：隐私友好的访问统计。
 
-未填写时，对应功能会明确显示“尚未配置”，不会连接第三方服务。部署时在 GitHub Actions repository variables 中配置同名变量。
+未填写时，对应功能会明确显示“尚未配置”，不会连接第三方服务。正式构建时由本地发布环境提供所需的 `PUBLIC_*` 变量。
 
 Waline 的评论 API 单独部署到 Vercel，使用 Neon PostgreSQL、Resend 邮件和 Cloudflare Turnstile。完整配置见 [`docs/comments.md`](docs/comments.md)。访客无需登录，昵称和邮箱必填，邮箱不公开；新评论和直接回复通过邮件通知。
 
@@ -50,6 +50,6 @@ Waline 的评论 API 单独部署到 Vercel，使用 Neon PostgreSQL、Resend �
 
 ## 部署
 
-`.github/workflows/deploy.yml` 在 `main` 分支更新后构建并部署 GitHub Pages。首次部署前，在仓库 Pages 设置中选择 **GitHub Actions** 作为来源，并保持自定义域名 `aliouswe.com` 的 DNS 配置。
+网站部署到阿里云轻量应用服务器；GitHub 仓库只用于 Git 同步，不通过 GitHub Pages 或 GitHub Actions 发布网站及支持服务。具体构建、打包、上传和验证流程见 [`AGENTS.md`](AGENTS.md)。OpenCV 教程 runner 的隔离、配置和回滚细节见 [`docs/opencv-runner.md`](docs/opencv-runner.md)。
 
 当前阶段不包含 3D、About 页面、CMS、PWA、推荐文章或第三方监控。

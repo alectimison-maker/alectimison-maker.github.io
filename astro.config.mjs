@@ -33,13 +33,22 @@ export default defineConfig({
     }),
     syntaxHighlight: 'shiki',
     shikiConfig: {
-      theme: 'github-dark-default',
+      themes: {
+        light: 'github-light-default',
+        dark: 'github-dark-default',
+      },
+      defaultColor: false,
       wrap: true,
     },
   },
   vite: {
     build: {
       target: 'es2022',
+    },
+    server: {
+      proxy: {
+        '/api/opencv': 'http://127.0.0.1:8787',
+      },
     },
   },
 })

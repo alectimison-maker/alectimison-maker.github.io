@@ -1,0 +1,364 @@
+---
+import ResponsiveImage from '../ResponsiveImage.astro'
+
+const channels = [
+  {
+    label: 'B',
+    title: '蓝色通道',
+    description: '单独观察蓝色响应。',
+    src: '/media/images/opencv/pipeline-summary/blue-channel.png',
+    alt: '赛场原图的蓝色通道灰度图，保持原始宽高比例',
+  },
+  {
+    label: 'G',
+    title: '绿色通道',
+    description: '单独观察绿色响应。',
+    src: '/media/images/opencv/pipeline-summary/green-channel.png',
+    alt: '赛场原图的绿色通道灰度图，保持原始宽高比例',
+  },
+  {
+    label: 'R',
+    title: '红色通道',
+    description: '单独观察红色响应。',
+    src: '/media/images/opencv/pipeline-summary/red-channel.png',
+    alt: '赛场原图的红色通道灰度图，保持原始宽高比例',
+  },
+]
+
+const stages = [
+  {
+    experiment: '实验 5A/B',
+    title: '灰度与高斯平滑',
+    description: '降低颜色维度，抑制细碎变化。',
+    src: '/media/images/opencv/pipeline-summary/gray-blur.png',
+    alt: '赛场图像转为灰度并经过高斯平滑',
+  },
+  {
+    experiment: '实验 6',
+    title: '阈值二值化',
+    description: '用阈值 150 生成黑白候选区域。',
+    src: '/media/images/opencv/pipeline-summary/threshold.png',
+    alt: '灰度图经过阈值 150 后形成的二值候选区域',
+  },
+  {
+    experiment: '实验 7',
+    title: '开运算清理',
+    description: '3 × 3 结构元素去除小型亮点。',
+    src: '/media/images/opencv/pipeline-summary/morphology-open.png',
+    alt: '二值图经过 3 乘 3 开运算后的结果',
+  },
+  {
+    experiment: '实验 8',
+    title: '轮廓与旋转框',
+    description: '把连通亮区转成可测量的几何候选。',
+    src: '/media/images/opencv/pipeline-summary/contours.png',
+    alt: '原图上绘制的轮廓最小外接旋转矩形',
+  },
+  {
+    experiment: '实验 9',
+    title: '几何与颜色筛选',
+    description: '按长宽比、倾角和红蓝置信度筛选灯条。',
+    src: '/media/images/opencv/pipeline-summary/geometry-color.png',
+    alt: '经过几何和颜色置信度筛选后的灯条候选',
+  },
+  {
+    experiment: '实验 10',
+    title: '灯条配对',
+    description: '检查两侧灯条关系，框出装甲板候选。',
+    src: '/media/images/opencv/pipeline-summary/paired-candidates.png',
+    alt: '配对后的灯条和装甲板候选框',
+  },
+]
+---
+
+<figure class="opencv-detection-pipeline" aria-labelledby="opencv-detection-pipeline-title">
+  <figcaption class="opencv-detection-pipeline__heading">
+    <span id="opencv-detection-pipeline-title">一帧图像如何变成装甲板候选</span>
+    <small>本文实验 1–10：原图分出颜色观察支路与装甲板检测主线</small>
+  </figcaption>
+
+  <section class="opencv-detection-pipeline__branch" aria-labelledby="opencv-color-branch-title">
+    <h3 id="opencv-color-branch-title">颜色支路 · 实验 4</h3>
+    <p>从原始 BGR 图像拆分三个通道，分别观察颜色响应。</p>
+    <ol class="opencv-detection-pipeline__channels">
+      {channels.map((channel) => (
+        <li class="opencv-detection-pipeline__card">
+          <div class="opencv-detection-pipeline__image">
+            <ResponsiveImage
+              src={channel.src}
+              alt={channel.alt}
+              class="opencv-detection-pipeline__thumb"
+              sizes="(max-width: 520px) calc(100vw - 5rem), (max-width: 900px) 42vw, 28vw"
+            />
+          </div>
+          <div class="opencv-detection-pipeline__card-label">
+            <span>{channel.label}</span>
+            <h4>{channel.title}</h4>
+          </div>
+          <p>{channel.description}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <div class="opencv-detection-pipeline__source-bridge" aria-label="输入图像向上连接颜色支路，向下进入检测主线">
+    <span class="opencv-detection-pipeline__up">↑ <span>颜色支路</span></span>
+    <figure class="opencv-detection-pipeline__source">
+      <div class="opencv-detection-pipeline__image">
+        <ResponsiveImage
+          src="/media/images/opencv/armor-field.jpg"
+          alt="OpenCV 装甲板检测使用的原始赛场图像"
+          class="opencv-detection-pipeline__thumb"
+          sizes="(max-width: 760px) calc(100vw - 5rem), 42rem"
+        />
+      </div>
+      <figcaption><strong>原始图像</strong><span>实验 1–3 · 输入与像素</span></figcaption>
+    </figure>
+    <span class="opencv-detection-pipeline__down">↓ <span>装甲板识别主线</span></span>
+  </div>
+
+  <section class="opencv-detection-pipeline__main" aria-labelledby="opencv-detection-main-title">
+    <h3 id="opencv-detection-main-title">装甲板检测主线</h3>
+    <ol class="opencv-detection-pipeline__stages">
+      {stages.map((stage, index) => (
+        <li class={`opencv-detection-pipeline__card opencv-detection-pipeline__stage opencv-detection-pipeline__stage--${index + 1}`}>
+          <div class="opencv-detection-pipeline__image">
+            <ResponsiveImage
+              src={stage.src}
+              alt={stage.alt}
+              class="opencv-detection-pipeline__thumb"
+              sizes="(max-width: 520px) calc(100vw - 5rem), (max-width: 900px) 42vw, 28vw"
+            />
+          </div>
+          <div class="opencv-detection-pipeline__card-label">
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <small>{stage.experiment}</small>
+          </div>
+          <h4>{stage.title}</h4>
+          <p>{stage.description}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <p class="opencv-detection-pipeline__note">
+    实验 9 会把轮廓几何与原图中的红蓝通道响应合并筛选；二值图负责生成候选，颜色判断仍读取原始 BGR 图像。
+  </p>
+</figure>
+
+<style>
+  .opencv-detection-pipeline {
+    width: 100%;
+    margin: 2rem 0 2.5rem;
+    padding: clamp(.85rem, 2vw, 1.25rem);
+    border: 1px solid var(--line);
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--surface) 72%, var(--paper));
+    box-shadow: 0 8px 28px rgb(25 32 44 / 6%);
+  }
+
+  .opencv-detection-pipeline__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .35rem 1rem;
+    margin-bottom: 1.2rem;
+    color: var(--text);
+    font: 650 1rem/1.4 var(--sans);
+  }
+
+  .opencv-detection-pipeline__heading small {
+    color: var(--muted);
+    font: .72rem/1.5 var(--sans);
+  }
+
+  .opencv-detection-pipeline__branch h3,
+  .opencv-detection-pipeline__main h3 {
+    margin: 0 0 .3rem !important;
+    color: var(--text);
+    font: 650 .82rem/1.4 var(--sans) !important;
+    letter-spacing: 0;
+  }
+
+  .opencv-detection-pipeline__branch > p {
+    margin: 0 0 .75rem !important;
+    color: var(--muted);
+    font: .68rem/1.5 var(--sans) !important;
+  }
+
+  .opencv-detection-pipeline__channels,
+  .opencv-detection-pipeline__stages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .85rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .opencv-detection-pipeline__channels { margin-bottom: .5rem; }
+
+  .opencv-detection-pipeline__card {
+    position: relative;
+    min-width: 0;
+    padding: .65rem;
+    border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+    border-radius: .75rem;
+    background: var(--paper);
+  }
+
+  .opencv-detection-pipeline__image {
+    overflow: hidden;
+    aspect-ratio: 5 / 3;
+    border: 1px solid var(--line);
+    border-radius: .45rem;
+    background: #151923;
+  }
+
+  .opencv-detection-pipeline__image :global(picture) { display: block; width: 100%; height: 100%; }
+  .opencv-detection-pipeline__image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 0;
+    object-fit: contain;
+  }
+
+  .opencv-detection-pipeline__card-label {
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+    margin: .5rem 0 .18rem;
+    color: var(--accent);
+    font: 650 .65rem/1.25 var(--mono);
+  }
+
+  .opencv-detection-pipeline__card-label h4 {
+    margin: 0 !important;
+    color: var(--text);
+    font: 650 .75rem/1.35 var(--sans) !important;
+    letter-spacing: 0;
+  }
+
+  .opencv-detection-pipeline__card-label small {
+    margin-left: auto;
+    color: var(--muted);
+    font: .6rem/1.3 var(--mono);
+  }
+
+  .opencv-detection-pipeline__card > p {
+    margin: 0 !important;
+    color: var(--muted);
+    font: .64rem/1.5 var(--sans) !important;
+  }
+
+  .opencv-detection-pipeline__source-bridge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: .35rem 0 .45rem;
+    color: var(--accent);
+    font: 700 .82rem/1.2 var(--sans);
+  }
+
+  .opencv-detection-pipeline__up,
+  .opencv-detection-pipeline__down {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .12rem;
+  }
+
+  .opencv-detection-pipeline__up span,
+  .opencv-detection-pipeline__down span {
+    color: var(--muted);
+    font: 600 .62rem/1.3 var(--sans);
+  }
+
+  .opencv-detection-pipeline__source {
+    width: min(100%, 42rem);
+    margin: .5rem 0;
+    padding: .65rem;
+    border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+    border-radius: .8rem;
+    background: var(--paper);
+  }
+
+  .opencv-detection-pipeline__source figcaption {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .5rem;
+    margin-top: .45rem;
+    color: var(--text);
+    font: .73rem/1.35 var(--sans);
+  }
+
+  .opencv-detection-pipeline__source figcaption span {
+    color: var(--muted);
+    font: .6rem/1.3 var(--mono);
+  }
+
+  .opencv-detection-pipeline__main h3 { margin-bottom: .65rem !important; }
+  .opencv-detection-pipeline__stages { row-gap: 1.2rem; }
+  .opencv-detection-pipeline__stage--1 { grid-column: 1; grid-row: 1; }
+  .opencv-detection-pipeline__stage--2 { grid-column: 2; grid-row: 1; }
+  .opencv-detection-pipeline__stage--3 { grid-column: 3; grid-row: 1; }
+  .opencv-detection-pipeline__stage--4 { grid-column: 3; grid-row: 2; }
+  .opencv-detection-pipeline__stage--5 { grid-column: 2; grid-row: 2; }
+  .opencv-detection-pipeline__stage--6 { grid-column: 1; grid-row: 2; }
+
+  .opencv-detection-pipeline__stage::after {
+    position: absolute;
+    z-index: 1;
+    color: var(--accent);
+    font: 700 1.15rem/1 var(--sans);
+    pointer-events: none;
+  }
+
+  .opencv-detection-pipeline__stage--1::after,
+  .opencv-detection-pipeline__stage--2::after {
+    top: 43%;
+    right: -.72rem;
+    content: '→';
+  }
+
+  .opencv-detection-pipeline__stage--3::after {
+    right: 48%;
+    bottom: -.95rem;
+    content: '↓';
+  }
+
+  .opencv-detection-pipeline__stage--4::after,
+  .opencv-detection-pipeline__stage--5::after {
+    top: 43%;
+    left: -.72rem;
+    content: '←';
+  }
+
+  .opencv-detection-pipeline__note {
+    margin: .85rem 0 0 !important;
+    color: var(--muted);
+    font: .68rem/1.55 var(--sans) !important;
+  }
+
+  @media (max-width: 900px) {
+    .opencv-detection-pipeline__channels,
+    .opencv-detection-pipeline__stages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .opencv-detection-pipeline__stage--1,
+    .opencv-detection-pipeline__stage--2,
+    .opencv-detection-pipeline__stage--3,
+    .opencv-detection-pipeline__stage--4,
+    .opencv-detection-pipeline__stage--5,
+    .opencv-detection-pipeline__stage--6 { grid-column: auto; grid-row: auto; }
+    .opencv-detection-pipeline__stage::after { display: none; }
+  }
+
+  @media (max-width: 520px) {
+    .opencv-detection-pipeline__channels,
+    .opencv-detection-pipeline__stages { grid-template-columns: 1fr; gap: .65rem; }
+    .opencv-detection-pipeline__source figcaption { flex-wrap: wrap; }
+  }
+</style>
