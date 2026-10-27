@@ -1,31 +1,32 @@
 ---
 name: deploy-site-incrementally
-description: Deploy and verify this Astro site through its GitHub Pages workflow while preserving incremental media builds. Use when asked to deploy, publish, push the current site live, reduce deployment time, change the Pages workflow, or investigate slow image builds.
+description: Deploy this Astro site to its existing Aliyun Simple Application Server, preserve incremental media builds, and synchronize the published source to GitHub. Use for site publication, deployment failures, or slow media preparation.
 ---
 
 # Deploy Site Incrementally
 
-Publish the current site through `main` without rebuilding unchanged responsive media. Treat a successful Git push as the start of deployment, not completion.
+Publish to the existing Aliyun server. GitHub stores synchronized source; GitHub Pages is retired. Keep Pages and Actions publishing disabled for both the site and support services.
 
-## Preserve the incremental media contract
+## Prepare the release
 
-- Keep generated files in `public/media` and `public/image-manifest.json` out of Git. Runtime pages must use `/media` responsive variants; do not recreate `public/images`, `public/anime`, or `public/coffee` compatibility copies.
-- Restore the newest `responsive-media-${runner.os}-` cache when the exact source hash key misses.
-- Set `SKIP_IMAGE_OPTIMIZATION=true` only for an exact cache hit. A prefix restore must run `scripts/optimize-images.mjs` so it can merge changes into the restored output.
-- Preserve `sourceHash` values in `public/image-manifest.json`. Reuse an entry only when every expected output exists and either its source fingerprint matches or a valid push diff proves the source was unchanged.
-- On every cache-prefix restore for a push, pass the NUL-delimited `git diff` of `src/assets/media` through `IMAGE_CHANGED_PATHS_FILE`; do not gate it with `hashFiles` because cached, ignored manifests are unavailable during expression evaluation. Entries absent from that diff may retain their prior `sourceHash` and variants without being re-read; changed, missing, or incomplete entries must be fingerprinted and regenerated.
-- Rebuild only new, changed, or incomplete media entries. Remove variants and legacy copies for deleted sources.
-- Allow a full media build only when no usable prior cache or manifest exists. Report that fallback explicitly.
+1. Read the repository `AGENTS.md` Publishing section for the authoritative build, installation, and verification procedure. Before Aliyun access, read the ignored `agent.md` for machine-local credential locations. Keep credentials and connection details outside tracked files and release archives.
+2. Inspect the working-tree diff and identify the changes authorized for this release. If the user requests only selected changes, create a clean temporary source snapshot from the tracked baseline and apply only those files or hunks. Preserve all excluded local files and changes, including excluded hunks in otherwise published files.
+3. Fetch `origin/main` and account for remote commits before building. Keep the source remote current without overwriting remote work.
+4. Use Node.js 24. Run `npm ci`, `npm run prepare:deploy`, `npm run validate:opencv-asset`, and `npm run build:site` in the curated source snapshot. Supply production `PUBLIC_*` values through a local release environment. Run additional checks appropriate to the actual changes.
 
-## Publish
+## Preserve incremental media
 
-1. Read `.github/workflows/deploy.yml`, `scripts/optimize-images.mjs`, and the worktree status.
-2. If Coffee editorial work is included, confirm `design-coffee-editorial-covers` has completed visual verification and the user has explicitly approved publication.
-3. Fetch `origin/main` and confirm the local branch is not behind. Do not overwrite remote work.
-4. Run `npm test` and `npm run build`. For incremental-pipeline changes, also prove that a second unchanged run reports zero rebuilt sources.
-5. Stage only deployable site source, tests, workflow files, and project skills. Exclude root drafts, archives, ZIP files, and unrelated agent notes unless explicitly requested.
-6. Commit and push `main`. The push triggers `Deploy Astro site to Pages`.
-7. Monitor the exact workflow run through both `build` and `deploy`. Do not report success while it is queued or in progress.
-8. Verify the live custom domain serves the new content after the workflow succeeds. Report the commit, workflow URL, and live URLs.
+- Seed the release workspace with the existing ignored `public/media/` output and `public/image-manifest.json` when available, then run media preparation. Keep generated variants and the manifest out of Git.
+- Preserve manifest `sourceHash` values. Reuse only entries whose fingerprints match and whose expected outputs exist; rebuild new, changed, or incomplete sources and remove outputs for deleted sources.
+- Runtime pages use `/media` responsive variants. The image pipeline clears legacy `public/images/`, `public/anime/`, and `public/coffee/` copies. Standalone tutorial figures belong under `public/articles/<article-slug>/`.
+- Report a cold media rebuild if no usable cache exists. For changes to the media pipeline itself, confirm a second unchanged run rebuilds zero sources.
 
-Do not manually cancel a healthy build merely because a cold media cache is slow. If a new incremental-pipeline commit supersedes it through the workflow concurrency group, monitor the replacement run instead.
+## Install and verify
+
+1. Check the Aliyun instance state and deployment access using the local settings. Read production public build values from the existing release configuration or live site when needed; preserve the current comments and OpenCV integration.
+2. Package only `dist/` and `opencv-runner/`. Upload to the host in local-only `ALIYUN_DEPLOY_TARGET`, then invoke the installer specified in `AGENTS.md` with the archive path and a unique release ID. The installer activates atomically and checks runner health. Inspect its actual completion result before reporting success.
+3. Verify the live routes and OpenCV health endpoint required by `AGENTS.md`, plus every page changed by this release. Confirm the requested content and styles are present; for removed routes, confirm they no longer serve the removed page.
+4. Remove the uploaded archive and any temporary firewall rule created for this release. Preserve the existing DNS target.
+5. Commit and synchronize only the published source changes and explicitly requested deployment documentation to GitHub through normal Git operations. When a file also contains excluded local changes, stage its curated release content while leaving those local changes in the working tree.
+
+Completion means the Aliyun release is active, live verification passed, temporary access artifacts are cleaned up, and GitHub source synchronization is accounted for. Report the release ID, source commit, verified URLs, and any unresolved blocker accurately.

@@ -724,8 +724,8 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
 
 .jp-library {
   padding: clamp(5rem, 10vw, 10rem) var(--page-pad);
-  color: #eee9dc;
-  background: #101511;
+  color: var(--jp-ink);
+  background: var(--jp-paper);
 }
 
 .jp-library__header {
@@ -754,26 +754,26 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   display: flex;
   align-items: center;
   gap: .65rem;
-  border-bottom: 1px solid rgba(238, 233, 220, .5);
+  border-bottom: 1px solid color-mix(in srgb, var(--jp-ink) 50%, transparent);
 }
 
 .jp-library__header input {
   width: 100%;
   border: 0;
   outline: 0;
-  color: #eee9dc;
+  color: var(--jp-ink);
   background: transparent;
   font: .7rem/1 var(--mono);
 }
 
-.jp-library__header input::placeholder { color: rgba(238, 233, 220, .48); }
+.jp-library__header input::placeholder { color: color-mix(in srgb, var(--jp-ink) 48%, transparent); }
 
 .jp-library__summary {
   margin-top: clamp(3rem, 6vw, 6rem);
   padding-bottom: .8rem;
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid rgba(238, 233, 220, .4);
+  border-bottom: 1px solid color-mix(in srgb, var(--jp-ink) 40%, transparent);
 }
 
 .jp-library__grid button {
@@ -787,7 +787,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   align-items: center;
   gap: clamp(1rem, 3vw, 3rem);
   border: 0;
-  border-bottom: 1px solid rgba(238, 233, 220, .16);
+  border-bottom: 1px solid color-mix(in srgb, var(--jp-ink) 16%, transparent);
   overflow: hidden;
   color: inherit;
   text-align: left;
@@ -803,7 +803,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
 }
 
 .jp-library__grid button:focus-visible {
-  outline: 2px solid #eee9dc;
+  outline: 2px solid var(--jp-ink);
   outline-offset: -4px;
 }
 
@@ -881,7 +881,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
 }
 
 .jp-library__copy i {
-  color: rgba(238, 233, 220, .55);
+  color: color-mix(in srgb, var(--jp-ink) 55%, transparent);
   font: .58rem/1.2 var(--mono);
   font-style: normal;
 }

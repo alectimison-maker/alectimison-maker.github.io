@@ -11,7 +11,6 @@ export async function GET() {
   const paths = [
     '/',
     ...Object.keys(SPACE_META).map((space) => `/${space}/`),
-    '/archive/',
     '/contact/',
     '/privacy/',
     ...posts.map((post) => `/posts/${post.id}/`),

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Incremental Site Deploys"
-  short_description: "Deploy only changed site media and verify GitHub Pages"
-  default_prompt: "Use $deploy-site-incrementally to publish the current site with incremental media generation and verify the live deployment."
+  display_name: "Aliyun Incremental Deploys"
+  short_description: "Deploy to Aliyun and sync source to GitHub"
+  default_prompt: "Use $deploy-site-incrementally to publish the authorized site changes to Aliyun with incremental media generation and synchronize the published source to GitHub."

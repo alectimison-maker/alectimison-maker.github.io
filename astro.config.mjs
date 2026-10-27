@@ -20,7 +20,6 @@ export default defineConfig({
       filter: (page) => {
         const pathname = new URL(page).pathname
         return !pathname.endsWith('/about/')
-          && !pathname.startsWith('/archives/')
           && !/^\/20\d{2}\//.test(pathname)
           && pathname !== '/search/'
       },

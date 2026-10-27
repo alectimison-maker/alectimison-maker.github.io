@@ -6,7 +6,6 @@ export async function GET() {
   const paths = [
     '/',
     ...Object.keys(SPACE_META).map((space) => `/${space}/`),
-    '/archive/',
     ...posts.map((post) => `/posts/${post.id}/`),
   ]
   return new Response(paths.map((path) => `${SITE.origin}${path}`).join('\n'), {

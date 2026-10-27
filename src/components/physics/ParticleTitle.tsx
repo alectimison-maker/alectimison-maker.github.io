@@ -18,7 +18,7 @@ interface Point { x: number; y: number }
 
 const CONFIG = typePreset
 const DARK_COLORS = ['#baff58', '#58fbd2', '#d9fff3', '#ff6d91']
-const LIGHT_COLORS = ['#173ea5', '#a51d3f', '#006854', '#17140f']
+const LIGHT_COLORS = ['#1f4fd1', '#d93a2a', '#007b67', '#512b68']
 
 const createGlowSprite = (color: string): HTMLCanvasElement => {
   const sprite = document.createElement('canvas')
