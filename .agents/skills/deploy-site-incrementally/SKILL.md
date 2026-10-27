@@ -26,7 +26,7 @@ Publish to the existing Aliyun server. GitHub stores synchronized source; GitHub
 
 1. Check the Aliyun instance state and deployment access using the local settings. Read production public build values from the existing release configuration or live site when needed; preserve the current comments and OpenCV integration.
 2. Package only `dist/` and `opencv-runner/`. Upload to the host in local-only `ALIYUN_DEPLOY_TARGET`, then invoke the installer specified in `AGENTS.md` with the archive path and a unique release ID. The installer activates atomically and checks runner health. Inspect its actual completion result before reporting success.
-3. Verify the live routes and OpenCV health endpoint required by `AGENTS.md`, plus every page changed by this release. Confirm the requested content and styles are present; for removed routes, confirm they no longer serve the removed page.
+3. Verify the live routes and OpenCV health endpoint required by `AGENTS.md`, plus every page changed by this release. Confirm the requested content and styles are present; run `python3 scripts/validate-live-404.py` to check missing routes serve the designed 404 with working resources and retain HTTP 404, rather than accepting a status-code-only check.
 4. Remove the uploaded archive and any temporary firewall rule created for this release. Preserve the existing DNS target.
 5. Commit and synchronize only the published source changes and explicitly requested deployment documentation to GitHub through normal Git operations. When a file also contains excluded local changes, stage its curated release content while leaving those local changes in the working tree.
 
