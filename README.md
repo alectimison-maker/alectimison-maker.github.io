@@ -28,6 +28,8 @@ npm run build
 - 迁移核对：`src/data/migration-manifest.json`
 - 旧站可回滚基线：Git 分支 `legacy-static`
 
+页面清理范围与保留理由见 [`docs/page-audit.md`](docs/page-audit.md)。构建会检查冗余路由、内部链接、历史文章跳转和站点地图。
+
 文章的 `date` 是 Markdown 中设置的写作日期，也是页面显示日期；`publishedAt` 只保留发布记录，不用于主日期展示。
 
 ## 图片策略

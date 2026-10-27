@@ -19,9 +19,9 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const pathname = new URL(page).pathname
-        return !pathname.endsWith('/about/')
-          && !/^\/20\d{2}\//.test(pathname)
-          && pathname !== '/search/'
+        // Only canonical public pages belong in the search engine sitemap.
+        return ['/', '/article/', '/nonsense/', '/jazz/', '/anime/', '/coffee/', '/contact/', '/privacy/'].includes(pathname)
+          || /^\/posts\/[^/]+\/$/.test(pathname)
       },
     }),
   ],

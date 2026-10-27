@@ -12,7 +12,8 @@ Publish to the existing Aliyun server. GitHub stores synchronized source; GitHub
 1. Read the repository `AGENTS.md` Publishing section for the authoritative build, installation, and verification procedure. Before Aliyun access, read the ignored `agent.md` for machine-local credential locations. Keep credentials and connection details outside tracked files and release archives.
 2. Inspect the working-tree diff and identify the changes authorized for this release. If the user requests only selected changes, create a clean temporary source snapshot from the tracked baseline and apply only those files or hunks. Preserve all excluded local files and changes, including excluded hunks in otherwise published files.
 3. Fetch `origin/main` and account for remote commits before building. Keep the source remote current without overwriting remote work.
-4. Use Node.js 24. Run `npm ci`, `npm run prepare:deploy`, `npm run validate:opencv-asset`, and `npm run build:site` in the curated source snapshot. Supply production `PUBLIC_*` values through a local release environment. Run additional checks appropriate to the actual changes.
+4. Complete the [page cleanup preflight](references/page-cleanup-preflight.md) in the curated snapshot. Resolve retired routes, duplicate page output, and broken internal links before packaging; retain useful pages and unfinished local work.
+5. Use Node.js 24. Run `npm ci`, `npm run prepare:deploy`, `npm run validate:opencv-asset`, and `npm run build:site` in the curated source snapshot. Supply production `PUBLIC_*` values through a local release environment. The build must pass its image and route validators before packaging. Run additional checks appropriate to the actual changes.
 
 ## Preserve incremental media
 
