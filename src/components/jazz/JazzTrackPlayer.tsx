@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ArrowUpRight, Pause, Play, Search, SkipBack, SkipForward, Volume2 } from 'lucide-react'
-import { formatTrackTime, jazzAlbumPath, type JazzQueueTrack, type JazzItem } from '../../data/jazz-types'
+import { Pause, Play, Search, SkipBack, SkipForward, Volume2 } from 'lucide-react'
+import { formatTrackTime, type JazzQueueTrack, type JazzItem } from '../../data/jazz-types'
 import './jazz-listening.css'
 import JazzCover from './JazzCover'
 import { music, restoreMusic, useMusic } from '../../lib/music-player'
@@ -93,8 +93,7 @@ export default function JazzTrackPlayer({ tracks, title, description, album }: {
               <span className="jl-track__duration">{formatTrackTime(entry.duration)}</span>
               <span className="jl-track__action" aria-hidden="true">{row === index && playing ? <Pause size={15} /> : <Play size={15} />}</span>
             </button>
-            {entry.albumId ? <a className="jl-track__album" href={`${jazzAlbumPath(entry.albumId)}?track=${entry.id}`} aria-label={`打开 ${entry.albumTitle} 专辑`}><ArrowUpRight size={15} /></a>
-              : <span className="jl-track__art"><img src={entry.thumbnail ?? entry.cover} alt="" width="28" height="28" loading="lazy" decoding="async" /></span>}
+            {!entry.albumId && <span className="jl-track__art"><img src={entry.thumbnail ?? entry.cover} alt="" width="28" height="28" loading="lazy" decoding="async" /></span>}
           </li>)}
         </ol>
         {!visible.length && <p className="jl-search-empty">没有找到这个曲目或演奏者。</p>}
