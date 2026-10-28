@@ -32,7 +32,6 @@ const links = [
   </nav>
 
   <div class="header-actions">
-    <a class="search-link" href="/search/" aria-label="搜索"><span aria-hidden="true">⌘K</span> Search</a>
     <button class="menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
   </div>
 
@@ -41,8 +40,7 @@ const links = [
       {links.map(([href, label], index) => (
         <a href={href}><span>{String(index + 1).padStart(2, '0')}</span>{label}</a>
       ))}
-      <a href="/search/"><span>07</span>Search</a>
-      <a href="/contact/"><span>08</span>Contact</a>
+      <a href="/contact/"><span>06</span>Contact</a>
     </nav>
     <div class="menu-settings">
       <span>THEME</span>
@@ -65,96 +63,100 @@ const links = [
 </header>
 
 <script>
-  const header = document.querySelector<HTMLElement>('[data-header]')
-  const menuButton = header?.querySelector<HTMLButtonElement>('.menu-button')
-  const menu = header?.querySelector<HTMLElement>('.mobile-menu')
-  const desktopLinks = header?.querySelectorAll<HTMLAnchorElement>('.desktop-nav a')
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-header]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    const header = document.querySelector<HTMLElement>('[data-header]')
+    const menuButton = header?.querySelector<HTMLButtonElement>('.menu-button')
+    const menu = header?.querySelector<HTMLElement>('.mobile-menu')
+    const desktopLinks = header?.querySelectorAll<HTMLAnchorElement>('.desktop-nav a')
 
-  const setMenu = (open: boolean) => {
-    if (!menuButton || !menu) return
-    menuButton.setAttribute('aria-expanded', String(open))
-    menu.hidden = !open
-    document.documentElement.style.overflow = open ? 'hidden' : ''
-  }
-
-  menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'))
-  menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)))
-
-  desktopLinks?.forEach((link) => {
-    const letters = Array.from(link.querySelectorAll<HTMLElement>('.nav-letter'))
-    let pointerFrame = 0
-    let pointerX = 0
-    let pointerY = 0
-
-    const paintWeightField = () => {
-      const radius = 52
-
-      letters.forEach((letter) => {
-        const rect = letter.getBoundingClientRect()
-        const distance = Math.hypot(
-          pointerX - (rect.left + rect.width / 2),
-          pointerY - (rect.top + rect.height / 2),
-        )
-        const proximity = Math.max(0, 1 - distance / radius)
-        const easedProximity = proximity * proximity * (3 - 2 * proximity)
-        letter.style.setProperty('--hover-weight', easedProximity.toFixed(3))
-      })
-
-      pointerFrame = 0
+    const setMenu = (open: boolean) => {
+      if (!menuButton || !menu) return
+      menuButton.setAttribute('aria-expanded', String(open))
+      menu.hidden = !open
+      document.documentElement.style.overflow = open ? 'hidden' : ''
     }
 
-    const updateWeightField = (event: PointerEvent) => {
-      if (event.pointerType === 'touch') return
-      pointerX = event.clientX
-      pointerY = event.clientY
-      link.classList.add('is-proximity-active')
-      if (!pointerFrame) pointerFrame = requestAnimationFrame(paintWeightField)
-    }
+    menuButton?.addEventListener('click', () => setMenu(menuButton.getAttribute('aria-expanded') !== 'true'))
+    menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)))
 
-    link.addEventListener('pointerenter', updateWeightField)
-    link.addEventListener('pointermove', updateWeightField)
-    link.addEventListener('pointerleave', () => {
-      if (pointerFrame) cancelAnimationFrame(pointerFrame)
-      pointerFrame = 0
-      link.classList.remove('is-proximity-active')
-      letters.forEach((letter) => letter.style.removeProperty('--hover-weight'))
-    })
-  })
+    desktopLinks?.forEach((link) => {
+      const letters = Array.from(link.querySelectorAll<HTMLElement>('.nav-letter'))
+      let pointerFrame = 0
+      let pointerX = 0
+      let pointerY = 0
 
-  header?.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const value = button.dataset.themeValue
-      if (value === 'system') {
-        delete document.documentElement.dataset.theme
-        localStorage.removeItem('aliouswe-theme')
-      } else if (value === 'light' || value === 'dark') {
-        document.documentElement.dataset.theme = value
-        localStorage.setItem('aliouswe-theme', value)
+      const paintWeightField = () => {
+        const radius = 52
+
+        letters.forEach((letter) => {
+          const rect = letter.getBoundingClientRect()
+          const distance = Math.hypot(
+            pointerX - (rect.left + rect.width / 2),
+            pointerY - (rect.top + rect.height / 2),
+          )
+          const proximity = Math.max(0, 1 - distance / radius)
+          const easedProximity = proximity * proximity * (3 - 2 * proximity)
+          letter.style.setProperty('--hover-weight', easedProximity.toFixed(3))
+        })
+
+        pointerFrame = 0
       }
-    })
-  })
-  header?.querySelectorAll<HTMLButtonElement>('[data-motion-value]').forEach((button) => {
-    button.addEventListener('click', () => {
-      localStorage.setItem('aliouswe-motion', button.dataset.motionValue ?? 'full')
-      window.location.reload()
-    })
-  })
-  header?.querySelectorAll<HTMLButtonElement>('[data-quality-value]').forEach((button) => {
-    button.addEventListener('click', () => {
-      localStorage.setItem('aliouswe-quality', button.dataset.qualityValue ?? 'balanced')
-      window.location.reload()
-    })
-  })
 
-  document.addEventListener('keydown', (event) => {
-    const target = event.target as HTMLElement | null
-    const editing = target?.matches('input, textarea, select, [contenteditable="true"]')
-    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k' || (!editing && event.key === '/')) {
-      event.preventDefault()
-      window.location.assign('/search/')
+      const updateWeightField = (event: PointerEvent) => {
+        if (event.pointerType === 'touch') return
+        pointerX = event.clientX
+        pointerY = event.clientY
+        link.classList.add('is-proximity-active')
+        if (!pointerFrame) pointerFrame = requestAnimationFrame(paintWeightField)
+      }
+
+      link.addEventListener('pointerenter', updateWeightField)
+      link.addEventListener('pointermove', updateWeightField)
+      link.addEventListener('pointerleave', () => {
+        if (pointerFrame) cancelAnimationFrame(pointerFrame)
+        pointerFrame = 0
+        link.classList.remove('is-proximity-active')
+        letters.forEach((letter) => letter.style.removeProperty('--hover-weight'))
+      })
+    })
+
+    header?.querySelectorAll<HTMLButtonElement>('[data-theme-value]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const value = button.dataset.themeValue
+        if (value === 'system') {
+          delete document.documentElement.dataset.theme
+          localStorage.removeItem('aliouswe-theme')
+        } else if (value === 'light' || value === 'dark') {
+          document.documentElement.dataset.theme = value
+          localStorage.setItem('aliouswe-theme', value)
+        }
+      })
+    })
+    header?.querySelectorAll<HTMLButtonElement>('[data-motion-value]').forEach((button) => {
+      button.addEventListener('click', () => {
+        localStorage.setItem('aliouswe-motion', button.dataset.motionValue ?? 'full')
+        window.location.reload()
+      })
+    })
+    header?.querySelectorAll<HTMLButtonElement>('[data-quality-value]').forEach((button) => {
+      button.addEventListener('click', () => {
+        localStorage.setItem('aliouswe-quality', button.dataset.qualityValue ?? 'balanced')
+        window.location.reload()
+      })
+    })
+
+    const shortcuts = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setMenu(false)
     }
-    if (event.key === 'Escape') setMenu(false)
-  })
+    document.addEventListener('keydown', shortcuts)
+    document.addEventListener('astro:before-swap', () => document.removeEventListener('keydown', shortcuts), { once: true })
+  }
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
 </script>
 
 <style>
@@ -188,7 +190,7 @@ const links = [
   }
   .brand-avatar:hover span { transform: translate(3px, -2px); }
   .desktop-nav { display: flex; gap: clamp(.8rem, 2vw, 1.7rem); }
-  .desktop-nav a, .search-link, .menu-button {
+  .desktop-nav a, .menu-button {
     color: var(--muted);
     font: 600 .7rem/1 var(--mono);
     letter-spacing: .08em;
@@ -225,12 +227,10 @@ const links = [
   }
   .desktop-nav a[aria-current="page"],
   .desktop-nav a:hover,
-  .desktop-nav a:focus-visible,
-  .search-link:hover {
+  .desktop-nav a:focus-visible {
     color: var(--text);
   }
   .header-actions { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; }
-  .search-link span { color: var(--accent); }
   .menu-button { display: none; padding: .7rem; border: 1px solid var(--line); background: none; }
   .mobile-menu {
     position: fixed;
@@ -256,7 +256,7 @@ const links = [
   .menu-settings button { padding: .6rem .8rem; border: 1px solid var(--line); color: var(--text); background: transparent; }
   @media (max-width: 900px) {
     .site-header { grid-template-columns: 1fr auto; }
-    .desktop-nav, .search-link { display: none; }
+    .desktop-nav { display: none; }
     .menu-button { display: inline-flex; }
   }
   @media (prefers-reduced-motion: reduce) {

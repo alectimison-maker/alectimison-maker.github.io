@@ -35,6 +35,5 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft && data.sp
     font: 400 clamp(5rem, 9vw, 9.5rem)/.72 var(--display-script);
     letter-spacing: 0;
   }
-  .coffee-notes-list { display: grid; }
-  .coffee-notes-list > :global(article + article) { margin-top: -1px; }
+  .coffee-notes-list { display: grid; gap: clamp(1.5rem, 3vw, 3rem); }
 </style>

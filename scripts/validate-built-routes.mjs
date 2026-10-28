@@ -4,7 +4,7 @@ import * as cheerio from 'cheerio'
 
 const dist = path.resolve(import.meta.dirname, '../dist')
 const origin = 'https://aliouswe.com'
-const retired = /^\/(?:categories|tags|404-lab|about|archives)(?:\/|\.|$)/
+const retired = /^\/(?:categories|tags|404-lab|about|archives|search|pagefind)(?:\/|\.|$)/
 // These are unfinished local work, preserved in source but excluded from releases.
 const localOnly = /^\/(?:design-prototype|coffee-3d-prototype|night-wanderer)(?:\/|\.|$)/
 const walk = async (directory) => {
@@ -20,6 +20,9 @@ const htmlFiles = files.filter((file) => file.endsWith('.html'))
 const fail = (message) => {
   console.error(`Built route validation failed: ${message}`)
   process.exitCode = 1
+}
+if (files.some((file) => path.relative(dist, file).split(path.sep)[0] === 'pagefind')) {
+  fail('retired Pagefind search index still emitted')
 }
 const exists = async (pathname) => {
   const target = path.join(dist, decodeURIComponent(pathname))

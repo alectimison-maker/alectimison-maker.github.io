@@ -47,100 +47,116 @@ const commentsConfigured = Boolean(serverUrl && turnstileSiteKey)
 </section>
 
 <script>
-  const sections = document.querySelectorAll<HTMLElement>('[data-comments]')
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-comments]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    const sections = document.querySelectorAll<HTMLElement>('[data-comments]')
 
-  const isDarkMode = () => {
-    const explicitTheme = document.documentElement.dataset.theme
-    if (explicitTheme) return explicitTheme === 'dark'
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-  }
-
-  const showRetry = (section: HTMLElement, message: string, load: () => void) => {
-    const root = section.querySelector<HTMLElement>('[data-comments-root]')
-    const status = section.querySelector<HTMLElement>('[data-comments-status]')
-    if (status) status.textContent = message
-    if (!root) return
-    root.replaceChildren()
-    const retry = document.createElement('button')
-    retry.type = 'button'
-    retry.className = 'comments__retry'
-    retry.textContent = '重新载入'
-    retry.addEventListener('click', load, { once: true })
-    root.append(retry)
-  }
-
-  const loadComments = async (section: HTMLElement) => {
-    if (section.dataset.commentsState === 'loading' || section.dataset.commentsState === 'loaded') return
-    const root = section.querySelector<HTMLElement>('[data-comments-root]')
-    const status = section.querySelector<HTMLElement>('[data-comments-status]')
-    const serverURL = section.dataset.serverUrl
-    const turnstileKey = section.dataset.turnstileSiteKey
-    const path = section.dataset.commentPath
-
-    if (section.dataset.commentsConfigured !== 'true' || !root || !serverURL || !turnstileKey || !path) {
-      if (status) status.textContent = '评论服务尚未完成配置，暂时无法留言。'
-      return
+    const isDarkMode = () => {
+      const explicitTheme = document.documentElement.dataset.theme
+      if (explicitTheme) return explicitTheme === 'dark'
+      return window.matchMedia('(prefers-color-scheme: dark)').matches
     }
 
-    section.dataset.commentsState = 'loading'
-    if (status) status.textContent = '正在载入现有评论与留言表单…'
-
-    try {
-      const { init } = await import('@waline/client')
+    const showRetry = (section: HTMLElement, message: string, load: () => void) => {
+      const root = section.querySelector<HTMLElement>('[data-comments-root]')
+      const status = section.querySelector<HTMLElement>('[data-comments-status]')
+      if (status) status.textContent = message
+      if (!root) return
       root.replaceChildren()
-      const instance = init({
-        el: root,
-        serverURL,
-        path,
-        lang: 'zh-CN',
-        dark: isDarkMode(),
-        login: 'disable',
-        meta: ['nick', 'mail', 'link'],
-        requiredMeta: ['nick', 'mail'],
-        wordLimit: [1, Number(section.dataset.maxLength) || 2_000],
-        pageSize: Number(section.dataset.pageSize) || 10,
-        commentSorting: 'latest',
-        imageUploader: false,
-        search: false,
-        emoji: false,
-        highlighter: false,
-        texRenderer: false,
-        reaction: false,
-        noRss: true,
-        noCopyright: true,
-        turnstileKey,
-      })
-
-      const syncTheme = () => instance?.update({ dark: isDarkMode() })
-      const themeObserver = new MutationObserver(syncTheme)
-      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme)
-
-      section.dataset.commentsState = 'loaded'
-      if (status) status.textContent = '邮箱不会公开；评论收到直接回复时，系统会发送邮件通知。'
-    } catch {
-      section.dataset.commentsState = 'error'
-      showRetry(section, '评论暂时载入失败，请稍后重试或通过邮件联系。', () => loadComments(section))
+      const retry = document.createElement('button')
+      retry.type = 'button'
+      retry.className = 'comments__retry'
+      retry.textContent = '重新载入'
+      retry.addEventListener('click', load, { once: true })
+      root.append(retry)
     }
+
+    const loadComments = async (section: HTMLElement) => {
+      if (section.dataset.commentsState === 'loading' || section.dataset.commentsState === 'loaded') return
+      const root = section.querySelector<HTMLElement>('[data-comments-root]')
+      const status = section.querySelector<HTMLElement>('[data-comments-status]')
+      const serverURL = section.dataset.serverUrl
+      const turnstileKey = section.dataset.turnstileSiteKey
+      const path = section.dataset.commentPath
+
+      if (section.dataset.commentsConfigured !== 'true' || !root || !serverURL || !turnstileKey || !path) {
+        if (status) status.textContent = '评论服务尚未完成配置，暂时无法留言。'
+        return
+      }
+
+      section.dataset.commentsState = 'loading'
+      if (status) status.textContent = '正在载入现有评论与留言表单…'
+
+      try {
+        const { init } = await import('@waline/client')
+        if (!section.isConnected) return
+        root.replaceChildren()
+        const instance = init({
+          el: root,
+          serverURL,
+          path,
+          lang: 'zh-CN',
+          dark: isDarkMode(),
+          login: 'disable',
+          meta: ['nick', 'mail', 'link'],
+          requiredMeta: ['nick', 'mail'],
+          wordLimit: [1, Number(section.dataset.maxLength) || 2_000],
+          pageSize: Number(section.dataset.pageSize) || 10,
+          commentSorting: 'latest',
+          imageUploader: false,
+          search: false,
+          emoji: false,
+          highlighter: false,
+          texRenderer: false,
+          reaction: false,
+          noRss: true,
+          noCopyright: true,
+          turnstileKey,
+        })
+
+        const syncTheme = () => instance?.update({ dark: isDarkMode() })
+        const themeObserver = new MutationObserver(syncTheme)
+        themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
+        const preference = window.matchMedia('(prefers-color-scheme: dark)')
+        preference.addEventListener('change', syncTheme)
+        document.addEventListener('astro:before-swap', () => {
+          themeObserver.disconnect()
+          preference.removeEventListener('change', syncTheme)
+          instance?.destroy()
+        }, { once: true })
+
+        section.dataset.commentsState = 'loaded'
+        if (status) status.textContent = '邮箱不会公开；评论收到直接回复时，系统会发送邮件通知。'
+      } catch {
+        section.dataset.commentsState = 'error'
+        showRetry(section, '评论暂时载入失败，请稍后重试或通过邮件联系。', () => loadComments(section))
+      }
+    }
+
+    sections.forEach((section) => {
+      if (section.dataset.commentsConfigured !== 'true') return
+      if (window.location.hash === '#comments') {
+        void loadComments(section)
+        return
+      }
+      if (!('IntersectionObserver' in window)) {
+        void loadComments(section)
+        return
+      }
+      const observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return
+        observer.disconnect()
+        void loadComments(section)
+      }, { rootMargin: '600px 0px' })
+      observer.observe(section)
+      document.addEventListener('astro:before-swap', () => observer.disconnect(), { once: true })
+    })
   }
-
-  sections.forEach((section) => {
-    if (section.dataset.commentsConfigured !== 'true') return
-    if (window.location.hash === '#comments') {
-      void loadComments(section)
-      return
-    }
-    if (!('IntersectionObserver' in window)) {
-      void loadComments(section)
-      return
-    }
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return
-      observer.disconnect()
-      void loadComments(section)
-    }, { rootMargin: '600px 0px' })
-    observer.observe(section)
-  })
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
 </script>
 
 <style>

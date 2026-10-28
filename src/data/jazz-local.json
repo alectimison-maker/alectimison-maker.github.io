@@ -1,0 +1,1420 @@
+[
+  {
+    "id": "cowboy-bebop",
+    "artist": "菅野よう子",
+    "year": 1998,
+    "tags": [
+      "Bebop",
+      "Big Band",
+      "Fusion",
+      "Swing",
+      "Cool Jazz",
+      "Blues",
+      "Funk Jazz",
+      "Neon",
+      "Late-night",
+      "Stormy"
+    ],
+    "cover": "/jazz-local/cowboy-bebop/cover.jpg",
+    "description": "",
+    "artworks": [
+      "/jazz-local/cowboy-bebop/artwork-1.jpg",
+      "/jazz-local/cowboy-bebop/artwork-2.png",
+      "/jazz-local/cowboy-bebop/artwork-3.png",
+      "/jazz-local/cowboy-bebop/artwork-4.png"
+    ],
+    "tracks": [
+      {
+        "id": "cowboy-bebop-1",
+        "number": 1,
+        "title": "Tank!",
+        "duration": 210.38,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-2",
+        "number": 2,
+        "title": "Rush",
+        "duration": 214.22,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-3",
+        "number": 3,
+        "title": "Spokey Dokey",
+        "duration": 245.05,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-4",
+        "number": 4,
+        "title": "Bad Dog No Biscuits",
+        "duration": 250.41,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-5",
+        "number": 5,
+        "title": "Cat Blues",
+        "duration": 157.35,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-6",
+        "number": 6,
+        "title": "Cosmos",
+        "duration": 97.05,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-7",
+        "number": 7,
+        "title": "Space Lion",
+        "duration": 431.41,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-8",
+        "number": 8,
+        "title": "Waltz for Zizi",
+        "duration": 209.45,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-9",
+        "number": 9,
+        "title": "Piano Black",
+        "duration": 167.95,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-10",
+        "number": 10,
+        "title": "Pot City",
+        "duration": 134.07,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-11",
+        "number": 11,
+        "title": "Too Good Too Bad",
+        "duration": 154.85,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/11.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-12",
+        "number": 12,
+        "title": "Car 24",
+        "duration": 169.35,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/12.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-13",
+        "number": 13,
+        "title": "The Egg and I",
+        "duration": 162.65,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/13.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-14",
+        "number": 14,
+        "title": "Felt Tip Pen",
+        "duration": 162.51,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/14.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-15",
+        "number": 15,
+        "title": "Rain",
+        "duration": 203.51,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/15.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-16",
+        "number": 16,
+        "title": "Digging My Potato",
+        "duration": 144.61,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/16.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "cowboy-bebop-17",
+        "number": 17,
+        "title": "Memory",
+        "duration": 91.98,
+        "categories": [
+          "bebop",
+          "hard-bop",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/cowboy-bebop/17.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "forever",
+    "artist": "Enjoy Music Club",
+    "year": 2015,
+    "tags": [
+      "City Pop",
+      "J-Pop",
+      "Funk",
+      "Chill",
+      "Clean",
+      "Dreamy",
+      "Sunny"
+    ],
+    "cover": "/jazz-local/forever/cover.jpg",
+    "description": "aliouswe在塞纳河里跳踢踏舞掀翻了卡瓦利亚雷的情话杂谈\r\nFrank骑着北极熊撞坏了冰山忙于被爱斯基摩人索赔\r\nOema搅着棉花糖在大西洋引发了海啸从此蝴蝶效应易主\r\nVilliper忘记在Mojito里加薄荷叶苦恼万分前往麦加朝圣……",
+    "artworks": [
+      "/jazz-local/forever/artwork-1.png",
+      "/jazz-local/forever/artwork-2.png"
+    ],
+    "tracks": [
+      {
+        "id": "forever-1",
+        "number": 1,
+        "title": "ENJOY OPENING",
+        "duration": 27.17,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-2",
+        "number": 2,
+        "title": "EMCのラップ道",
+        "duration": 168.86,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-3",
+        "number": 3,
+        "title": "EMCトラベル",
+        "duration": 191.54,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-4",
+        "number": 4,
+        "title": "Taylor Swift",
+        "duration": 220.87,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-5",
+        "number": 5,
+        "title": "N・A・T・S・U",
+        "duration": 277.36,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-6",
+        "number": 6,
+        "title": "いいトゥモロー",
+        "duration": 205.57,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-7",
+        "number": 7,
+        "title": "ナイトランデブー",
+        "duration": 242.86,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-8",
+        "number": 8,
+        "title": "WORKER'S DELIGHT",
+        "duration": 222.77,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-9",
+        "number": 9,
+        "title": "クリスマスをしようよ",
+        "duration": 306.39,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-10",
+        "number": 10,
+        "title": "BIG LOVE",
+        "duration": 241.07,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "forever-11",
+        "number": 11,
+        "title": "ENJOY MUSIC FOREVER",
+        "duration": 268.21,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/forever/11.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "help-ever-hurt-never",
+    "artist": "藤井風",
+    "year": 2020,
+    "tags": [
+      "Piano",
+      "J-Pop",
+      "Chill",
+      "Warm vocal",
+      "Healing",
+      "City Night",
+      "Cafe",
+      "Dawn"
+    ],
+    "cover": "/jazz-local/help-ever-hurt-never/cover.jpg",
+    "description": "藤井风的第一张专辑",
+    "artworks": [
+      "/jazz-local/help-ever-hurt-never/artwork-1.jpg"
+    ],
+    "tracks": [
+      {
+        "id": "help-ever-hurt-never-1",
+        "number": 1,
+        "title": "何なんw",
+        "duration": 320.64,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-2",
+        "number": 2,
+        "title": "I'm Over it",
+        "duration": 301.94,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-3",
+        "number": 3,
+        "title": "優しさ",
+        "duration": 240.08,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-4",
+        "number": 4,
+        "title": "キリがないから",
+        "duration": 217.61,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-5",
+        "number": 5,
+        "title": "罪の香り",
+        "duration": 214.2,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-6",
+        "number": 6,
+        "title": "調子のっちゃって",
+        "duration": 282.24,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-7",
+        "number": 7,
+        "title": "特にない",
+        "duration": 205.25,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-8",
+        "number": 8,
+        "title": "死ぬのがいいわ",
+        "duration": 185.57,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-9",
+        "number": 9,
+        "title": "風よ",
+        "duration": 284.53,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-10",
+        "number": 10,
+        "title": "さよならべいべ",
+        "duration": 260.54,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "help-ever-hurt-never-11",
+        "number": 11,
+        "title": "帰ろう",
+        "duration": 284.46,
+        "categories": [
+          "fusion",
+          "vocal-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/help-ever-hurt-never/11.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "kind-of-blue",
+    "artist": "Miles Davis",
+    "year": 1959,
+    "tags": [
+      "Modal Jazz",
+      "Cool Jazz",
+      "minimalism",
+      "restrained",
+      "late-night",
+      "light-rain",
+      "overcast"
+    ],
+    "cover": "/jazz-local/kind-of-blue/cover.jpg",
+    "description": "- Miles Davis — trumpet\r\n\r\n- John Coltrane — tenor sax\r\n\r\n- Cannonball Adderley — alto sax\r\n\r\n- Bill Evans — piano\r\n\r\n- Wynton Kelly — piano（Freddie Freeloader）\r\n\r\n- Paul Chambers — bass\r\n\r\n- Jimmy Cobb — drums",
+    "artworks": [
+      "/jazz-local/kind-of-blue/artwork-1.jpg",
+      "/jazz-local/kind-of-blue/artwork-2.jpg",
+      "/jazz-local/kind-of-blue/artwork-3.jpg",
+      "/jazz-local/kind-of-blue/artwork-4.jpg"
+    ],
+    "tracks": [
+      {
+        "id": "kind-of-blue-1",
+        "number": 1,
+        "title": "So What",
+        "duration": 562.99,
+        "categories": [
+          "modal-jazz",
+          "cool-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/kind-of-blue/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "kind-of-blue-2",
+        "number": 2,
+        "title": "Freddie Freeloader",
+        "duration": 586.81,
+        "categories": [
+          "modal-jazz",
+          "cool-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/kind-of-blue/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "kind-of-blue-3",
+        "number": 3,
+        "title": "Blue in Green",
+        "duration": 337.43,
+        "categories": [
+          "modal-jazz",
+          "cool-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/kind-of-blue/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "kind-of-blue-4",
+        "number": 4,
+        "title": "All Blues",
+        "duration": 692.81,
+        "categories": [
+          "modal-jazz",
+          "cool-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/kind-of-blue/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "kind-of-blue-5",
+        "number": 5,
+        "title": "Flamenco Sketches",
+        "duration": 566.18,
+        "categories": [
+          "modal-jazz",
+          "cool-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/kind-of-blue/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "live-2022",
+    "artist": "Toshiki Soejima",
+    "year": 2022,
+    "tags": [
+      "Neo Soul",
+      "Peaceful",
+      "Neon"
+    ],
+    "cover": "/jazz-local/live-2022/cover.jpg",
+    "description": "aliouswe踏入月之神殿，刚好错过Artemis的宴请，野兽的保护神同时赋予生灵以死亡，几个萤精灵像被放逐的颤音琴将宴席上的泡沫粉末舔食而尽，眼底雾住了月光女神伪造的霓虹，aliouswe未等泡沫散尽就离去了……",
+    "artworks": [
+      "/jazz-local/live-2022/artwork-1.png",
+      "/jazz-local/live-2022/artwork-2.png",
+      "/jazz-local/live-2022/artwork-3.png"
+    ],
+    "tracks": [
+      {
+        "id": "live-2022-1",
+        "number": 1,
+        "title": "Feel Like Makin' Love",
+        "duration": 467.29,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/live-2022/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "live-2022-2",
+        "number": 2,
+        "title": "Birth",
+        "duration": 358.02,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/live-2022/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "live-2022-3",
+        "number": 3,
+        "title": "Snow",
+        "duration": 349.43,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/live-2022/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "live-2022-4",
+        "number": 4,
+        "title": "Crying",
+        "duration": 458.18,
+        "categories": [
+          "fusion",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/live-2022/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "love-all-cover-all",
+    "artist": "藤井風",
+    "year": 2022,
+    "tags": [
+      "Vocal cover",
+      "Piano",
+      "Warm",
+      "Quiet",
+      "Cafe",
+      "Smooth harmony"
+    ],
+    "cover": "/jazz-local/love-all-cover-all/cover.jpg",
+    "description": "",
+    "artworks": [
+      "/jazz-local/love-all-cover-all/artwork-1.jpg",
+      "/jazz-local/love-all-cover-all/artwork-2.jpg",
+      "/jazz-local/love-all-cover-all/artwork-3.jpg"
+    ],
+    "tracks": [
+      {
+        "id": "love-all-cover-all-1",
+        "number": 1,
+        "title": "Sunny",
+        "duration": 188.55,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-2",
+        "number": 2,
+        "title": "No Tears Left To Cry",
+        "duration": 196.58,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-3",
+        "number": 3,
+        "title": "Hot Stuff",
+        "duration": 214.37,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-4",
+        "number": 4,
+        "title": "Sorry",
+        "duration": 169.38,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-5",
+        "number": 5,
+        "title": "Good As Hell",
+        "duration": 158.37,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-6",
+        "number": 6,
+        "title": "Just The Two Of Us",
+        "duration": 217.4,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-7",
+        "number": 7,
+        "title": "Weak",
+        "duration": 286.9,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-8",
+        "number": 8,
+        "title": "Overprotected",
+        "duration": 201.17,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-9",
+        "number": 9,
+        "title": "Teenage Dream",
+        "duration": 253.98,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-10",
+        "number": 10,
+        "title": "Eh, Eh",
+        "duration": 166.98,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-cover-all-11",
+        "number": 11,
+        "title": "Circles",
+        "duration": 196.61,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-cover-all/11.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "love-all-serve-all",
+    "artist": "藤井風",
+    "year": 2022,
+    "tags": [
+      "Piano",
+      "J-Pop",
+      "Chill",
+      "Soft vocal",
+      "Healing",
+      "Peaceful",
+      "Morning calm",
+      "Golden Hour"
+    ],
+    "cover": "/jazz-local/love-all-serve-all/cover.jpg",
+    "description": "",
+    "artworks": [
+      "/jazz-local/love-all-serve-all/artwork-1.jpg",
+      "/jazz-local/love-all-serve-all/artwork-2.jpg",
+      "/jazz-local/love-all-serve-all/artwork-3.jpg",
+      "/jazz-local/love-all-serve-all/artwork-4.jpg",
+      "/jazz-local/love-all-serve-all/artwork-5.jpg"
+    ],
+    "tracks": [
+      {
+        "id": "love-all-serve-all-1",
+        "number": 1,
+        "title": "きらり",
+        "duration": 227.89,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-2",
+        "number": 2,
+        "title": "まつり",
+        "duration": 225.92,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-3",
+        "number": 3,
+        "title": "へでもねーよ",
+        "duration": 188.95,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-4",
+        "number": 4,
+        "title": "やば。",
+        "duration": 251.88,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-5",
+        "number": 5,
+        "title": "燃えよ",
+        "duration": 277.43,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-6",
+        "number": 6,
+        "title": "ガーデン",
+        "duration": 229.33,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-7",
+        "number": 7,
+        "title": "damn",
+        "duration": 259.03,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-8",
+        "number": 8,
+        "title": "ロンリーラプソディ",
+        "duration": 286.64,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-9",
+        "number": 9,
+        "title": "それでは、",
+        "duration": 230.72,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-10",
+        "number": 10,
+        "title": "青春病",
+        "duration": 324.15,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "love-all-serve-all-11",
+        "number": 11,
+        "title": "旅路",
+        "duration": 277.03,
+        "categories": [
+          "vocal-jazz",
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/love-all-serve-all/11.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "moanin",
+    "artist": "Art Blakey",
+    "year": 1959,
+    "tags": [
+      "Hard Bop",
+      "Bebop",
+      "Swing",
+      "Soul Jazz",
+      "Shuffle",
+      "Bluesy",
+      "Groovy",
+      "Late-night",
+      "Smoke-filled"
+    ],
+    "cover": "/jazz-local/moanin/cover.jpg",
+    "description": "Art Blakey - drums\r\nBenny Golson - tenor saxophone\r\nLee Morgan - trumpet\r\nBobby Timmons - piano\r\nJymie Merritt - bass",
+    "artworks": [
+      "/jazz-local/moanin/artwork-1.png",
+      "/jazz-local/moanin/artwork-2.png"
+    ],
+    "tracks": [
+      {
+        "id": "moanin-1",
+        "number": 1,
+        "title": "Moanin'",
+        "duration": 573.31,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "moanin-2",
+        "number": 2,
+        "title": "Are You Real",
+        "duration": 287.36,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "moanin-3",
+        "number": 3,
+        "title": "Along Came Betty",
+        "duration": 369.56,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "moanin-4",
+        "number": 4,
+        "title": "The Drum Thunder Suite",
+        "duration": 451.83,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "moanin-5",
+        "number": 5,
+        "title": "Blues March",
+        "duration": 371.23,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "moanin-6",
+        "number": 6,
+        "title": "Come Rain Or Come Shine",
+        "duration": 345.83,
+        "categories": [
+          "hard-bop",
+          "soul-jazz"
+        ],
+        "audio": {
+          "src": "/jazz-local/moanin/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  },
+  {
+    "id": "scene",
+    "artist": "Toshiki Soejima , Nahokimama",
+    "year": 2025,
+    "tags": [
+      "Neo Soul",
+      "Chill",
+      "Soft Rain",
+      "Cafe",
+      "Lazy afternoon"
+    ],
+    "cover": "/jazz-local/scene/cover.jpg",
+    "description": "Guitar : Toshiki Soejima\r\nTrumpet : nahokimama\r\nKeyboard : Yoshitaka Utano\r\nBass : Yoshua Yoshida\r\nDrums : Ryo Kanda\r\nRec &Mix engineer：GRAPEFRUIT MOON",
+    "artworks": [
+      "/jazz-local/scene/artwork-1.png",
+      "/jazz-local/scene/artwork-2.png",
+      "/jazz-local/scene/artwork-3.png"
+    ],
+    "tracks": [
+      {
+        "id": "scene-1",
+        "number": 1,
+        "title": "Moon",
+        "duration": 192.71,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/01.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-2",
+        "number": 2,
+        "title": "Time",
+        "duration": 230.33,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/02.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-3",
+        "number": 3,
+        "title": "Tokyo",
+        "duration": 205.26,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/03.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-4",
+        "number": 4,
+        "title": "Feel Good",
+        "duration": 221.8,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/04.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-5",
+        "number": 5,
+        "title": "Hug",
+        "duration": 138.08,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/05.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-6",
+        "number": 6,
+        "title": "Other Side",
+        "duration": 179.3,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/06.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-7",
+        "number": 7,
+        "title": "Wave",
+        "duration": 188.75,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/07.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-8",
+        "number": 8,
+        "title": "Moyu",
+        "duration": 169.5,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/08.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-9",
+        "number": 9,
+        "title": "Rain",
+        "duration": 210.25,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/09.m4a",
+          "mimeType": "audio/mp4"
+        }
+      },
+      {
+        "id": "scene-10",
+        "number": 10,
+        "title": "Rise and Shine",
+        "duration": 164.52,
+        "categories": [
+          "fusion"
+        ],
+        "audio": {
+          "src": "/jazz-local/scene/10.m4a",
+          "mimeType": "audio/mp4"
+        }
+      }
+    ]
+  }
+]

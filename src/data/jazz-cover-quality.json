@@ -1,0 +1,3967 @@
+[
+  {
+    "id": "standard-all-of-me-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      598,
+      598
+    ],
+    "identityDifference": 5.67
+  },
+  {
+    "id": "standard-all-of-me-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      320,
+      320
+    ],
+    "identityDifference": 1.11
+  },
+  {
+    "id": "standard-all-of-me-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.76
+  },
+  {
+    "id": "standard-all-of-me-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.66
+  },
+  {
+    "id": "standard-all-of-me-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1080,
+      1080
+    ],
+    "identityDifference": 2.48
+  },
+  {
+    "id": "standard-all-of-me-14",
+    "status": "restored",
+    "before": [
+      177,
+      177
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 3.46
+  },
+  {
+    "id": "standard-all-of-me-15",
+    "status": "restored",
+    "before": [
+      177,
+      177
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 5.18
+  },
+  {
+    "id": "standard-all-of-me-16",
+    "status": "restored",
+    "before": [
+      177,
+      177
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 4.3
+  },
+  {
+    "id": "standard-all-of-me-17",
+    "status": "restored",
+    "before": [
+      177,
+      177
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 4.41
+  },
+  {
+    "id": "standard-all-of-me-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 4.66
+  },
+  {
+    "id": "standard-all-of-me-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.92
+  },
+  {
+    "id": "standard-all-of-me-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.41
+  },
+  {
+    "id": "standard-all-of-me-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1074,
+      1074
+    ],
+    "identityDifference": 1.35
+  },
+  {
+    "id": "standard-all-of-me-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.42
+  },
+  {
+    "id": "standard-all-of-me-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.28
+  },
+  {
+    "id": "standard-all-of-me-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.38
+  },
+  {
+    "id": "standard-all-of-me-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.92
+  },
+  {
+    "id": "standard-all-the-things-you-are-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 4
+  },
+  {
+    "id": "standard-all-the-things-you-are-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.24
+  },
+  {
+    "id": "standard-all-the-things-you-are-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 2.05
+  },
+  {
+    "id": "standard-all-the-things-you-are-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      4000,
+      4000
+    ],
+    "identityDifference": 1.71
+  },
+  {
+    "id": "standard-all-the-things-you-are-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2000,
+      2000
+    ],
+    "identityDifference": 2.32
+  },
+  {
+    "id": "standard-all-the-things-you-are-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      469,
+      468
+    ],
+    "identityDifference": 2.22
+  },
+  {
+    "id": "standard-all-the-things-you-are-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2000,
+      2000
+    ],
+    "identityDifference": 2.32
+  },
+  {
+    "id": "standard-all-the-things-you-are-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.93
+  },
+  {
+    "id": "standard-all-the-things-you-are-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      456,
+      456
+    ],
+    "identityDifference": 1.85
+  },
+  {
+    "id": "standard-all-the-things-you-are-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.12
+  },
+  {
+    "id": "standard-all-the-things-you-are-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      437,
+      437
+    ],
+    "identityDifference": 1.33
+  },
+  {
+    "id": "standard-all-the-things-you-are-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      321,
+      321
+    ],
+    "identityDifference": 1.85
+  },
+  {
+    "id": "standard-all-the-things-you-are-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      432,
+      432
+    ],
+    "identityDifference": 1.06
+  },
+  {
+    "id": "standard-all-the-things-you-are-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 1.17
+  },
+  {
+    "id": "standard-all-the-things-you-are-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 3.62
+  },
+  {
+    "id": "standard-all-the-things-you-are-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2269,
+      2268
+    ],
+    "identityDifference": 0.81
+  },
+  {
+    "id": "standard-all-the-things-you-are-24",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1381,
+      1400
+    ],
+    "identityDifference": 6.71
+  },
+  {
+    "id": "standard-all-the-things-you-are-25",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1193,
+      1193
+    ],
+    "identityDifference": 2.12
+  },
+  {
+    "id": "standard-all-the-things-you-are-26",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2400,
+      2400
+    ],
+    "identityDifference": 2.23
+  },
+  {
+    "id": "standard-all-the-things-you-are-27",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.56
+  },
+  {
+    "id": "standard-all-the-things-you-are-28",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.24
+  },
+  {
+    "id": "standard-all-the-things-you-are-29",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2000,
+      2000
+    ],
+    "identityDifference": 2.32
+  },
+  {
+    "id": "standard-all-the-things-you-are-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.52
+  },
+  {
+    "id": "standard-all-the-things-you-are-30",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1448,
+      1448
+    ],
+    "identityDifference": 1.56
+  },
+  {
+    "id": "standard-all-the-things-you-are-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 1.43
+  },
+  {
+    "id": "standard-all-the-things-you-are-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 2.81
+  },
+  {
+    "id": "standard-all-the-things-you-are-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 0.91
+  },
+  {
+    "id": "standard-all-the-things-you-are-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.53
+  },
+  {
+    "id": "standard-all-the-things-you-are-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.78
+  },
+  {
+    "id": "standard-all-the-things-you-are-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.56
+  },
+  {
+    "id": "standard-autumn-leaves-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 1.79
+  },
+  {
+    "id": "standard-autumn-leaves-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1600,
+      1600
+    ],
+    "identityDifference": 1.78
+  },
+  {
+    "id": "standard-autumn-leaves-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.99
+  },
+  {
+    "id": "standard-autumn-leaves-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      451,
+      451
+    ],
+    "identityDifference": 1.37
+  },
+  {
+    "id": "standard-autumn-leaves-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.45
+  },
+  {
+    "id": "standard-autumn-leaves-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 0.86
+  },
+  {
+    "id": "standard-autumn-leaves-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.27
+  },
+  {
+    "id": "standard-autumn-leaves-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.69
+  },
+  {
+    "id": "standard-autumn-leaves-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.45
+  },
+  {
+    "id": "standard-autumn-leaves-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.56
+  },
+  {
+    "id": "standard-autumn-leaves-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 1.54
+  },
+  {
+    "id": "standard-autumn-leaves-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      480
+    ],
+    "identityDifference": 9.69
+  },
+  {
+    "id": "standard-autumn-leaves-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      473,
+      473
+    ],
+    "identityDifference": 2.2
+  },
+  {
+    "id": "standard-blue-bossa-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 1.43
+  },
+  {
+    "id": "standard-blue-bossa-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.55
+  },
+  {
+    "id": "standard-blue-bossa-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.53
+  },
+  {
+    "id": "standard-blue-bossa-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1415,
+      1415
+    ],
+    "identityDifference": 3.81
+  },
+  {
+    "id": "standard-blue-bossa-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      640,
+      640
+    ],
+    "identityDifference": 3.02
+  },
+  {
+    "id": "standard-blue-bossa-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.21
+  },
+  {
+    "id": "standard-blue-bossa-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.98
+  },
+  {
+    "id": "standard-blue-bossa-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.4
+  },
+  {
+    "id": "standard-blue-bossa-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.75
+  },
+  {
+    "id": "standard-blue-bossa-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 3.04
+  },
+  {
+    "id": "standard-blue-bossa-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      495,
+      495
+    ],
+    "identityDifference": 2.44
+  },
+  {
+    "id": "standard-blue-bossa-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 1.6
+  },
+  {
+    "id": "standard-blue-bossa-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      420,
+      420
+    ],
+    "identityDifference": 1.47
+  },
+  {
+    "id": "standard-blue-bossa-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.02
+  },
+  {
+    "id": "standard-blue-bossa-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.73
+  },
+  {
+    "id": "standard-blue-bossa-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.06
+  },
+  {
+    "id": "standard-blue-bossa-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.39
+  },
+  {
+    "id": "standard-blue-bossa-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.28
+  },
+  {
+    "id": "standard-blue-bossa-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 1.57
+  },
+  {
+    "id": "standard-blue-bossa-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.78
+  },
+  {
+    "id": "standard-blue-bossa-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.42
+  },
+  {
+    "id": "standard-blue-bossa-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.3
+  },
+  {
+    "id": "standard-donna-lee-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.53
+  },
+  {
+    "id": "standard-donna-lee-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      550,
+      550
+    ],
+    "identityDifference": 0.91
+  },
+  {
+    "id": "standard-donna-lee-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2269,
+      2268
+    ],
+    "identityDifference": 0.81
+  },
+  {
+    "id": "standard-donna-lee-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 2.82
+  },
+  {
+    "id": "standard-donna-lee-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 11.61
+  },
+  {
+    "id": "standard-donna-lee-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.6
+  },
+  {
+    "id": "standard-donna-lee-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 1.91
+  },
+  {
+    "id": "standard-donna-lee-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 2.67
+  },
+  {
+    "id": "standard-donna-lee-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.41
+  },
+  {
+    "id": "standard-donna-lee-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.56
+  },
+  {
+    "id": "standard-donna-lee-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.46
+  },
+  {
+    "id": "standard-donna-lee-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.26
+  },
+  {
+    "id": "standard-donna-lee-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.01
+  },
+  {
+    "id": "standard-donna-lee-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1417,
+      1417
+    ],
+    "identityDifference": 1.58
+  },
+  {
+    "id": "standard-donna-lee-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.63
+  },
+  {
+    "id": "standard-donna-lee-24",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.52
+  },
+  {
+    "id": "standard-donna-lee-25",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.05
+  },
+  {
+    "id": "standard-donna-lee-26",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.16
+  },
+  {
+    "id": "standard-donna-lee-27",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.27
+  },
+  {
+    "id": "standard-donna-lee-28",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.71
+  },
+  {
+    "id": "standard-donna-lee-29",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.28
+  },
+  {
+    "id": "standard-donna-lee-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3072,
+      3072
+    ],
+    "identityDifference": 2.26
+  },
+  {
+    "id": "standard-donna-lee-30",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      495,
+      495
+    ],
+    "identityDifference": 1.86
+  },
+  {
+    "id": "standard-donna-lee-31",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.21
+  },
+  {
+    "id": "standard-donna-lee-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.2
+  },
+  {
+    "id": "standard-donna-lee-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.95
+  },
+  {
+    "id": "standard-donna-lee-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.34
+  },
+  {
+    "id": "standard-donna-lee-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.54
+  },
+  {
+    "id": "standard-donna-lee-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.32
+  },
+  {
+    "id": "standard-donna-lee-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 2.39
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 0.94
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.54
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.24
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      609,
+      600
+    ],
+    "identityDifference": 2.1
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.99
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.66
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      434,
+      434
+    ],
+    "identityDifference": 3.25
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 2.76
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 2.2
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.7
+  },
+  {
+    "id": "standard-fly-me-to-the-moon-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      4096,
+      4096
+    ],
+    "identityDifference": 2.83
+  },
+  {
+    "id": "standard-just-the-two-of-us-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 2.81
+  },
+  {
+    "id": "standard-just-the-two-of-us-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      320,
+      320
+    ],
+    "identityDifference": 1.61
+  },
+  {
+    "id": "standard-just-the-two-of-us-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.06
+  },
+  {
+    "id": "standard-just-the-two-of-us-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 1.32
+  },
+  {
+    "id": "standard-just-the-two-of-us-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      400,
+      400
+    ],
+    "identityDifference": 1.87
+  },
+  {
+    "id": "standard-just-the-two-of-us-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.15
+  },
+  {
+    "id": "standard-just-the-two-of-us-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.07
+  },
+  {
+    "id": "standard-just-the-two-of-us-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.79
+  },
+  {
+    "id": "standard-just-the-two-of-us-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.12
+  },
+  {
+    "id": "standard-just-the-two-of-us-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 2.34
+  },
+  {
+    "id": "standard-just-the-two-of-us-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1112,
+      987
+    ],
+    "identityDifference": 3.28
+  },
+  {
+    "id": "standard-just-the-two-of-us-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.16
+  },
+  {
+    "id": "standard-just-the-two-of-us-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.54
+  },
+  {
+    "id": "standard-misty-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      787,
+      800
+    ],
+    "identityDifference": 6.72
+  },
+  {
+    "id": "standard-misty-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.64
+  },
+  {
+    "id": "standard-misty-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.84
+  },
+  {
+    "id": "standard-misty-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.65
+  },
+  {
+    "id": "standard-misty-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.29
+  },
+  {
+    "id": "standard-misty-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 3.07
+  },
+  {
+    "id": "standard-misty-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.2
+  },
+  {
+    "id": "standard-misty-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.85
+  },
+  {
+    "id": "standard-misty-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2000,
+      2000
+    ],
+    "identityDifference": 2.46
+  },
+  {
+    "id": "standard-misty-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.23
+  },
+  {
+    "id": "standard-misty-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.53
+  },
+  {
+    "id": "standard-misty-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2479
+    ],
+    "identityDifference": 3.29
+  },
+  {
+    "id": "standard-misty-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.7
+  },
+  {
+    "id": "standard-misty-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 1.96
+  },
+  {
+    "id": "standard-misty-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.25
+  },
+  {
+    "id": "standard-misty-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.54
+  },
+  {
+    "id": "standard-misty-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.77
+  },
+  {
+    "id": "standard-misty-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.04
+  },
+  {
+    "id": "standard-misty-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 1.28
+  },
+  {
+    "id": "standard-misty-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      349,
+      349
+    ],
+    "identityDifference": 1.28
+  },
+  {
+    "id": "standard-misty-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.9
+  },
+  {
+    "id": "standard-misty-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      640,
+      640
+    ],
+    "identityDifference": 1.39
+  },
+  {
+    "id": "standard-misty-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.35
+  },
+  {
+    "id": "standard-my-funny-valentine-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.96
+  },
+  {
+    "id": "standard-my-funny-valentine-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.12
+  },
+  {
+    "id": "standard-my-funny-valentine-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.79
+  },
+  {
+    "id": "standard-my-funny-valentine-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.32
+  },
+  {
+    "id": "standard-my-funny-valentine-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 3.07
+  },
+  {
+    "id": "standard-my-funny-valentine-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.58
+  },
+  {
+    "id": "standard-my-funny-valentine-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 1.86
+  },
+  {
+    "id": "standard-my-funny-valentine-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.35
+  },
+  {
+    "id": "standard-my-funny-valentine-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      350,
+      350
+    ],
+    "identityDifference": 1.16
+  },
+  {
+    "id": "standard-my-funny-valentine-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.43
+  },
+  {
+    "id": "standard-my-funny-valentine-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.13
+  },
+  {
+    "id": "standard-my-funny-valentine-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.08
+  },
+  {
+    "id": "standard-my-funny-valentine-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.1
+  },
+  {
+    "id": "standard-my-funny-valentine-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 2.31
+  },
+  {
+    "id": "standard-my-funny-valentine-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.81
+  },
+  {
+    "id": "standard-my-funny-valentine-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.87
+  },
+  {
+    "id": "standard-my-funny-valentine-24",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1196,
+      1196
+    ],
+    "identityDifference": 3.2
+  },
+  {
+    "id": "standard-my-funny-valentine-25",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 2.31
+  },
+  {
+    "id": "standard-my-funny-valentine-26",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.1
+  },
+  {
+    "id": "standard-my-funny-valentine-27",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 1.28
+  },
+  {
+    "id": "standard-my-funny-valentine-28",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.42
+  },
+  {
+    "id": "standard-my-funny-valentine-29",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.61
+  },
+  {
+    "id": "standard-my-funny-valentine-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.42
+  },
+  {
+    "id": "standard-my-funny-valentine-30",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.72
+  },
+  {
+    "id": "standard-my-funny-valentine-31",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.29
+  },
+  {
+    "id": "standard-my-funny-valentine-32",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.75
+  },
+  {
+    "id": "standard-my-funny-valentine-33",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.72
+  },
+  {
+    "id": "standard-my-funny-valentine-34",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.35
+  },
+  {
+    "id": "standard-my-funny-valentine-35",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.27
+  },
+  {
+    "id": "standard-my-funny-valentine-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1300,
+      1300
+    ],
+    "identityDifference": 1.29
+  },
+  {
+    "id": "standard-my-funny-valentine-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.16
+  },
+  {
+    "id": "standard-my-funny-valentine-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1190,
+      1190
+    ],
+    "identityDifference": 2.09
+  },
+  {
+    "id": "standard-my-funny-valentine-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.51
+  },
+  {
+    "id": "standard-my-funny-valentine-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.68
+  },
+  {
+    "id": "standard-my-funny-valentine-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      700,
+      700
+    ],
+    "identityDifference": 1.74
+  },
+  {
+    "id": "standard-night-and-day-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      741
+    ],
+    "identityDifference": 4.88
+  },
+  {
+    "id": "standard-night-and-day-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 1.78
+  },
+  {
+    "id": "standard-night-and-day-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.42
+  },
+  {
+    "id": "standard-night-and-day-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.58
+  },
+  {
+    "id": "standard-night-and-day-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.15
+  },
+  {
+    "id": "standard-night-and-day-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.68
+  },
+  {
+    "id": "standard-night-and-day-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.86
+  },
+  {
+    "id": "standard-night-and-day-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 3.86
+  },
+  {
+    "id": "standard-night-and-day-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.86
+  },
+  {
+    "id": "standard-night-and-day-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.49
+  },
+  {
+    "id": "standard-night-and-day-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.37
+  },
+  {
+    "id": "standard-night-and-day-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.13
+  },
+  {
+    "id": "standard-night-and-day-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.05
+  },
+  {
+    "id": "standard-night-and-day-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.78
+  },
+  {
+    "id": "standard-night-and-day-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.91
+  },
+  {
+    "id": "standard-night-and-day-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.4
+  },
+  {
+    "id": "standard-night-and-day-24",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.59
+  },
+  {
+    "id": "standard-night-and-day-25",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.11
+  },
+  {
+    "id": "standard-night-and-day-26",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.41
+  },
+  {
+    "id": "standard-night-and-day-27",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.49
+  },
+  {
+    "id": "standard-night-and-day-28",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 0.72
+  },
+  {
+    "id": "standard-night-and-day-29",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.77
+  },
+  {
+    "id": "standard-night-and-day-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.9
+  },
+  {
+    "id": "standard-night-and-day-30",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.99
+  },
+  {
+    "id": "standard-night-and-day-31",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.99
+  },
+  {
+    "id": "standard-night-and-day-32",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.67
+  },
+  {
+    "id": "standard-night-and-day-33",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.54
+  },
+  {
+    "id": "standard-night-and-day-34",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.47
+  },
+  {
+    "id": "standard-night-and-day-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.02
+  },
+  {
+    "id": "standard-night-and-day-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.27
+  },
+  {
+    "id": "standard-night-and-day-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2800,
+      2800
+    ],
+    "identityDifference": 0.58
+  },
+  {
+    "id": "standard-night-and-day-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 4.15
+  },
+  {
+    "id": "standard-night-and-day-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2000,
+      2000
+    ],
+    "identityDifference": 2.15
+  },
+  {
+    "id": "standard-satin-doll-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      349,
+      349
+    ],
+    "identityDifference": 1.44
+  },
+  {
+    "id": "standard-satin-doll-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.42
+  },
+  {
+    "id": "standard-satin-doll-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.41
+  },
+  {
+    "id": "standard-satin-doll-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.69
+  },
+  {
+    "id": "standard-satin-doll-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1425,
+      1425
+    ],
+    "identityDifference": 1.76
+  },
+  {
+    "id": "standard-satin-doll-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.98
+  },
+  {
+    "id": "standard-satin-doll-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.19
+  },
+  {
+    "id": "standard-satin-doll-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 2.35
+  },
+  {
+    "id": "standard-satin-doll-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.63
+  },
+  {
+    "id": "standard-satin-doll-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      591,
+      599
+    ],
+    "identityDifference": 4.49
+  },
+  {
+    "id": "standard-satin-doll-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.83
+  },
+  {
+    "id": "standard-satin-doll-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.02
+  },
+  {
+    "id": "standard-satin-doll-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.78
+  },
+  {
+    "id": "standard-satin-doll-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      592
+    ],
+    "identityDifference": 2.38
+  },
+  {
+    "id": "standard-satin-doll-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 3.04
+  },
+  {
+    "id": "standard-satin-doll-23",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.38
+  },
+  {
+    "id": "standard-satin-doll-24",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.7
+  },
+  {
+    "id": "standard-satin-doll-25",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.17
+  },
+  {
+    "id": "standard-satin-doll-26",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 16.45
+  },
+  {
+    "id": "standard-satin-doll-27",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2400,
+      2400
+    ],
+    "identityDifference": 2.88
+  },
+  {
+    "id": "standard-satin-doll-28",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1190,
+      1190
+    ],
+    "identityDifference": 3.18
+  },
+  {
+    "id": "standard-satin-doll-29",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.9
+  },
+  {
+    "id": "standard-satin-doll-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 3.52
+  },
+  {
+    "id": "standard-satin-doll-30",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.24
+  },
+  {
+    "id": "standard-satin-doll-31",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.88
+  },
+  {
+    "id": "standard-satin-doll-32",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2400,
+      2400
+    ],
+    "identityDifference": 1.83
+  },
+  {
+    "id": "standard-satin-doll-33",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.48
+  },
+  {
+    "id": "standard-satin-doll-34",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.61
+  },
+  {
+    "id": "standard-satin-doll-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 1.81
+  },
+  {
+    "id": "standard-satin-doll-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.34
+  },
+  {
+    "id": "standard-satin-doll-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      461,
+      461
+    ],
+    "identityDifference": 1.67
+  },
+  {
+    "id": "standard-satin-doll-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 2.38
+  },
+  {
+    "id": "standard-satin-doll-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      363,
+      363
+    ],
+    "identityDifference": 1.11
+  },
+  {
+    "id": "standard-satin-doll-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.45
+  },
+  {
+    "id": "standard-so-what-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 1.53
+  },
+  {
+    "id": "standard-so-what-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.42
+  },
+  {
+    "id": "standard-so-what-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.8
+  },
+  {
+    "id": "standard-so-what-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.25
+  },
+  {
+    "id": "standard-summertime-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      439,
+      439
+    ],
+    "identityDifference": 1.35
+  },
+  {
+    "id": "standard-summertime-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1200,
+      1200
+    ],
+    "identityDifference": 1.38
+  },
+  {
+    "id": "standard-summertime-11",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 2.25
+  },
+  {
+    "id": "standard-summertime-12",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1192,
+      1192
+    ],
+    "identityDifference": 1.7
+  },
+  {
+    "id": "standard-summertime-13",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 2.26
+  },
+  {
+    "id": "standard-summertime-14",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.24
+  },
+  {
+    "id": "standard-summertime-15",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2500,
+      2500
+    ],
+    "identityDifference": 1.57
+  },
+  {
+    "id": "standard-summertime-16",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      493,
+      493
+    ],
+    "identityDifference": 1.39
+  },
+  {
+    "id": "standard-summertime-17",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      793
+    ],
+    "identityDifference": 1.8
+  },
+  {
+    "id": "standard-summertime-18",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 3.07
+  },
+  {
+    "id": "standard-summertime-19",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1576,
+      1545
+    ],
+    "identityDifference": 6.14
+  },
+  {
+    "id": "standard-summertime-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.76
+  },
+  {
+    "id": "standard-summertime-20",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 3.04
+  },
+  {
+    "id": "standard-summertime-21",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.39
+  },
+  {
+    "id": "standard-summertime-22",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 1.88
+  },
+  {
+    "id": "standard-summertime-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 3.05
+  },
+  {
+    "id": "standard-summertime-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 2.76
+  },
+  {
+    "id": "standard-summertime-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1500,
+      1500
+    ],
+    "identityDifference": 4.12
+  },
+  {
+    "id": "standard-summertime-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      640,
+      640
+    ],
+    "identityDifference": 1.27
+  },
+  {
+    "id": "standard-summertime-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2400,
+      2400
+    ],
+    "identityDifference": 1.26
+  },
+  {
+    "id": "standard-summertime-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 2.97
+  },
+  {
+    "id": "standard-summertime-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.38
+  },
+  {
+    "id": "standard-take-the-a-rain-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.24
+  },
+  {
+    "id": "standard-take-the-a-rain-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.3
+  },
+  {
+    "id": "standard-take-the-a-rain-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 2.3
+  },
+  {
+    "id": "standard-take-the-a-rain-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      500,
+      500
+    ],
+    "identityDifference": 1.83
+  },
+  {
+    "id": "standard-take-the-a-rain-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1440,
+      1440
+    ],
+    "identityDifference": 3.19
+  },
+  {
+    "id": "standard-take-the-a-rain-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      436,
+      436
+    ],
+    "identityDifference": 2.1
+  },
+  {
+    "id": "standard-take-the-a-rain-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.11
+  },
+  {
+    "id": "standard-take-the-a-rain-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.01
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-1",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 6.18
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-10",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      600,
+      600
+    ],
+    "identityDifference": 3.62
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-2",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.81
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-3",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      440,
+      440
+    ],
+    "identityDifference": 1.34
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-4",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1080,
+      1080
+    ],
+    "identityDifference": 2.48
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-5",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      2800,
+      2800
+    ],
+    "identityDifference": 2
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-6",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      3000,
+      3000
+    ],
+    "identityDifference": 1.64
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-7",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      800,
+      800
+    ],
+    "identityDifference": 1.79
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-8",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1195,
+      1195
+    ],
+    "identityDifference": 1.64
+  },
+  {
+    "id": "standard-there-will-never-be-another-you-9",
+    "status": "restored",
+    "before": [
+      130,
+      130
+    ],
+    "after": [
+      1400,
+      1400
+    ],
+    "identityDifference": 2.42
+  }
+]

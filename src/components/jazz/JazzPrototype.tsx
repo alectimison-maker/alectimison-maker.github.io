@@ -1,37 +1,19 @@
+import { navigate } from 'astro:transitions/client'
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
-import { ArrowDown, ArrowLeft, ArrowRight, Pause, Play, Search, X } from 'lucide-react'
-import { jazzCategoryPath, type JazzCategory, type JazzCategorySlug } from '../../data/jazz-categories'
+import { ArrowDown, ArrowLeft, ArrowRight, Play, Search, X } from 'lucide-react'
+import { jazzCategories, jazzCategoryPath, type JazzCategory, type JazzCategorySlug } from '../../data/jazz-categories'
 import JazzCategoryArchive from './JazzCategoryArchive'
+import JazzTrackPlayer from './JazzTrackPlayer'
+import JazzArtwork from './JazzArtwork'
+import { albumQueue, jazzAlbumPath, type JazzItem } from '../../data/jazz-types'
 import './jazz-prototype.css'
-
-export type JazzAudioSource = {
-  src: string
-  mimeType?: string
-}
-
-type JazzItem = {
-  id: string
-  type: string
-  title: string
-  cover: string
-  shelves: string[]
-  order: number
-  featured?: boolean
-  artist?: string
-  year?: number
-  genre?: string
-  categories?: string[]
-  note?: string
-  audio?: JazzAudioSource
-  previewAudio?: string
-  externalUrl?: string
-}
 
 const coverUrl = (source: string) => encodeURI(source)
 
 const writeAlbumToUrl = (item?: JazzItem) => {
   const url = new URL(window.location.href)
   url.searchParams.delete('variant')
+  url.hash = ''
   if (item) url.searchParams.set('album', item.id)
   else url.searchParams.delete('album')
   window.history.replaceState({}, '', url)
@@ -234,7 +216,7 @@ const focusRects = [
   { x: 838, y: 22, width: 118, height: 570 },
 ]
 
-function FocusStage({
+export function FocusStage({
   item,
   index,
   total,
@@ -249,38 +231,12 @@ function FocusStage({
   onPrevious: () => void
   onNext: () => void
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const audioSource = item.audio?.src ?? item.previewAudio
-  const canPlay = Boolean(audioSource)
-
-  useEffect(() => {
-    const audio = audioRef.current
-    if (audio) {
-      audio.pause()
-      audio.currentTime = 0
-    }
-    setIsPlaying(false)
-  }, [item.id])
-
-  const togglePlayback = async () => {
-    const audio = audioRef.current
-    if (!audio || !canPlay) return
-    if (audio.paused) {
-      try {
-        await audio.play()
-      } catch {
-        setIsPlaying(false)
-      }
-    } else {
-      audio.pause()
-    }
-  }
+  const tracks = useMemo(() => albumQueue(item), [item])
 
   return (
     <section className="jp-focus">
       <div className="jp-focus__toolbar">
-        <button type="button" onClick={onBack}><X size={16} /> Back to featured</button>
+        <button type="button" onClick={onBack}><X size={16} /> {item.kind === 'standard' ? 'Back to collection' : 'Back to featured'}</button>
         <span>{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
       </div>
 
@@ -311,7 +267,7 @@ function FocusStage({
         </svg>
 
         <div className="jp-focus__title">
-          <p>ALBUM IN FOCUS</p>
+          <p>{item.kind === 'standard' ? 'STANDARD IN FOCUS' : 'ALBUM IN FOCUS'}</p>
           <h1>{item.title}</h1>
           <span>{itemMeta(item, index)}</span>
         </div>
@@ -319,7 +275,7 @@ function FocusStage({
         <button
           className="jp-focus__previous"
           type="button"
-          aria-label="Previous album"
+          aria-label={item.kind === 'standard' ? 'Previous version' : 'Previous album'}
           onClick={onPrevious}
         >
           <ArrowLeft size={19} aria-hidden="true" />
@@ -327,65 +283,48 @@ function FocusStage({
         <button
           className="jp-focus__next"
           type="button"
-          aria-label="Next album"
+          aria-label={item.kind === 'standard' ? 'Next version' : 'Next album'}
           onClick={onNext}
         >
           <ArrowRight size={19} aria-hidden="true" />
         </button>
       </div>
 
-      <div className="jp-focus__details">
-        <div className={`jp-focus__player ${isPlaying ? 'is-playing' : ''}`}>
-          <button
-            className="jp-focus__vinyl"
-            type="button"
-            onClick={togglePlayback}
-            disabled={!canPlay}
-            aria-label={canPlay
-              ? `${isPlaying ? '暂停' : '播放'} ${item.title}`
-              : `${item.title} 暂无试听音频`}
-          >
+      {tracks.length > 0 ? (
+        <div id="album-tracks" className="jl-album-listening">
+          <nav className="jl-album-tags" aria-label={item.kind === 'standard' ? '本曲目的爵士分类' : '本专辑的爵士分类'}>{jazzCategories.filter((category) => item.categories?.includes(category.slug)).map((category) => <a key={category.slug} href={jazzCategoryPath(category.slug)}>{category.title} ↗</a>)}</nav>
+          <JazzTrackPlayer tracks={tracks} album={item} title={item.title} description={item.description || item.note} />
+        </div>
+      ) : <div className="jp-focus__details">
+        <div className="jp-focus__player">
+          <div className="jp-focus__vinyl" aria-hidden="true">
             <span className="jp-focus__vinyl-label" aria-hidden="true">
-              {isPlaying ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" />}
+              <Play size={18} fill="currentColor" />
             </span>
-          </button>
+          </div>
           <img
             className="jp-focus__sleeve"
             src={coverUrl(item.cover)}
             alt={`${item.title} 封面`}
             draggable="false"
           />
-          <span className="jp-focus__audio-status">
-            {canPlay ? (isPlaying ? 'NOW PLAYING' : 'CLICK VINYL TO LISTEN') : 'AUDIO DATABASE · RESERVED'}
-          </span>
-          {audioSource && (
-            <audio
-              ref={audioRef}
-              src={audioSource}
-              preload="none"
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onEnded={() => setIsPlaying(false)}
-            />
-          )}
         </div>
 
         <article className="jp-focus__note">
           <span>LISTENING NOTE</span>
           <h2>{item.title}</h2>
-          <p>{item.note ?? '专辑笔记、曲目和外部播放链接以后可以从同一条内容数据中进入，不需要改变这个舞台。'}</p>
+          {item.note && <p>{item.note}</p>}
           <dl>
             {item.artist && <><dt>Artist</dt><dd>{item.artist}</dd></>}
             {item.year && <><dt>Year</dt><dd>{item.year}</dd></>}
             <dt>Shelf</dt><dd>{item.shelves.join(' / ')}</dd>
           </dl>
-          {item.externalUrl && (
-            <a href={item.externalUrl} target="_blank" rel="noreferrer">
-              External listening <ArrowRight size={14} />
-            </a>
-          )}
         </article>
-      </div>
+      </div>}
+      {!!item.artworks?.length && <section className="jl-artworks" aria-label="专辑影像">
+        <header><span className="jl-kicker">BEYOND THE SLEEVE</span><h2>Something else</h2><span>{item.artworks.length} IMAGES</span></header>
+        <div>{item.artworks.map((image, artworkIndex) => <JazzArtwork key={image} src={image} alt={`${item.title} 专辑相关影像 ${artworkIndex + 1}`} />)}</div>
+      </section>}
     </section>
   )
 }
@@ -403,7 +342,7 @@ function AlbumLibrary({
     if (!value) return items.map((item, index) => ({ item, index }))
     return items
       .map((item, index) => ({ item, index }))
-      .filter(({ item }) => [item.title, item.artist, item.genre, ...item.shelves]
+      .filter(({ item }) => [item.title, item.artist, item.genre, ...item.shelves, ...(item.tracks ?? []).map((track) => track.title)]
         .filter(Boolean)
         .some((field) => field!.toLocaleLowerCase().includes(value)))
   }, [items, query])
@@ -429,7 +368,7 @@ function AlbumLibrary({
 
       <div className="jp-library__summary">
         <span>{String(visible.length).padStart(2, '0')} / {String(items.length).padStart(2, '0')} RECORDS</span>
-        <span>DATA-DRIVEN · READY TO EXPAND</span>
+        <span>SELECT A RECORD · STAY A WHILE</span>
       </div>
 
       <div className="jp-library__grid">
@@ -442,7 +381,7 @@ function AlbumLibrary({
             <img src={coverUrl(item.cover)} alt={`${item.title} 封面`} loading="lazy" decoding="async" />
             <span className="jp-library__copy">
               <strong>{item.title}</strong>
-              <i>{itemMeta(item, index)}</i>
+              <i>{itemMeta(item, index)}{item.tracks?.length ? ` · ${item.tracks.length} TRACKS / 可播放` : ''}</i>
             </span>
             <ArrowRight className="jp-library__arrow" size={17} />
           </button>
@@ -452,7 +391,7 @@ function AlbumLibrary({
   )
 }
 
-export default function JazzPrototype({ items }: { items: JazzItem[] }) {
+export default function JazzPrototype({ items, standardTrackCounts }: { items: JazzItem[]; standardTrackCounts?: Record<string, number> }) {
   const ordered = useMemo(() => [...items].sort((a, b) => a.order - b.order), [items])
   const featured = useMemo(() => {
     const selected = ordered.filter((item) => item.featured !== false)
@@ -467,17 +406,11 @@ export default function JazzPrototype({ items }: { items: JazzItem[] }) {
   }, [ordered])
 
   const selectFeatured = (index: number) => {
-    const item = featured[index]
-    const orderedIndex = ordered.findIndex((entry) => entry.id === item.id)
-    setFocusedIndex(orderedIndex)
-    writeAlbumToUrl(item)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    void navigate(jazzAlbumPath(featured[index].id))
   }
 
   const selectLibrary = (index: number) => {
-    setFocusedIndex(index)
-    writeAlbumToUrl(ordered[index])
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    void navigate(jazzAlbumPath(ordered[index].id))
   }
 
   const moveFocus = (direction: number) => {
@@ -496,12 +429,7 @@ export default function JazzPrototype({ items }: { items: JazzItem[] }) {
   }
 
   const selectCategory = (category: JazzCategory) => {
-    window.dispatchEvent(new CustomEvent('jazz:category-select', {
-      detail: {
-        category,
-        path: jazzCategoryPath(category.slug as JazzCategorySlug),
-      },
-    }))
+    void navigate(jazzCategoryPath(category.slug as JazzCategorySlug))
   }
 
   return (
@@ -509,7 +437,7 @@ export default function JazzPrototype({ items }: { items: JazzItem[] }) {
       {focusedIndex === undefined ? (
         <>
           <CurtainArchive items={featured} onSelect={selectFeatured} />
-          <JazzCategoryArchive items={ordered} onSelectCategory={selectCategory} />
+          <JazzCategoryArchive items={ordered} standardTrackCounts={standardTrackCounts} onSelectCategory={selectCategory} />
           <AlbumLibrary items={ordered} onSelect={selectLibrary} />
         </>
       ) : (

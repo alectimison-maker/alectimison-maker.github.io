@@ -516,7 +516,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   margin: 1rem auto 0;
 }
 
-.jp-focus__canvas svg {
+.jp-focus__canvas > svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -642,10 +642,6 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   box-shadow: 1.4rem 1.8rem 4rem rgba(16, 18, 15, .32);
 }
 
-.jp-focus__vinyl:disabled {
-  cursor: default;
-}
-
 .jp-focus__vinyl-label {
   position: absolute;
   inset: 42%;
@@ -656,12 +652,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   background: #ef5c3d;
 }
 
-.jp-focus__player.is-playing .jp-focus__vinyl-label {
-  color: #eee9dc;
-  background: #244fca;
-}
-
-.jp-focus__audio-status {
+.jp-focus__source-status {
   position: absolute;
   z-index: 3;
   right: 0;
@@ -1047,7 +1038,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
   .jp-categories__next { margin-top: 1.5rem; }
   .jp-focus { padding-top: .8rem; }
   .jp-focus__canvas { min-height: calc(100svh - 4rem); }
-  .jp-focus__canvas svg {
+  .jp-focus__canvas > svg {
     left: -28%;
     width: 150%;
   }
@@ -1074,7 +1065,7 @@ html.jp-cursor-lens-stage .p1-cursor-trail {
     width: min(calc(100vw - 2rem), 22rem);
     max-width: 100%;
   }
-  .jp-focus__audio-status { font-size: .5rem; }
+  .jp-focus__source-status { font-size: .5rem; }
   .jp-focus__player:hover .jp-focus__vinyl,
   .jp-focus__player:focus-within .jp-focus__vinyl {
     transform: translateX(8%) rotate(24deg);

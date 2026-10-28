@@ -35,147 +35,156 @@ const statsConfigured = Boolean(serverUrl)
 </section>
 
 <script>
-  const VISITOR_COOKIE = 'aliouswe_stats_visitor'
-  const VISITOR_MAX_AGE = 60 * 60 * 24 * 365
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-post-stats]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    const VISITOR_COOKIE = 'aliouswe_stats_visitor'
+    const VISITOR_MAX_AGE = 60 * 60 * 24 * 365
 
-  const getCookie = (name: string) => document.cookie
-    .split(';')
-    .map((part) => part.trim())
-    .find((part) => part.startsWith(`${name}=`))
-    ?.slice(name.length + 1)
+    const getCookie = (name: string) => document.cookie
+      .split(';')
+      .map((part) => part.trim())
+      .find((part) => part.startsWith(`${name}=`))
+      ?.slice(name.length + 1)
 
-  const createVisitorId = () => {
-    if (crypto.randomUUID) return crypto.randomUUID()
-    const bytes = crypto.getRandomValues(new Uint8Array(16))
-    return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
-  }
-
-  const ensureVisitorId = () => {
-    const existing = getCookie(VISITOR_COOKIE)
-    if (existing) return existing
-    const domain = location.hostname === 'aliouswe.com' || location.hostname.endsWith('.aliouswe.com')
-      ? '; Domain=aliouswe.com'
-      : ''
-    const secure = location.protocol === 'https:' ? '; Secure' : ''
-    const visitorId = createVisitorId()
-    document.cookie = `${VISITOR_COOKIE}=${visitorId}; Max-Age=${VISITOR_MAX_AGE}; Path=/; SameSite=Lax${secure}${domain}`
-    return visitorId
-  }
-
-  const formatCount = (value: unknown) => {
-    const count = Number(value)
-    return Number.isFinite(count) && count >= 0 ? new Intl.NumberFormat('zh-CN').format(count) : '—'
-  }
-
-  const sections = document.querySelectorAll<HTMLElement>('[data-post-stats]')
-
-  sections.forEach((section) => {
-    const serverUrl = section.dataset.serverUrl
-    const postId = section.dataset.postId
-    const status = section.querySelector<HTMLElement>('[data-stats-status]')
-    const views = section.querySelector<HTMLElement>('[data-stats-views]')
-    const likes = section.querySelector<HTMLElement>('[data-stats-likes]')
-    const likeButton = section.querySelector<HTMLButtonElement>('[data-stats-like]')
-    const heart = section.querySelector<HTMLElement>('.post-stats__heart')
-
-    if (section.dataset.statsConfigured !== 'true' || !serverUrl || !postId || !status || !views || !likes || !likeButton || !heart) return
-
-    const visitorId = ensureVisitorId()
-    let liked = false
-    let viewRecorded = false
-    let statsLoaded = false
-    let readThresholdReached = false
-
-    const request = async (path: string, init: RequestInit = {}) => {
-      const headers = new Headers(init.headers)
-      headers.set('Accept', 'application/json')
-      headers.set('X-Stats-Visitor', visitorId)
-      if (init.body) headers.set('Content-Type', 'application/json')
-      const response = await fetch(`${serverUrl}${path}`, {
-        ...init,
-        headers,
-        credentials: 'include',
-      })
-      const payload = await response.json().catch(() => ({}))
-      if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : 'Stats request failed')
-      return payload as { views: number; likes: number; liked?: boolean; counted?: boolean; changed?: boolean }
+    const createVisitorId = () => {
+      if (crypto.randomUUID) return crypto.randomUUID()
+      const bytes = crypto.getRandomValues(new Uint8Array(16))
+      return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('')
     }
 
-    const renderStats = (payload: { views: number; likes: number; liked?: boolean }) => {
-      views.textContent = formatCount(payload.views)
-      likes.textContent = formatCount(payload.likes)
-      if (typeof payload.liked === 'boolean') liked = payload.liked
-      likeButton.setAttribute('aria-pressed', String(liked))
-      likeButton.setAttribute('aria-label', liked ? '取消点赞' : '点赞')
-      likeButton.classList.toggle('is-liked', liked)
-      heart.textContent = liked ? '♥' : '♡'
+    const ensureVisitorId = () => {
+      const existing = getCookie(VISITOR_COOKIE)
+      if (existing) return existing
+      const domain = location.hostname === 'aliouswe.com' || location.hostname.endsWith('.aliouswe.com')
+        ? '; Domain=aliouswe.com'
+        : ''
+      const secure = location.protocol === 'https:' ? '; Secure' : ''
+      const visitorId = createVisitorId()
+      document.cookie = `${VISITOR_COOKIE}=${visitorId}; Max-Age=${VISITOR_MAX_AGE}; Path=/; SameSite=Lax${secure}${domain}`
+      return visitorId
     }
 
-    const loadStats = async () => {
-      const payload = await request(`/stats?postId=${encodeURIComponent(postId)}`)
-      renderStats(payload)
-      statsLoaded = true
-      likeButton.disabled = false
-      status.textContent = '匿名统计；同一浏览器每天只记录一次阅读。'
+    const formatCount = (value: unknown) => {
+      const count = Number(value)
+      return Number.isFinite(count) && count >= 0 ? new Intl.NumberFormat('zh-CN').format(count) : '—'
     }
 
-    const recordView = async () => {
-      readThresholdReached = true
-      if (!statsLoaded || viewRecorded) return
-      viewRecorded = true
-      try {
-        const payload = await request('/stats/view', {
-          method: 'POST',
-          body: JSON.stringify({ postId, visitorId }),
+    const sections = document.querySelectorAll<HTMLElement>('[data-post-stats]')
+
+    sections.forEach((section) => {
+      const serverUrl = section.dataset.serverUrl
+      const postId = section.dataset.postId
+      const status = section.querySelector<HTMLElement>('[data-stats-status]')
+      const views = section.querySelector<HTMLElement>('[data-stats-views]')
+      const likes = section.querySelector<HTMLElement>('[data-stats-likes]')
+      const likeButton = section.querySelector<HTMLButtonElement>('[data-stats-like]')
+      const heart = section.querySelector<HTMLElement>('.post-stats__heart')
+
+      if (section.dataset.statsConfigured !== 'true' || !serverUrl || !postId || !status || !views || !likes || !likeButton || !heart) return
+
+      const visitorId = ensureVisitorId()
+      let liked = false
+      let viewRecorded = false
+      let statsLoaded = false
+      let readThresholdReached = false
+
+      const request = async (path: string, init: RequestInit = {}) => {
+        const headers = new Headers(init.headers)
+        headers.set('Accept', 'application/json')
+        headers.set('X-Stats-Visitor', visitorId)
+        if (init.body) headers.set('Content-Type', 'application/json')
+        const response = await fetch(`${serverUrl}${path}`, {
+          ...init,
+          headers,
+          credentials: 'include',
         })
-        renderStats(payload)
-      } catch {
-        viewRecorded = false
+        const payload = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(typeof payload.error === 'string' ? payload.error : 'Stats request failed')
+        return payload as { views: number; likes: number; liked?: boolean; counted?: boolean; changed?: boolean }
       }
-    }
 
-    const reachedReadThreshold = () => {
-      const content = document.querySelector<HTMLElement>('.article-content')
-      if (!content) return false
-      const rect = content.getBoundingClientRect()
-      const contentTop = window.scrollY + rect.top
-      return window.scrollY + window.innerHeight >= contentTop + rect.height * 0.3
-    }
-
-    const checkReadThreshold = () => {
-      if (reachedReadThreshold()) {
-        window.removeEventListener('scroll', checkReadThreshold)
-        void recordView()
+      const renderStats = (payload: { views: number; likes: number; liked?: boolean }) => {
+        views.textContent = formatCount(payload.views)
+        likes.textContent = formatCount(payload.likes)
+        if (typeof payload.liked === 'boolean') liked = payload.liked
+        likeButton.setAttribute('aria-pressed', String(liked))
+        likeButton.setAttribute('aria-label', liked ? '取消点赞' : '点赞')
+        likeButton.classList.toggle('is-liked', liked)
+        heart.textContent = liked ? '♥' : '♡'
       }
-    }
 
-    likeButton.addEventListener('click', async () => {
-      if (!statsLoaded) return
-      const nextLiked = !liked
-      likeButton.disabled = true
-      status.textContent = nextLiked ? '正在记录点赞…' : '正在取消点赞…'
-      try {
-        const payload = await request('/stats/like', {
-          method: 'POST',
-          body: JSON.stringify({ postId, visitorId, liked: nextLiked }),
-        })
+      const loadStats = async () => {
+        const payload = await request(`/stats?postId=${encodeURIComponent(postId)}`)
         renderStats(payload)
-        status.textContent = nextLiked ? '已记录匿名点赞。' : '已取消点赞。'
-      } catch {
-        status.textContent = '点赞暂时不可用，文章仍可正常阅读。'
-      } finally {
+        statsLoaded = true
         likeButton.disabled = false
+        status.textContent = '匿名统计；同一浏览器每天只记录一次阅读。'
       }
-    })
 
-    void loadStats().then(() => {
-      if (readThresholdReached) void recordView()
-    }).catch(() => {
-      status.textContent = '统计暂时不可用，文章仍可正常阅读。'
+      const recordView = async () => {
+        readThresholdReached = true
+        if (!statsLoaded || viewRecorded) return
+        viewRecorded = true
+        try {
+          const payload = await request('/stats/view', {
+            method: 'POST',
+            body: JSON.stringify({ postId, visitorId }),
+          })
+          renderStats(payload)
+        } catch {
+          viewRecorded = false
+        }
+      }
+
+      const reachedReadThreshold = () => {
+        const content = document.querySelector<HTMLElement>('.article-content')
+        if (!content) return false
+        const rect = content.getBoundingClientRect()
+        const contentTop = window.scrollY + rect.top
+        return window.scrollY + window.innerHeight >= contentTop + rect.height * 0.3
+      }
+
+      const checkReadThreshold = () => {
+        if (reachedReadThreshold()) {
+          window.removeEventListener('scroll', checkReadThreshold)
+          void recordView()
+        }
+      }
+
+      likeButton.addEventListener('click', async () => {
+        if (!statsLoaded) return
+        const nextLiked = !liked
+        likeButton.disabled = true
+        status.textContent = nextLiked ? '正在记录点赞…' : '正在取消点赞…'
+        try {
+          const payload = await request('/stats/like', {
+            method: 'POST',
+            body: JSON.stringify({ postId, visitorId, liked: nextLiked }),
+          })
+          renderStats(payload)
+          status.textContent = nextLiked ? '已记录匿名点赞。' : '已取消点赞。'
+        } catch {
+          status.textContent = '点赞暂时不可用，文章仍可正常阅读。'
+        } finally {
+          likeButton.disabled = false
+        }
+      })
+
+      void loadStats().then(() => {
+        if (readThresholdReached) void recordView()
+      }).catch(() => {
+        status.textContent = '统计暂时不可用，文章仍可正常阅读。'
+      })
+      window.addEventListener('scroll', checkReadThreshold, { passive: true })
+      document.addEventListener('astro:before-swap', () => window.removeEventListener('scroll', checkReadThreshold), { once: true })
+      checkReadThreshold()
     })
-    window.addEventListener('scroll', checkReadThreshold, { passive: true })
-    checkReadThreshold()
-  })
+  }
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
 </script>
 
 <style>

@@ -36,54 +36,62 @@ const formEndpoint = formId ? `https://formspree.io/f/${formId}` : ''
 </BaseLayout>
 
 <script>
-  const form = document.querySelector<HTMLFormElement>('[data-contact-form]')
-  const status = document.querySelector<HTMLElement>('[data-form-status]')
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const endpoint = form.dataset.formEndpoint ?? ''
-    const data = new FormData(form)
-    if (!endpoint) {
-      const recipient = form.dataset.recipient
-      const subject = String(data.get('subject') || 'Message from aliouswe.com')
-      const name = String(data.get('name') || '未署名')
-      const replyEmail = String(data.get('email') || '')
-      const message = String(data.get('message') || '')
-      const body = `称呼：${name}\n回复邮箱：${replyEmail}\n\n${message}`
-      window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-      if (status) status.textContent = '已调用邮件应用；请在邮件应用中确认发送。'
-      return
-    }
-    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')
-    if (button) button.disabled = true
-    form.setAttribute('aria-busy', 'true')
-    if (status) status.textContent = '正在发送…'
-    const controller = new AbortController()
-    const timeout = window.setTimeout(() => controller.abort(), 15000)
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        body: data,
-        headers: { Accept: 'application/json' },
-        signal: controller.signal,
-      })
-      const result = await response.json().catch(() => null)
-      if (!response.ok) {
-        const detail = result?.errors?.map((item: { message?: string }) => item.message).filter(Boolean).join('；')
-        throw new Error(detail || '提交失败')
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-contact-form]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    const form = document.querySelector<HTMLFormElement>('[data-contact-form]')
+    const status = document.querySelector<HTMLElement>('[data-form-status]')
+    form?.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      const endpoint = form.dataset.formEndpoint ?? ''
+      const data = new FormData(form)
+      if (!endpoint) {
+        const recipient = form.dataset.recipient
+        const subject = String(data.get('subject') || 'Message from aliouswe.com')
+        const name = String(data.get('name') || '未署名')
+        const replyEmail = String(data.get('email') || '')
+        const message = String(data.get('message') || '')
+        const body = `称呼：${name}\n回复邮箱：${replyEmail}\n\n${message}`
+        window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+        if (status) status.textContent = '已调用邮件应用；请在邮件应用中确认发送。'
+        return
       }
-      form.reset()
-      if (status) status.textContent = `发送成功 · 回执 ${Date.now().toString(36).toUpperCase()}`
-    } catch (error) {
-      const timedOut = error instanceof DOMException && error.name === 'AbortError'
-      if (status) status.textContent = timedOut
-        ? '发送超时。内容仍保留在页面中，请检查网络后重试。'
-        : '暂时无法发送。内容仍保留在页面中，请稍后重试或先复制保存。'
-    } finally {
-      window.clearTimeout(timeout)
-      form.removeAttribute('aria-busy')
-      if (button) button.disabled = false
-    }
-  })
+      const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')
+      if (button) button.disabled = true
+      form.setAttribute('aria-busy', 'true')
+      if (status) status.textContent = '正在发送…'
+      const controller = new AbortController()
+      const timeout = window.setTimeout(() => controller.abort(), 15000)
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          body: data,
+          headers: { Accept: 'application/json' },
+          signal: controller.signal,
+        })
+        const result = await response.json().catch(() => null)
+        if (!response.ok) {
+          const detail = result?.errors?.map((item: { message?: string }) => item.message).filter(Boolean).join('；')
+          throw new Error(detail || '提交失败')
+        }
+        form.reset()
+        if (status) status.textContent = `发送成功 · 回执 ${Date.now().toString(36).toUpperCase()}`
+      } catch (error) {
+        const timedOut = error instanceof DOMException && error.name === 'AbortError'
+        if (status) status.textContent = timedOut
+          ? '发送超时。内容仍保留在页面中，请检查网络后重试。'
+          : '暂时无法发送。内容仍保留在页面中，请稍后重试或先复制保存。'
+      } finally {
+        window.clearTimeout(timeout)
+        form.removeAttribute('aria-busy')
+        if (button) button.disabled = false
+      }
+    })
+  }
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
 </script>
 
 <style>

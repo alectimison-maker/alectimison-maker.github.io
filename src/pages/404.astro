@@ -154,178 +154,185 @@ const reelSequences = Array.from({ length: 3 }, (_, reelIndex) => {
     </main>
 
     <script>
-      const app = document.querySelector('[data-tv-app]')
-      const action = document.querySelector('[data-action]')
-      const actionEn = document.querySelector('[data-action-en]')
-      const actionZh = document.querySelector('[data-action-zh]')
-      const screens = [...document.querySelectorAll('[data-screen]')]
-      const slotStatus = document.querySelector('[data-slot-status]')
-      const gamePrompt = document.querySelector('[data-game-prompt]')
-      const reels = [...document.querySelectorAll('[data-reel]')]
-      const coffeePoolNode = document.querySelector('[data-coffee-pool]')
-      const winningDisplay = document.querySelector('[data-winning-display]')
-      const winningCards = [...document.querySelectorAll('[data-winning-card]')]
-      const resultImage = document.querySelector('[data-result-image]')
-      const winningSlices = [...document.querySelectorAll('[data-winning-slice]')]
-      const resultScore = document.querySelector('[data-result-score]')
-      const resultName = document.querySelector('[data-result-name]')
-      const resultLead = document.querySelector('[data-result-lead]')
-      const resultPages = document.querySelector('[data-result-pages]')
-      const resultLink = document.querySelector('[data-result-link]')
-      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      let spinning = false
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-tv-app]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    const app = document.querySelector('[data-tv-app]')
+    const action = document.querySelector('[data-action]')
+    const actionEn = document.querySelector('[data-action-en]')
+    const actionZh = document.querySelector('[data-action-zh]')
+    const screens = [...document.querySelectorAll('[data-screen]')]
+    const slotStatus = document.querySelector('[data-slot-status]')
+    const gamePrompt = document.querySelector('[data-game-prompt]')
+    const reels = [...document.querySelectorAll('[data-reel]')]
+    const coffeePoolNode = document.querySelector('[data-coffee-pool]')
+    const winningDisplay = document.querySelector('[data-winning-display]')
+    const winningCards = [...document.querySelectorAll('[data-winning-card]')]
+    const resultImage = document.querySelector('[data-result-image]')
+    const winningSlices = [...document.querySelectorAll('[data-winning-slice]')]
+    const resultScore = document.querySelector('[data-result-score]')
+    const resultName = document.querySelector('[data-result-name]')
+    const resultLead = document.querySelector('[data-result-lead]')
+    const resultPages = document.querySelector('[data-result-pages]')
+    const resultLink = document.querySelector('[data-result-link]')
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let spinning = false
 
-      type CoffeeResult = {
-        id: string
-        names: string[]
-        image: string
-        imageAlt: string
-        sourceLabel: string
-        sourceHref: string
-        lead: string
-        pages: string[]
-        score?: string
-      }
+    type CoffeeResult = {
+      id: string
+      names: string[]
+      image: string
+      imageAlt: string
+      sourceLabel: string
+      sourceHref: string
+      lead: string
+      pages: string[]
+      score?: string
+    }
 
-      const coffeePool: CoffeeResult[] = coffeePoolNode?.textContent
-        ? JSON.parse(coffeePoolNode.textContent)
-        : []
-      let selectedCoffee = coffeePool[0]
+    const coffeePool: CoffeeResult[] = coffeePoolNode?.textContent
+      ? JSON.parse(coffeePoolNode.textContent)
+      : []
+    let selectedCoffee = coffeePool[0]
 
-      const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration))
+    const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration))
 
-      const setImageProperty = (element: Element | null, property: string, image: string) => {
-        if (element instanceof HTMLElement) element.style.setProperty(property, `url("${image}")`)
-      }
+    const setImageProperty = (element: Element | null, property: string, image: string) => {
+      if (element instanceof HTMLElement) element.style.setProperty(property, `url("${image}")`)
+    }
 
-      const selectCoffee = () => {
-        if (coffeePool.length < 2) return coffeePool[0]
-        const choices = coffeePool.filter((coffee) => coffee.id !== selectedCoffee?.id)
-        return choices[Math.floor(Math.random() * choices.length)]
-      }
+    const selectCoffee = () => {
+      if (coffeePool.length < 2) return coffeePool[0]
+      const choices = coffeePool.filter((coffee) => coffee.id !== selectedCoffee?.id)
+      return choices[Math.floor(Math.random() * choices.length)]
+    }
 
-      const prepareResult = (coffee: CoffeeResult) => {
-        selectedCoffee = coffee
-        setImageProperty(winningDisplay, '--winning-image', coffee.image)
-        setImageProperty(resultImage, '--winning-image', coffee.image)
+    const prepareResult = (coffee: CoffeeResult) => {
+      selectedCoffee = coffee
+      setImageProperty(winningDisplay, '--winning-image', coffee.image)
+      setImageProperty(resultImage, '--winning-image', coffee.image)
 
-        winningCards.forEach((card, reelIndex) => {
-          setImageProperty(card, '--reel-image', coffee.image.replace('.w960.webp', '.w480.webp'))
-          if (card instanceof HTMLElement) {
-            card.style.setProperty('--slice-position', `${reelIndex * 50}%`)
-            card.setAttribute('aria-label', `${coffee.imageAlt}，中奖图像第 ${reelIndex + 1} 列`)
-          }
-        })
-        winningSlices.forEach((slice, reelIndex) => {
-          setImageProperty(slice, '--winning-image', coffee.image)
-          if (slice instanceof HTMLElement) slice.style.setProperty('--slice-position', `${reelIndex * 50}%`)
-        })
-
-        resultImage?.setAttribute('aria-label', `中奖咖啡：${coffee.names.join('与')}`)
-        if (resultScore) resultScore.textContent = coffee.score ?? '--/10'
-        if (resultName) resultName.textContent = coffee.names.join(' × ')
-        if (resultLead) resultLead.textContent = coffee.lead
-        if (resultPages) {
-          resultPages.replaceChildren(...coffee.pages.map((page) => {
-            const paragraph = document.createElement('p')
-            paragraph.textContent = page
-            return paragraph
-          }))
+      winningCards.forEach((card, reelIndex) => {
+        setImageProperty(card, '--reel-image', coffee.image.replace('.w960.webp', '.w480.webp'))
+        if (card instanceof HTMLElement) {
+          card.style.setProperty('--slice-position', `${reelIndex * 50}%`)
+          card.setAttribute('aria-label', `${coffee.imageAlt}，中奖图像第 ${reelIndex + 1} 列`)
         }
-        if (resultLink instanceof HTMLAnchorElement) {
-          resultLink.href = coffee.sourceHref
-          resultLink.textContent = `阅读原文 ${coffee.sourceLabel}`
-        }
-      }
-
-      const resetReels = () => {
-        reels.forEach((reel) => {
-          const track = reel.querySelector('[data-reel-track]')
-          track?.getAnimations().forEach((animation) => animation.cancel())
-          if (track instanceof HTMLElement) {
-            track.style.transform = 'translateY(0)'
-            track.style.filter = 'none'
-          }
-        })
-        if (slotStatus) slotStatus.textContent = 'READY'
-        if (gamePrompt) gamePrompt.textContent = '按下 BREW，抽取一杯咖啡'
-        winningDisplay?.setAttribute('aria-label', '三列咖啡老虎机待机画面')
-      }
-
-      const setState = (state: 'error' | 'game' | 'result') => {
-        if (!(app instanceof HTMLElement)) return
-        app.dataset.state = state
-        screens.forEach((screen) => {
-          if (screen instanceof HTMLElement) screen.hidden = screen.dataset.screen !== state
-        })
-
-        if (actionEn) actionEn.textContent = state === 'error' ? 'PLAY' : state === 'game' ? 'BREW' : 'AGAIN'
-        if (actionZh) actionZh.textContent = state === 'error' ? '进入游戏' : state === 'game' ? '抽一杯' : '再来一杯'
-      }
-
-      action?.addEventListener('click', () => {
-        const current = app instanceof HTMLElement ? app.dataset.state : 'error'
-        if (current === 'error') {
-          resetReels()
-          setState('game')
-          return
-        }
-
-        if (current === 'result') {
-          resetReels()
-          setState('game')
-          return
-        }
-
-        if (spinning) return
-        const nextCoffee = selectCoffee()
-        if (!nextCoffee) return
-        prepareResult(nextCoffee)
-        spinning = true
-        if (action instanceof HTMLButtonElement) action.disabled = true
-        if (actionEn) actionEn.textContent = 'ROLL'
-        if (actionZh) actionZh.textContent = '滚动中'
-        if (slotStatus) slotStatus.textContent = 'SPINNING'
-        if (gamePrompt) gamePrompt.textContent = '三列信号正在独立滚动…'
-        if (app instanceof HTMLElement) app.dataset.spinning = 'true'
-
-        const animations = reels.map((reel, reelIndex) => {
-          const track = reel.querySelector('[data-reel-track]')
-          if (!(track instanceof HTMLElement) || !(reel instanceof HTMLElement)) return Promise.resolve()
-
-          const stopIndex = Number(reel.dataset.stopIndex ?? 0)
-          const distance = reel.clientHeight * stopIndex
-          const duration = reduceMotion ? 1 : 1450 + reelIndex * 430
-          const animation = track.animate([
-            { transform: 'translateY(0)', filter: 'blur(0)', offset: 0 },
-            { filter: 'blur(2.4px)', offset: .18 },
-            { filter: 'blur(1.4px)', offset: .72 },
-            { transform: `translateY(-${distance}px)`, filter: 'blur(0)', offset: 1 },
-          ], {
-            duration,
-            easing: 'cubic-bezier(.12, .76, .18, 1)',
-            fill: 'forwards',
-          })
-
-          return animation.finished.catch(() => undefined)
-        })
-
-        Promise.all(animations).then(async () => {
-          if (slotStatus) slotStatus.textContent = 'MATCHED'
-          if (actionEn) actionEn.textContent = 'MATCH'
-          if (actionZh) actionZh.textContent = '已中奖'
-          if (gamePrompt) gamePrompt.textContent = `信号锁定：${selectedCoffee.names.join(' × ')}`
-          winningDisplay?.setAttribute('aria-label', `中奖咖啡：${selectedCoffee.names.join('与')}`)
-          if (app instanceof HTMLElement) app.dataset.spinning = 'settled'
-          await wait(reduceMotion ? 1 : 720)
-          setState('result')
-          spinning = false
-          if (action instanceof HTMLButtonElement) action.disabled = false
-          if (app instanceof HTMLElement) delete app.dataset.spinning
-        })
+      })
+      winningSlices.forEach((slice, reelIndex) => {
+        setImageProperty(slice, '--winning-image', coffee.image)
+        if (slice instanceof HTMLElement) slice.style.setProperty('--slice-position', `${reelIndex * 50}%`)
       })
 
-    </script>
+      resultImage?.setAttribute('aria-label', `中奖咖啡：${coffee.names.join('与')}`)
+      if (resultScore) resultScore.textContent = coffee.score ?? '--/10'
+      if (resultName) resultName.textContent = coffee.names.join(' × ')
+      if (resultLead) resultLead.textContent = coffee.lead
+      if (resultPages) {
+        resultPages.replaceChildren(...coffee.pages.map((page) => {
+          const paragraph = document.createElement('p')
+          paragraph.textContent = page
+          return paragraph
+        }))
+      }
+      if (resultLink instanceof HTMLAnchorElement) {
+        resultLink.href = coffee.sourceHref
+        resultLink.textContent = `阅读原文 ${coffee.sourceLabel}`
+      }
+    }
+
+    const resetReels = () => {
+      reels.forEach((reel) => {
+        const track = reel.querySelector('[data-reel-track]')
+        track?.getAnimations().forEach((animation) => animation.cancel())
+        if (track instanceof HTMLElement) {
+          track.style.transform = 'translateY(0)'
+          track.style.filter = 'none'
+        }
+      })
+      if (slotStatus) slotStatus.textContent = 'READY'
+      if (gamePrompt) gamePrompt.textContent = '按下 BREW，抽取一杯咖啡'
+      winningDisplay?.setAttribute('aria-label', '三列咖啡老虎机待机画面')
+    }
+
+    const setState = (state: 'error' | 'game' | 'result') => {
+      if (!(app instanceof HTMLElement)) return
+      app.dataset.state = state
+      screens.forEach((screen) => {
+        if (screen instanceof HTMLElement) screen.hidden = screen.dataset.screen !== state
+      })
+
+      if (actionEn) actionEn.textContent = state === 'error' ? 'PLAY' : state === 'game' ? 'BREW' : 'AGAIN'
+      if (actionZh) actionZh.textContent = state === 'error' ? '进入游戏' : state === 'game' ? '抽一杯' : '再来一杯'
+    }
+
+    action?.addEventListener('click', () => {
+      const current = app instanceof HTMLElement ? app.dataset.state : 'error'
+      if (current === 'error') {
+        resetReels()
+        setState('game')
+        return
+      }
+
+      if (current === 'result') {
+        resetReels()
+        setState('game')
+        return
+      }
+
+      if (spinning) return
+      const nextCoffee = selectCoffee()
+      if (!nextCoffee) return
+      prepareResult(nextCoffee)
+      spinning = true
+      if (action instanceof HTMLButtonElement) action.disabled = true
+      if (actionEn) actionEn.textContent = 'ROLL'
+      if (actionZh) actionZh.textContent = '滚动中'
+      if (slotStatus) slotStatus.textContent = 'SPINNING'
+      if (gamePrompt) gamePrompt.textContent = '三列信号正在独立滚动…'
+      if (app instanceof HTMLElement) app.dataset.spinning = 'true'
+
+      const animations = reels.map((reel, reelIndex) => {
+        const track = reel.querySelector('[data-reel-track]')
+        if (!(track instanceof HTMLElement) || !(reel instanceof HTMLElement)) return Promise.resolve()
+
+        const stopIndex = Number(reel.dataset.stopIndex ?? 0)
+        const distance = reel.clientHeight * stopIndex
+        const duration = reduceMotion ? 1 : 1450 + reelIndex * 430
+        const animation = track.animate([
+          { transform: 'translateY(0)', filter: 'blur(0)', offset: 0 },
+          { filter: 'blur(2.4px)', offset: .18 },
+          { filter: 'blur(1.4px)', offset: .72 },
+          { transform: `translateY(-${distance}px)`, filter: 'blur(0)', offset: 1 },
+        ], {
+          duration,
+          easing: 'cubic-bezier(.12, .76, .18, 1)',
+          fill: 'forwards',
+        })
+
+        return animation.finished.catch(() => undefined)
+      })
+
+      Promise.all(animations).then(async () => {
+        if (slotStatus) slotStatus.textContent = 'MATCHED'
+        if (actionEn) actionEn.textContent = 'MATCH'
+        if (actionZh) actionZh.textContent = '已中奖'
+        if (gamePrompt) gamePrompt.textContent = `信号锁定：${selectedCoffee.names.join(' × ')}`
+        winningDisplay?.setAttribute('aria-label', `中奖咖啡：${selectedCoffee.names.join('与')}`)
+        if (app instanceof HTMLElement) app.dataset.spinning = 'settled'
+        await wait(reduceMotion ? 1 : 720)
+        setState('result')
+        spinning = false
+        if (action instanceof HTMLButtonElement) action.disabled = false
+        if (app instanceof HTMLElement) delete app.dataset.spinning
+      })
+    })
+  }
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
+</script>
   </body>
 </html>
 

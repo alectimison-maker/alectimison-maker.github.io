@@ -93,6 +93,8 @@
     window.addEventListener('resize', () => {
       targetY = clamp(targetY, 0, maxScrollY())
     }, { passive: true })
+    document.addEventListener('astro:before-preparation', stopAnimation)
+    document.addEventListener('astro:after-swap', stopAnimation)
     window.addEventListener('hashchange', stopAnimation)
     window.addEventListener('popstate', stopAnimation)
     window.addEventListener('blur', stopAnimation)

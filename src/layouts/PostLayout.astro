@@ -12,16 +12,15 @@ interface Props {
   previous?: CollectionEntry<'posts'>
   next?: CollectionEntry<'posts'>
   noindex?: boolean
-  searchable?: boolean
 }
 
-const { post, headings, canonical, previous, next, noindex = false, searchable = true } = Astro.props
+const { post, headings, canonical, previous, next, noindex = false } = Astro.props
 const { title, description, date, updatedAt, tags, lang, space } = post.data
 const displayLang = lang === 'mixed' ? 'zh-CN' : lang
 const readingMinutes = estimateReadingMinutes(post.body)
 ---
 
-<BaseLayout title={title} description={description} canonical={canonical} image={`/og/${post.id}.png`} type="article" lang={displayLang} space={space} noindex={noindex} searchable={searchable}>
+<BaseLayout title={title} description={description} canonical={canonical} image={`/og/${post.id}.png`} type="article" lang={displayLang} space={space} noindex={noindex}>
   <article class="article-shell container">
     <header class="article-header">
       <p class="eyebrow">{space} / {date.getFullYear()}</p>

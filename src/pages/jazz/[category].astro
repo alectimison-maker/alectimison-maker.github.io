@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import JazzStandardGrid from '../../components/jazz/JazzStandardGrid'
+import { jazzCategories, jazzCategoryPath } from '../../data/jazz-categories'
+import { jazzAlbumPath } from '../../data/jazz-types'
+import { jazzItems, jazzStandards } from '../../lib/jazz-library'
+import '../../components/jazz/jazz-prototype.css'
+import '../../components/jazz/jazz-listening.css'
+
+export function getStaticPaths() {
+  return jazzCategories.map((category) => ({ params: { category: category.slug }, props: { category } }))
+}
+const { category } = Astro.props
+const albums = jazzItems.filter((item) => item.categories?.includes(category.slug))
+const standards = jazzStandards.filter((track) => track.categories.includes(category.slug))
+const trackCount = albums.reduce((count, album) => count + (album.tracks?.length ?? 0), 0) + standards.length
+const cards = standards.map(({ id, title, artist, cover, coverVariants, standard, duration, reviewNote }) => ({ id, title, artist, cover, coverVariants, standard, duration, reviewNote }))
+---
+<BaseLayout title={`${category.title} · Jazz`} space="jazz">
+  <div class="jp-root jl-category-page" style={`--category-color:${category.color};--category-ink:${category.ink};--category-font:${category.fontFamily}`}>
+    <header class="jl-category-hero">
+      <a href="/jazz/#jazz-categories">← BACK TO JAZZ</a>
+      <div class="jl-category-hero__label"><span>A DIRECTION, A FEELING.</span><span>THE JAZZ COLLECTION</span></div>
+      <h1>{category.title}</h1>
+      <div class="jl-category-hero__bottom"><blockquote>“{category.quote}”<cite>{category.author} · {category.work}</cite></blockquote><p>{String(albums.length).padStart(2, '0')} <span>RECORDS</span><br />{String(trackCount).padStart(2, '0')} <span>TRACKS TO PLAY</span></p></div>
+    </header>
+    <nav class="jl-category-nav" aria-label="爵士分类">{jazzCategories.map((entry) => <a href={jazzCategoryPath(entry.slug)} aria-current={entry.slug === category.slug ? 'page' : undefined}>{entry.title}</a>)}</nav>
+    <section class="jl-category-records" aria-label="本分类专辑">
+      <header><span class="jl-kicker">RECORDS ON THIS SHELF</span><h2 class="jl-category-albums-title">Albums</h2></header>
+      <div>{albums.map((album) => <a href={jazzAlbumPath(album.id)}><img src={album.cover} alt={`${album.title} 封面`} width="240" height="240" loading="lazy" /><strong>{album.title}</strong><span>{album.artist ?? 'Jazz archive'}</span></a>)}</div>
+      {!albums.length && <p class="jl-empty">这只唱片架还留着空位，下一张好唱片会来到这里。</p>}
+    </section>
+    {standards.length > 0 && <JazzStandardGrid client:load items={cards} category={category.slug} />}
+  </div>
+</BaseLayout>

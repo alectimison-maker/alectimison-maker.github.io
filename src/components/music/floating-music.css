@@ -1,0 +1,53 @@
+.music-float { position: fixed; z-index: 140; right: max(1.25rem, env(safe-area-inset-right)); bottom: max(2rem, env(safe-area-inset-bottom)); color: #172019; font-family: var(--mono); }
+.music-float button { color: inherit; cursor: pointer; }
+.music-float__orb, .music-float__panel, .music-float__history[open] ol, .music-float__history[open] > button { border: 1px solid #ffffff9c; background: linear-gradient(135deg, #ffffffb8, #e7ecea60 55%, #ffffff80); backdrop-filter: blur(24px) saturate(1.6); -webkit-backdrop-filter: blur(24px) saturate(1.6); box-shadow: inset 0 1px 1px #ffffffef, inset 0 -1px 1px #ffffff55, 0 10px 35px #19251b25; }
+.music-float__orb { position: relative; display: grid; place-items: center; width: 76px; height: 76px; padding: 9px; border-radius: 50%; transition: box-shadow .25s, scale .25s; }
+.music-float__orb:hover { scale: 1.06; box-shadow: inset 0 1px 2px #fff, 0 12px 40px #19251b38; }
+.music-float__orb img { display: block; width: 56px; height: 56px; border-radius: 50%; object-fit: cover; animation: music-record-spin 18s linear infinite; animation-play-state: paused; }
+.music-float[data-playing="true"] .music-float__orb img { animation-play-state: running; }
+.music-float__badge { position: absolute; right: 1px; bottom: 1px; display: grid; place-items: center; width: 22px; height: 22px; background: #f3f1e5e8; border: 1px solid #fff; border-radius: 50%; }
+.music-float__panel { position: absolute; bottom: 0; right: 88px; width: min(600px, calc(100vw - 128px)); height: 76px; display: flex; align-items: center; gap: 1rem; padding: 12px 18px; border-radius: 999px; transform-origin: right center; animation: music-bar-open .55s cubic-bezier(.2,.8,.2,1) both; }
+.music-float__panel button { display: inline-grid; place-items: center; flex: none; padding: .3rem; border: 0; border-radius: 50%; background: transparent; }
+.music-float__panel button:disabled { opacity: .3; cursor: default; }
+.music-float__controls { display: flex; align-items: center; gap: .3rem; flex: none; }
+.music-float__controls .music-float__play { width: 36px; height: 36px; background: linear-gradient(135deg, #87788e38, #5e536c30); border: 1px solid #ffffff70; backdrop-filter: blur(12px) saturate(1.3); -webkit-backdrop-filter: blur(12px) saturate(1.3); box-shadow: none; }
+.music-float__timeline { min-width: 0; flex: 1; }
+.music-float__track { display: flex; align-items: baseline; gap: .65rem; color: inherit; text-decoration: none; min-width: 0; margin-bottom: 5px; }
+.music-float__track strong { flex: none; max-width: 55%; font: 500 1rem/1.2 var(--serif); }
+.music-float__track span { font-size: .53rem; opacity: .6; }
+.music-float__track strong, .music-float__track span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.music-float__progress { display: flex; align-items: center; gap: .45rem; font-size: .5rem; font-variant-numeric: tabular-nums; }
+.music-float__progress > span { opacity: .6; }
+.music-float input { accent-color: #8c63b7; cursor: pointer; min-width: 0; }
+.music-float__seek { display: flex; align-items: center; min-width: 0; flex: 1; }
+.music-float__seek input { width: 100%; height: 12px; margin: 0; }
+.music-float__volume { display: flex; align-items: center; gap: .4rem; flex: none; }
+.music-float__volume input { width: 52px; }
+.music-float__panel p[role="alert"] { position: absolute; right: 0; bottom: 86px; width: 280px; padding: .8rem; background: #f3f1e5; border-radius: 12px; font-size: .65rem; }
+.music-float__history { flex: none; font-size: .6rem; }
+.music-float__history summary { display: grid; place-items: center; width: 24px; height: 30px; cursor: pointer; list-style: none; }
+.music-float__history summary::-webkit-details-marker { display: none; }
+.music-float__history ol { position: absolute; right: 0; bottom: 122px; width: min(300px, calc(100vw - 128px)); max-height: min(45vh, 300px); overflow-y: auto; list-style: none; padding: .6rem 1rem; margin: 0; border-radius: 18px 18px 0 0; }
+.music-float__history li button { display: grid; width: 100%; text-align: left; justify-items: start; gap: .3rem; padding: .6rem 0; border-radius: 0; }
+.music-float__history li span { opacity: .6; font-size: .55rem; }
+.music-float__history[open] > button { position: absolute; right: 0; bottom: 86px; width: min(300px, calc(100vw - 128px)); height: 36px; border-radius: 0 0 18px 18px; }
+.music-float :focus-visible { outline: 2px solid #58715e; outline-offset: 3px; }
+@keyframes music-record-spin { to { transform: rotate(360deg); } }
+@keyframes music-bar-open { from { opacity: 0; transform: translateX(14px) scaleX(.94); } to { opacity: 1; transform: translateX(0) scaleX(1); } }
+@media (max-width: 700px) { .music-float__volume { display: none; } }
+@media (max-width: 600px) {
+  .music-float { right: 1rem; bottom: max(1.25rem, env(safe-area-inset-bottom)); }
+  .music-float__orb { width: 66px; height: 66px; padding: 7px; }
+  .music-float__orb img { width: 50px; height: 50px; }
+  .music-float__panel { right: 76px; height: 66px; width: calc(100vw - 108px); padding: 8px 10px; gap: .5rem; }
+  .music-float__controls { gap: 0; }
+  .music-float__controls .music-float__play { width: 30px; height: 30px; }
+  .music-float__track { display: block; margin-bottom: 3px; }
+  .music-float__track strong { display: block; max-width: 100%; font-size: .85rem; }
+  .music-float__track span { display: none; }
+  .music-float__progress { gap: .2rem; font-size: .45rem; }
+  .music-float__history ol, .music-float__history[open] > button { width: min(300px, calc(100vw - 108px)); }
+}
+@media (prefers-reduced-motion: reduce) { .music-float__orb img, .music-float__panel { animation: none; } .music-float__orb { transition: none; } }
+
+.music-float__empty:not([hidden]) { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; color: #75539c; background: #87788e22; }

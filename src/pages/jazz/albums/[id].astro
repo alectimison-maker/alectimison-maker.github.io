@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import JazzAlbumPage from '../../../components/jazz/JazzAlbumPage'
+import { jazzItems } from '../../../lib/jazz-library'
+
+export function getStaticPaths() {
+  return jazzItems.map((item, index) => ({ params: { id: item.id }, props: {
+    item, index, total: jazzItems.length,
+    previousId: jazzItems[(index - 1 + jazzItems.length) % jazzItems.length].id,
+    nextId: jazzItems[(index + 1) % jazzItems.length].id,
+  } }))
+}
+const { item, ...navigation } = Astro.props
+---
+<BaseLayout title={`${item.title} · Jazz`} description={`${item.artist ?? ''} — ${item.title}`} space="jazz">
+  <JazzAlbumPage client:load item={item} {...navigation} />
+</BaseLayout>

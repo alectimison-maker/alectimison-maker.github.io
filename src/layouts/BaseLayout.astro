@@ -7,6 +7,8 @@ import SiteLoader from '../components/SiteLoader.astro'
 import P1CursorTrail from '../components/physics/P1CursorTrail'
 import { SITE } from '../lib/site'
 import '../styles/global.css'
+import { ClientRouter } from 'astro:transitions'
+import FloatingMusicPlayer from '../components/music/FloatingMusicPlayer'
 
 interface Props {
   title?: string
@@ -17,7 +19,6 @@ interface Props {
   lang?: string
   noindex?: boolean
   space?: string
-  searchable?: boolean
 }
 
 const {
@@ -29,7 +30,6 @@ const {
   lang = 'zh-CN',
   noindex = false,
   space,
-  searchable = true,
 } = Astro.props
 
 const pageTitle = title ? `${title} · ${SITE.name}` : SITE.name
@@ -41,6 +41,7 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
 <!doctype html>
 <html lang={lang} data-space={space}>
   <head>
+    <ClientRouter />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
@@ -90,10 +91,19 @@ const umamiId = import.meta.env.PUBLIC_UMAMI_WEBSITE_ID
     <SiteLoader />
     <a class="skip-link" href="#main-content">跳到正文</a>
     <Header />
-    <main id="main-content" class="page-shell" data-pagefind-body={searchable ? true : undefined}>
+    <main id="main-content" class="page-shell">
       <slot />
     </main>
     <Footer />
+    <FloatingMusicPlayer client:load transition:persist="site-music" />
+    <script>
+      document.addEventListener('astro:before-swap', (event) => {
+        event.newDocument.querySelector('.site-loader')?.remove()
+        event.newDocument.documentElement.classList.remove('site-loader-active')
+        event.newDocument.documentElement.classList.add('site-loader-skip')
+        document.documentElement.style.overflow = ''
+      })
+    </script>
     <SpringUI />
     <DampedScroll />
     <P1CursorTrail client:load />

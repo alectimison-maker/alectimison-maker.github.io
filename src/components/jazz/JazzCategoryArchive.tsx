@@ -8,6 +8,7 @@ import {
 
 type CategorizedRecord = {
   categories?: string[]
+  tracks?: { categories: string[] }[]
 }
 
 export type JazzCategorySelectHandler = (category: JazzCategory) => void
@@ -21,15 +22,20 @@ const categoryStyle = (category: JazzCategory) => ({
 export default function JazzCategoryArchive({
   items,
   onSelectCategory,
+  standardTrackCounts = {},
 }: {
   items: CategorizedRecord[]
   onSelectCategory?: JazzCategorySelectHandler
+  standardTrackCounts?: Record<string, number>
 }) {
   const [activeSlug, setActiveSlug] = useState<JazzCategorySlug>('swing')
   const hoverTimer = useRef<number | undefined>(undefined)
   const counts = useMemo(() => new Map(jazzCategories.map((category) => [
     category.slug,
     items.filter((item) => item.categories?.includes(category.slug)).length,
+  ])), [items])
+  const trackCounts = useMemo(() => new Map(jazzCategories.map((category) => [category.slug,
+    items.flatMap((item) => item.tracks ?? []).filter((track) => track.categories.includes(category.slug)).length,
   ])), [items])
 
   useEffect(() => () => window.clearTimeout(hoverTimer.current), [])
@@ -89,7 +95,7 @@ export default function JazzCategoryArchive({
                   <i>{category.work}</i>
                 </span>
                 <span className="jp-category__status">
-                  {count ? `${String(count).padStart(2, '0')} RECORDS` : 'COLLECTION IN PROGRESS'}
+                  {count || standardTrackCounts[category.slug] ? `${String(count).padStart(2, '0')} RECORDS · ${(trackCounts.get(category.slug) ?? 0) + (standardTrackCounts[category.slug] ?? 0)} TRACKS` : 'COLLECTION IN PROGRESS'}
                 </span>
               </span>
             </button>

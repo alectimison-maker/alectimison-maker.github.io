@@ -18,7 +18,7 @@ npm test
 npm run build
 ```
 
-`npm run build` 会依次校验迁移清单、同步 GitHub 头像、压缩图片、检查 Astro/TypeScript、生成静态站点与 Pagefind 搜索索引。
+`npm run build` 会依次校验迁移清单、同步 GitHub 头像、压缩图片、检查 Astro/TypeScript、生成静态站点并校验图片和路由。
 
 ## 内容
 

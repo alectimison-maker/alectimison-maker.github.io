@@ -44,42 +44,50 @@ const shelves = [...new Set(items.flatMap((item) => item.shelves))]
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-collection]').forEach((view) => {
-    const cards = [...view.querySelectorAll<HTMLElement>('.collection-card')]
-    view.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((button) => {
-      button.addEventListener('click', () => {
-        view.querySelectorAll('[data-shelf]').forEach((item) => item.classList.remove('active'))
-        button.classList.add('active')
-        const shelf = button.dataset.shelf
-        cards.forEach((card) => {
-          const shelves = JSON.parse(card.dataset.shelves ?? '[]') as string[]
-          card.hidden = shelf !== 'all' && !shelves.includes(shelf ?? '')
+  const initialized = new WeakSet<Element>()
+  const initialize = () => {
+    const target = document.querySelector('[data-collection]')
+    if (!target || initialized.has(target)) return
+    initialized.add(target)
+    document.querySelectorAll<HTMLElement>('[data-collection]').forEach((view) => {
+      const cards = [...view.querySelectorAll<HTMLElement>('.collection-card')]
+      view.querySelectorAll<HTMLButtonElement>('[data-shelf]').forEach((button) => {
+        button.addEventListener('click', () => {
+          view.querySelectorAll('[data-shelf]').forEach((item) => item.classList.remove('active'))
+          button.classList.add('active')
+          const shelf = button.dataset.shelf
+          cards.forEach((card) => {
+            const shelves = JSON.parse(card.dataset.shelves ?? '[]') as string[]
+            card.hidden = shelf !== 'all' && !shelves.includes(shelf ?? '')
+          })
         })
       })
-    })
 
-    const dialog = view.querySelector<HTMLDialogElement>('.collection-dialog')
-    cards.forEach((card) => {
-      card.querySelector('[data-card-open]')?.addEventListener('click', () => {
-        const sourceImage = card.querySelector<HTMLImageElement>('img')
-        const sourceTitle = card.querySelector<HTMLElement>('span')
-        const image = dialog?.querySelector<HTMLImageElement>('[data-dialog-image]')
-        const title = dialog?.querySelector<HTMLElement>('[data-dialog-title]')
-        const shelves = dialog?.querySelector<HTMLElement>('[data-dialog-shelves]')
-        if (image && sourceImage) {
-          image.src = sourceImage.src
-          image.alt = sourceImage.alt
-        }
-        if (title) title.textContent = sourceTitle?.textContent ?? ''
-        if (shelves) shelves.textContent = (JSON.parse(card.dataset.shelves ?? '[]') as string[]).join(' / ')
-        dialog?.showModal()
+      const dialog = view.querySelector<HTMLDialogElement>('.collection-dialog')
+      cards.forEach((card) => {
+        card.querySelector('[data-card-open]')?.addEventListener('click', () => {
+          const sourceImage = card.querySelector<HTMLImageElement>('img')
+          const sourceTitle = card.querySelector<HTMLElement>('span')
+          const image = dialog?.querySelector<HTMLImageElement>('[data-dialog-image]')
+          const title = dialog?.querySelector<HTMLElement>('[data-dialog-title]')
+          const shelves = dialog?.querySelector<HTMLElement>('[data-dialog-shelves]')
+          if (image && sourceImage) {
+            image.src = sourceImage.src
+            image.alt = sourceImage.alt
+          }
+          if (title) title.textContent = sourceTitle?.textContent ?? ''
+          if (shelves) shelves.textContent = (JSON.parse(card.dataset.shelves ?? '[]') as string[]).join(' / ')
+          dialog?.showModal()
+        })
+      })
+      dialog?.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close())
+      dialog?.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close()
       })
     })
-    dialog?.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close())
-    dialog?.addEventListener('click', (event) => {
-      if (event.target === dialog) dialog.close()
-    })
-  })
+  }
+  initialize()
+  document.addEventListener('astro:page-load', initialize)
 </script>
 
 <style>
